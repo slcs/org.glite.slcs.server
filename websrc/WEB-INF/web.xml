@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- $Id: web.xml,v 1.1 2006/10/27 12:16:13 vtschopp Exp $ -->
+         
+
+<web-app id="SLCS"
+         version="2.4">
+         
+    <display-name>Short Lived Credential Service</display-name>
+    
+    <!-- SLCS Server Configuration -->
+    <context-param>
+        <!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath -->
+        <param-name>SLCSServerConfigurationFile</param-name>
+        <param-value>/opt/glite/etc/slcs/slcs.xml</param-value>
+    </context-param>
+
+    <!-- Shibboleth Authorization Filter -->
+    <filter>
+        <filter-name>LoginAuthorizationFilter</filter-name>
+        <filter-class>org.glite.slcs.filter.ShibbolethAuthorizationFilter</filter-class>
+        <!-- MANDATORY ACLImplementation: class name of implementation -->
+        <init-param>
+            <param-name>ACLImplementation</param-name>
+            <param-value>org.glite.slcs.acl.impl.ShibbolethXMLAccessControlList</param-value>
+        </init-param>
+        <!-- OPTIONAL ACLFile: REQUIRED(filename) for org.glite.slcs.acl.impl.ShibbolethXMLAccessControlList implementation -->
+        <init-param>
+            <param-name>ACLFile</param-name>
+            <param-value>/opt/glite/etc/slcs/acl.xml</param-value>
+        </init-param>
+        <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
+        <init-param>
+            <param-name>ACLFileMonitoringInterval</param-name>
+            <param-value>60</param-value>
+        </init-param>
+
+    </filter>
+
+    <filter>
+        <filter-name>AdminAuthorizationFilter</filter-name>
+        <filter-class>org.glite.slcs.filter.ShibbolethAuthorizationFilter</filter-class>
+        <!-- MANDATORY ACLImplementation: class name of implementation -->
+        <init-param>
+            <param-name>ACLImplementation</param-name>
+            <param-value>org.glite.slcs.acl.impl.ShibbolethXMLAccessControlList</param-value>
+        </init-param>
+        <!-- OPTIONAL ACLFile: REQUIRED for org.glite.slcs.acl.impl.ShibbolethXMLAccessControlList implementation -->
+        <init-param>
+            <param-name>ACLFile</param-name>
+            <param-value>/opt/glite/etc/slcs/acl-admin.xml</param-value>
+        </init-param>
+        <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
+        <init-param>
+            <param-name>ACLFileMonitoringInterval</param-name>
+            <param-value>60</param-value>
+        </init-param>
+    </filter>
+    
+    <!-- Filters mapping -->
+    <filter-mapping>
+        <filter-name>LoginAuthorizationFilter</filter-name>
+        <servlet-name>SLCSLoginServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AdminAuthorizationFilter</filter-name>
+        <servlet-name>SLCSAdminServlet</servlet-name>
+    </filter-mapping>
+
+
+    <!-- Servlets -->
+    <servlet>
+        <display-name>SLCS Login</display-name>
+        <servlet-name>SLCSLoginServlet</servlet-name>
+        <servlet-class>org.glite.slcs.servlet.LoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <display-name>SLCS Certificate Request</display-name>
+        <servlet-name>SLCSCertificateServlet</servlet-name>
+        <servlet-class>org.glite.slcs.servlet.CertificateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <display-name>SLCS Admininistration</display-name>
+        <servlet-name>SLCSAdminServlet</servlet-name>
+        <servlet-class>org.glite.slcs.servlet.AdminServlet</servlet-class>
+    </servlet>    
+    <!-- XXX: test servlet -->
+    <servlet>
+        <display-name>SLCS Test Servlet</display-name>
+        <servlet-name>SLCSTestServlet</servlet-name>
+        <servlet-class>org.glite.slcs.servlet.TestServlet</servlet-class>
+    </servlet>
+
+    <!-- Servet Mapping -->
+    <servlet-mapping>
+        <servlet-name>SLCSLoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SLCSCertificateServlet</servlet-name>
+        <url-pattern>/certificate</url-pattern>
+    </servlet-mapping>
+<!-- 
+    <servlet-mapping>
+        <servlet-name>SLCSAdminServlet</servlet-name>
+        <url-pattern>/admin</url-pattern>
+    </servlet-mapping>
+ -->
+    <!-- XXX: test servlet -->
+    <servlet-mapping>
+        <servlet-name>SLCSTestServlet</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
+
+</web-app>

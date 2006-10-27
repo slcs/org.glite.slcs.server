@@ -1,0 +1,74 @@
+/*
+ *   $Id: switchaai.css,v 1.1 2006/10/27 12:16:13 vtschopp Exp $
+ */
+
+body {
+  	background-color: white;
+  	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+h3 {
+	color: rgb(0,43,127);
+}
+
+.logo {
+  	color: white;
+  	text-decoration: none;
+}
+
+.border-blue {
+	border-style: solid;
+	border-width: 1px;
+    	border-color: rgb(0,43,127);
+}
+
+.border-orange {
+	border-style: solid;
+	border-width: 1px;
+    	border-color: rgb(226,140,5);
+}
+
+.blue {
+    color: rgb(0,43,127);
+}
+
+.orange {
+    color: rgb(226,140,5);
+}
+
+td.top-left {
+    background-image: url('images/obenlinks.gif');
+    height: 14px;
+    width: 14px;
+}
+td.top-middle {
+    background-image: url('images/obenmitte.gif');
+    height: 14px;
+}
+td.top-right {
+    background-image: url('images/obenrechts.gif');
+    height: 14px;
+    width: 14px;
+}
+td.middle-left {
+    background-image: url('images/mittelinks.gif');
+    width: 14px;
+}
+td.middle-right {
+    background-image: url('images/mitterechts.gif');
+    width: 14px;
+}
+td.bottom-left {
+    background-image: url('images/untenlinks.gif');
+    height: 14px;
+    width: 14px;
+}
+td.bottom-middle {
+    background-image: url('images/untenmitte.gif');
+    height: 14px;
+}
+td.bottom-right {
+    background-image: url('images/untenrechts.gif');
+    height: 14px;
+    width: 14px;
+}
