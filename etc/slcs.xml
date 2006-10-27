@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!-- $Id: slcs.xml,v 1.1 2006/10/27 12:20:04 vtschopp Exp $ -->
+
+<SLCSServerConfiguration>
+
+    <!-- Shibboleth Attributes Configuration -->
+    <ShibbolethConfiguration>
+        <RequiredAttributeName>Shib-SwissEP-UniqueID</RequiredAttributeName>
+        <RequiredAttributeName>Shib-Person-surname</RequiredAttributeName>
+        <RequiredAttributeName>Shib-InetOrgPerson-givenName</RequiredAttributeName>
+        <RequiredAttributeName>Shib-InetOrgPerson-mail</RequiredAttributeName>      
+        <RequiredAttributeName>Shib-SwissEP-HomeOrganization</RequiredAttributeName>        
+    </ShibbolethConfiguration>
+
+    <!-- SLCS Server Components Configuration -->
+    <SLCSComponentConfiguration>
+    
+        <!-- 
+        SLCS Sessions:  
+        -->
+        <SLCSSessions implementation="org.glite.slcs.session.impl.MemorySessions">
+           <SessionTTL>300</SessionTTL>
+        </SLCSSessions>
+        
+        <!-- SimplePatternBuilder
+        <DNBuilder implementation="org.glite.slcs.dn.impl.SimplePatternBuilder">
+            <DNPattern>CN=${Shib-Person-surname} ${Shib-InetOrgPerson-givenName} (${Shib-SwissEP-UniqueID})\,OU=SLCS Test\,O=SWITCH\,C=CH</DNPattern>
+        </DNBuilder>
+        -->
+        <DNBuilder implementation="org.glite.slcs.dn.impl.FunctionalPatternBuilder">
+            <DNPattern>C=CH\,O=mappedValue(${Shib-SwissEP-HomeOrganization})\,CN=${Shib-InetOrgPerson-givenName} ${Shib-Person-surname} hashValue(${Shib-SwissEP-UniqueID})</DNPattern>
+            <MappedValues attributeName="Shib-SwissEP-HomeOrganization">
+                <MappedValue attributeValue="ethz.ch">ETH Zuerich</MappedValue>
+                <MappedValue attributeValue="switch.ch">Switch - Teleinformatikdienste fuer Lehre und Forschung</MappedValue>
+                <MappedValue attributeValue="unibas.ch">Universitaet Basel</MappedValue>
+                <MappedValue attributeValue="unibe.ch">Universitaet Bern</MappedValue>
+                <MappedValue attributeValue="unil.ch">Universite de Lausanne</MappedValue>
+                <MappedValue attributeValue="unizh.ch">Universitaet Zuerich</MappedValue>
+            </MappedValues>
+        </DNBuilder>
+
+        <!-- Dummy implementation
+        <CertificatePolicy implementation="org.glite.slcs.policy.impl.NoCertificatePolicy">
+        </CertificatePolicy>
+        -->
+        <CertificatePolicy implementation="org.glite.slcs.policy.impl.SWITCHSLCSCertificatePolicy">
+            <CertificateExtensions>
+                <CertificateExtension id="KeyUsage" critical="true">DigitalSignature\,KeyEncipherment</CertificateExtension>
+                <CertificateExtension id="SubjectAltName" critical="false">email:${Shib-InetOrgPerson-mail}</CertificateExtension>
+                <CertificateExtension id="CertificatePolicies" critical="false">2.16.756.1.2.6.3</CertificateExtension>
+                <CertificateExtension id="ExtendedKeyUsage" critical="false">ClientAuth</CertificateExtension>
+            </CertificateExtensions>
+        </CertificatePolicy>
+
+        <CAClient implementation="org.glite.slcs.caclient.impl.CMCClient">
+            <CAUrl>https://swisssign.net/cgi-bin/auth/remote?rfc2797=1</CAUrl>
+            <KeyStoreFile>/opt/glite/etc/slcs/keystore.cmc.jks</KeyStoreFile>
+            <KeyStorePassword>switchgrid</KeyStorePassword>
+            <TrustStoreFile>/opt/glite/etc/slcs/truststore.cmc.jks</TrustStoreFile> 
+        </CAClient>
+        
+        <Auditor implementation="org.glite.slcs.audit.impl.DatabaseAuditor">
+            <JDBCDriver>com.mysql.jdbc.Driver</JDBCDriver>
+            <ConnectionUrl>jdbc:mysql://localhost/slcs</ConnectionUrl>
+            <User>slcs</User>
+            <Password>slcs</Password>
+        </Auditor>
+
+    </SLCSComponentConfiguration>
+
+</SLCSServerConfiguration>
