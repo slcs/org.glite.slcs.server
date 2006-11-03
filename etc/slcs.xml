@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: slcs.xml,v 1.1 2006/10/27 12:20:04 vtschopp Exp $ -->
+<!-- $Id: slcs.xml,v 1.2 2006/11/03 15:31:38 vtschopp Exp $ -->
 
 <SLCSServerConfiguration>
 
@@ -48,13 +48,13 @@
             <CertificateExtensions>
                 <CertificateExtension id="KeyUsage" critical="true">DigitalSignature\,KeyEncipherment</CertificateExtension>
                 <CertificateExtension id="SubjectAltName" critical="false">email:${Shib-InetOrgPerson-mail}</CertificateExtension>
-                <CertificateExtension id="CertificatePolicies" critical="false">2.16.756.1.2.6.3</CertificateExtension>
+                <CertificateExtension id="CertificatePolicies" critical="false">2.16.756.1.2.6.4.0.5</CertificateExtension>
                 <CertificateExtension id="ExtendedKeyUsage" critical="false">ClientAuth</CertificateExtension>
             </CertificateExtensions>
         </CertificatePolicy>
 
         <CAClient implementation="org.glite.slcs.caclient.impl.CMCClient">
-            <CAUrl>https://swisssign.net/cgi-bin/auth/remote?rfc2797=1</CAUrl>
+            <CAUrl>https://test.ca.slcs.switch.ch/cmcs.aspx</CAUrl>
             <KeyStoreFile>/opt/glite/etc/slcs/keystore.cmc.jks</KeyStoreFile>
             <KeyStorePassword>switchgrid</KeyStorePassword>
             <TrustStoreFile>/opt/glite/etc/slcs/truststore.cmc.jks</TrustStoreFile> 
