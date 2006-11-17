@@ -1,0 +1,199 @@
+<!-- $Id -->
+<project name="SLCS" default="package" basedir=".">
+
+	<property file="build.standalone.properties" />
+
+	<!-- Tomcat Tasks (catalina-ant.jar) -->
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
+	<taskdef name="install" classname="org.apache.catalina.ant.InstallTask" />
+	<taskdef name="list" classname="org.apache.catalina.ant.ListTask" />
+	<taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask" />
+	<taskdef name="remove" classname="org.apache.catalina.ant.RemoveTask" />
+	<taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask" />
+	<taskdef name="roles" classname="org.apache.catalina.ant.RolesTask" />
+	<taskdef name="start" classname="org.apache.catalina.ant.StartTask" />
+	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask" />
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
+
+	<!-- Properties -->
+	<property name="src.dir" location="${basedir}/src" />
+	<property name="websrc.dir" location="${basedir}/websrc" />
+	<property name="etc.dir" location="${basedir}/etc" />
+	<property name="build.dir" location="${basedir}/build" />
+	<property name="classes.dir" location="${build.dir}/classes" />
+	<property name="lib.dir" location="${build.dir}/lib" />
+    <property name="external.lib.dir" location="${basedir}/../repository/externals" />
+
+   <target name="javacheck">
+        <!-- check JVM version -->
+        <condition property="isJavaOk">
+            <contains string="${java.version}" substring="${slcs.java.version}"/>
+        </condition>
+        <echo>Java version: ${java.version}</echo>
+        <fail unless="isJavaOk">Java JRE version must be ${slcs.java.version}_XX</fail>
+        <!-- check bouncycastle JDK version -->
+        <available property="isBouncycastleOk"
+                   filepath="${external.lib.dir}" 
+                   file="bouncycastle/1.34/noarch/jars/bcmail-${slcs.java.short.version}-134.jar"/>
+        <fail unless="isBouncycastleOk">BouncyCastle bcmail-${slcs.java.short.version}-134.jar is not available</fail>
+        
+    </target>
+
+    <target name="init" depends="javacheck">
+		<tstamp />
+        <!-- condition: depends on org.glite.slcs.common package -->
+        <condition property="slcs.common.dist.present">
+            <available file="${slcs.common.dist.dir}" type="dir" />
+        </condition>
+
+        <!-- slcs common jar list (JRA1MW only) -->
+        <fileset id="slcs.common.lib.jar.set" dir="${slcs.common.dist.dir}">
+            <include name="share/java/*.jar" />
+            <include name="externals/share/java/*.jar" />
+        </fileset>
+
+        <!-- tomcat common jar list (JRA1MW only) -->
+        <fileset id="tomcat.common.lib.jar.set" dir="${external.lib.dir}">
+            <include name="tomcat/5.0.28/noarch/common/lib/*.jar"/>
+        </fileset>
+
+       <!-- slcs server external jar list (JRA1MW only) -->
+        <fileset id="external.lib.jar.set" dir="${external.lib.dir}">
+            <include name="bouncycastle/1.34/noarch/jars/bcmail-jdk14-134.jar"/>
+            <include name="mm-mysql/3.1.8/noarch/mysql-connector-java-3.1.8-bin.jar"/>
+        </fileset>
+
+        <!-- build classpath -->
+        <path id="compile.classpath">
+            <!-- SLCS common lib and all common third-party libs -->
+            <fileset refid="slcs.common.lib.jar.set"/>
+            <!-- tomcat common libs -->
+            <fileset refid="tomcat.common.lib.jar.set"/>
+            <!-- external third-party libs -->
+            <fileset refid="external.lib.jar.set"/>
+        </path>
+
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+        <ant dir="${slcs.common.dir}" antfile="build.standalone.xml" target="clean" inheritall="false"/>
+	</target>
+
+	<target name="prepare" depends="init">
+		<echo message="Creating ${app.name}'s build directory ..." />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${lib.dir}" />
+	</target>
+
+	<!-- call SLCS common 'package' task if not yet available -->
+	<target name="package.slcs.common" depends="prepare" unless="${slcs.common.dist.present}">
+		<ant dir="${slcs.common.dir}" antfile="build.standalone.xml" target="package" inheritall="false" />
+	</target>
+
+	<target name="compile" depends="package.slcs.common">
+		<echo message="Compiling ${app.name} ..." />
+		<javac srcdir="${src.dir}" 
+               debug="true"
+               destdir="${classes.dir}">
+			<classpath refid="compile.classpath" />
+		</javac>
+	</target>
+
+	<target name="package" depends="compile">
+		<echo message="Packaging ${app.name}'s web archive file ..." />
+
+		<delete file="${build.dir}/${app.name}.war" />
+
+        <!-- copy (flatten) all needed libraries -->
+        <copy todir="${lib.dir}" flatten="true">
+            <fileset refid="slcs.common.lib.jar.set" />
+            <fileset refid="external.lib.jar.set" />
+        </copy>
+        <!-- create the war file -->
+		<war destfile="${build.dir}/${app.name}.war"
+             webxml="${websrc.dir}/WEB-INF/web.xml">
+            <classes dir="${classes.dir}" />
+            <classes dir="${etc.dir}">
+                <include name="*.xml" />
+                <include name="log4j.properties" />
+            </classes>
+            <lib dir="${lib.dir}" />
+            <fileset dir="${websrc.dir}">
+                <exclude name="WEB-INF/**" />
+            </fileset>
+		</war>
+	</target>
+
+	<target name="install" description="Installs the Web Application" depends="package">
+		<echo message="Installing ${app.name} ..." />
+		<install url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${app.name}" config="file:${basedir}/war/META-INF/context.xml" war="file:${basedir}/${app.name}.war" />
+	</target>
+
+	<target name="reload" description="Reloads the Web Application" depends="package">
+		<echo message="Reloading ${app.name} ..." />
+		<reload url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${app.name}" />
+	</target>
+
+	<target name="remove" description="Removes the Web Application">
+		<echo message="Removing ${app.name} ..." />
+		<remove url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${app.name}" />
+	</target>
+
+	<target name="deploy" description="Deploys the Web Application" depends="package">
+		<echo message="Deploying ${app.name} on ${tomcat.manager.url}..." />
+		<deploy url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${app.name}" war="file:${build.dir}/${app.name}.war" />
+	</target>
+
+	<target name="redeploy" description="Redeploys the Web Application">
+		<echo message="Redeploying ${app.name} ..." />
+		<antcall target="remove">
+		</antcall>
+		<antcall target="deploy">
+		</antcall>
+	</target>
+
+
+	<target name="undeploy" description="Undeploys the Web Application">
+		<echo message="Undeploying ${app.name} ..." />
+		<undeploy url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${app.name}" />
+	</target>
+
+	<target name="start" description="Start the Web Application">
+		<echo message="Start the Web Application ..." />
+		<start url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${app.name}" />
+	</target>
+
+	<target name="stop" description="Stop the Web Application">
+		<echo message="Stop the Web Application ..." />
+		<stop url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${app.name}" />
+	</target>
+
+	<target name="list" description="Lists Installed and Deployed Web Applications">
+		<echo message="Listing Installed and Deployed Web Applications ..." />
+		<list url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" />
+	</target>
+
+	<target name="resources" description="Lists Tomcat Global Resources of All Types">
+		<echo message="Listing Tomcat Global Resources of All Types ..." />
+		<resources url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" />
+	</target>
+
+	<target name="roles" description="Lists Tomcat Security Roles">
+		<echo message="Listing Tomcat Security Roles ..." />
+		<roles url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" />
+	</target>
+
+	<target name="debug">
+		<echo message="Lists the properties for debugging purposes ..." />
+		<echo message="app.name    = ${app.name}" />
+		<echo message="basedir     = ${basedir}" />
+		<echo message="user.home   = ${user.home}" />
+		<echo message="tomcat.home = ${tomcat.home}" />
+		<echo message="tomcat.manager.url = ${tomcat.manager.url}" />
+		<echo message="tomcat.manager.username    = ${tomcat.manager.username}" />
+		<!-- <echo message="tomcat.manager.password    = ${tomcat.manager.password}"/> commented out for security reasons -->
+	</target>
+
+</project>
