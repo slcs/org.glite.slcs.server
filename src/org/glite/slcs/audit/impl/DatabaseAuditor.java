@@ -1,5 +1,5 @@
 /*
- * $Id: DatabaseAuditor.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
+ * $Id: DatabaseAuditor.java,v 1.2 2006/12/07 16:14:57 vtschopp Exp $
  * 
  * Created on Aug 30, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
  * simple JDBC delegate to store in the DB.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DatabaseAuditor implements Auditor {
 
@@ -84,7 +84,7 @@ public class DatabaseAuditor implements Auditor {
         try {
             database_.insertAuditEvent(event);
         } catch (SQLException e) {
-            LOG.warn("Failed to log event. Retrying", e);
+            LOG.warn("Database disconnected, reconnecting...");
             try {
                 database_.reconnect();
                 database_.insertAuditEvent(event);
