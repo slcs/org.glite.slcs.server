@@ -1,43 +1,52 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: slcs.xml,v 1.2 2006/11/03 15:31:38 vtschopp Exp $ -->
+<!-- $Id: slcs.xml,v 1.3 2007/01/30 15:08:39 vtschopp Exp $ -->
 
 <SLCSServerConfiguration>
 
     <!-- Shibboleth Attributes Configuration -->
-    <ShibbolethConfiguration>
-        <RequiredAttributeName>Shib-SwissEP-UniqueID</RequiredAttributeName>
-        <RequiredAttributeName>Shib-Person-surname</RequiredAttributeName>
-        <RequiredAttributeName>Shib-InetOrgPerson-givenName</RequiredAttributeName>
-        <RequiredAttributeName>Shib-InetOrgPerson-mail</RequiredAttributeName>      
-        <RequiredAttributeName>Shib-SwissEP-HomeOrganization</RequiredAttributeName>        
-    </ShibbolethConfiguration>
+    <AttributesConfiguration>
+        <Attribute name="Shib-SwissEP-UniqueID" required="true" 
+                   displayName="AAI UniqueID"/>
+	    <Attribute name="Shib-Person-surname" required="true" 
+	               displayName="Lastname"/>
+	    <Attribute name="Shib-InetOrgPerson-givenName" required="true" 
+	               displayName="Firstname"/>
+	    <Attribute name="Shib-InetOrgPerson-mail" required="true" 
+	               displayName="Email"/>
+	    <Attribute name="Shib-EP-Affiliation" required="false"
+	               displayName="Affiliation"/>
+	    <Attribute name="Shib-SwissEP-HomeOrganization" required="true" 
+	               displayName="Home Organization"/>
+	    <Attribute name="Shib-SwissEP-HomeOrganizationType" required="false"
+	               displayName="Home Organization Type"/>
+    </AttributesConfiguration>
 
     <!-- SLCS Server Components Configuration -->
-    <SLCSComponentConfiguration>
+    <SLCSComponentsConfiguration>
     
         <!-- 
-        SLCS Sessions:  
+        SLCS Sessions: 
+        	SessionTTL: session time to live (second)
+        	CleaningInterval: time between 2 memory cleaning rounds (second)
         -->
         <SLCSSessions implementation="org.glite.slcs.session.impl.MemorySessions">
-           <SessionTTL>300</SessionTTL>
+           <SessionTTL>60</SessionTTL>
+           <CleaningInterval>30</CleaningInterval>
         </SLCSSessions>
         
-        <!-- SimplePatternBuilder
-        <DNBuilder implementation="org.glite.slcs.dn.impl.SimplePatternBuilder">
-            <DNPattern>CN=${Shib-Person-surname} ${Shib-InetOrgPerson-givenName} (${Shib-SwissEP-UniqueID})\,OU=SLCS Test\,O=SWITCH\,C=CH</DNPattern>
-        </DNBuilder>
-        -->
         <DNBuilder implementation="org.glite.slcs.dn.impl.FunctionalPatternBuilder">
-            <DNPattern>C=CH\,O=mappedValue(${Shib-SwissEP-HomeOrganization})\,CN=${Shib-InetOrgPerson-givenName} ${Shib-Person-surname} hashValue(${Shib-SwissEP-UniqueID})</DNPattern>
+            <DNPattern>DC=ch\,DC=switch\,DC=slcs\,mappedValue(${Shib-SwissEP-HomeOrganization})\,CN=${Shib-InetOrgPerson-givenName} ${Shib-Person-surname} hashValue(${Shib-SwissEP-UniqueID})</DNPattern>
             <MappedValues attributeName="Shib-SwissEP-HomeOrganization">
-                <MappedValue attributeValue="ethz.ch">ETH Zuerich</MappedValue>
-                <MappedValue attributeValue="switch.ch">Switch - Teleinformatikdienste fuer Lehre und Forschung</MappedValue>
-                <MappedValue attributeValue="unibas.ch">Universitaet Basel</MappedValue>
-                <MappedValue attributeValue="unibe.ch">Universitaet Bern</MappedValue>
-                <MappedValue attributeValue="unil.ch">Universite de Lausanne</MappedValue>
-                <MappedValue attributeValue="unizh.ch">Universitaet Zuerich</MappedValue>
+                <MappedValue attributeValue="switch.ch">O=Switch - Teleinformatikdienste fuer Lehre und Forschung</MappedValue>
+                <MappedValue attributeValue="vho-switchaai.ch">OU=SWITCHaai Virtual Home Organization</MappedValue>
+                <MappedValue attributeValue="ethz.ch">O=ETH Zuerich</MappedValue>
+                <MappedValue attributeValue="unibas.ch">O=Universitaet Basel</MappedValue>
+                <MappedValue attributeValue="unibe.ch">O=Universitaet Bern</MappedValue>
+                <MappedValue attributeValue="unil.ch">O=Universite de Lausanne</MappedValue>
+                <MappedValue attributeValue="unizh.ch">O=Universitaet Zuerich</MappedValue>
             </MappedValues>
+
         </DNBuilder>
 
         <!-- Dummy implementation
@@ -66,7 +75,12 @@
             <User>slcs</User>
             <Password>slcs</Password>
         </Auditor>
+        
+        <AccessControlListEditor implementation="org.glite.slcs.acl.impl.XMLFileAccessControlListEditor">
+			<LoginACLFile>/opt/glite/etc/slcs-test/acl.xml</LoginACLFile>
+			<AdminACLFile>/opt/glite/etc/slcs-test/acl-admin.xml</AdminACLFile>
+        </AccessControlListEditor>
 
-    </SLCSComponentConfiguration>
+    </SLCSComponentsConfiguration>
 
 </SLCSServerConfiguration>
