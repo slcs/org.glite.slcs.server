@@ -1,5 +1,5 @@
 /*
- * $Id: ShibbolethAccessControlListFactory.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
+ * $Id: AccessControlListFactory.java,v 1.1 2007/01/30 13:38:33 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -16,40 +16,40 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * ShibbolethAccessControlListFactory is a factory to create new
- * ShibbolethAccessControlList implementation instance based on the
+ * AccessControlListFactory is a factory to create new
+ * AccessControlList implementation instance based on the
  * FilterConfiguration.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
  * @version $Revision: 1.1 $
  */
-public class ShibbolethAccessControlListFactory {
+public class AccessControlListFactory {
 
     /** Logging */
-    private static Log LOG= LogFactory.getLog(ShibbolethAccessControlListFactory.class);
+    private static Log LOG= LogFactory.getLog(AccessControlListFactory.class);
 
     /**
-     * Creates a new instance of ShibbolethAccessControlList implementation.
+     * Creates a new instance of AccessControlList implementation.
      * 
      * @param filterConfig
      *            The FilterConfig containing the ACLImplementation parameter.
-     * @return A new instance of the implmenting ShibbolethAccessControlList
+     * @return A new instance of the implmenting AccessControlList
      * @throws SLCSException
-     *             If the instantiation of the ShibbolethAccessControlList
+     *             If the instantiation of the AccessControlList
      *             implementation failed.
      */
-    public static ShibbolethAccessControlList newInstance(
+    public static AccessControlList newInstance(
             FilterConfig filterConfig) throws SLCSException {
         String className= filterConfig.getInitParameter("ACLImplementation");
         // check null or empty
         if (className == null || className.equals("")) {
             throw new SLCSConfigurationException("Filter parameter ACLImplementation is missing or empty");
         }
-        LOG.info("ShibbolethAccessControlList implementation=" + className);
+        LOG.info("AccessControlList implementation=" + className);
         // instantiate new
-        ShibbolethAccessControlList impl= null;
+        AccessControlList impl= null;
         try {
-            impl= (ShibbolethAccessControlList) Class.forName(className).newInstance();
+            impl= (AccessControlList) Class.forName(className).newInstance();
             impl.init(filterConfig);
         } catch (InstantiationException e) {
             LOG.error("Can not instantiate class: " + className, e);
@@ -69,7 +69,7 @@ public class ShibbolethAccessControlListFactory {
     /**
      * Prevents instantiation of the factory
      */
-    private ShibbolethAccessControlListFactory() {
+    private AccessControlListFactory() {
     }
 
 }
