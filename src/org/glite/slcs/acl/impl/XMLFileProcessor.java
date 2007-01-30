@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileProcessor.java,v 1.1 2007/01/30 13:40:06 vtschopp Exp $
+ * $Id: XMLFileProcessor.java,v 1.2 2007/01/30 14:30:52 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -9,7 +9,6 @@ package org.glite.slcs.acl.impl;
 
 import java.io.File;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -17,12 +16,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
-import org.glite.slcs.acl.AccessControlRule;
 
 /**
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class XMLFileProcessor {
 
@@ -72,21 +70,17 @@ public class XMLFileProcessor {
     }
 
     /**
+     * Enqueues the {@link XMLOperation} and wait for its completion.
      * 
-     * @param group
-     * @return
+     * @param operation The {@link XMLOperation} to process
      */
-    public List getAccessControlRules(String group) {
-        ListAccessControlRulesXMLOperation operation = new ListAccessControlRulesXMLOperation(
-                group);
-
+    public void process(XMLOperation operation) {
         queueOperation(operation);
-        waitForOperation(operation);
-
-        return operation.getAccessControlRules();
+        waitForOperation(operation);        
     }
-
+    
     /**
+     * Enqueues the operation in the queue.
      * 
      * @param operation
      */
@@ -98,6 +92,7 @@ public class XMLFileProcessor {
     }
 
     /**
+     * Waits for the operation to be finished.
      * 
      * @param operation
      */
@@ -127,21 +122,6 @@ public class XMLFileProcessor {
             processingThread_.shutdown();
             processingThread_ = null;
         }
-    }
-
-    public void addAccessControlRule(AccessControlRule rule) {
-        AddAccessControlRuleXMLOperation operation = new AddAccessControlRuleXMLOperation(
-                rule);
-        queueOperation(operation);
-        waitForOperation(operation);
-    }
-
-    public void removeAccessControlRule(AccessControlRule rule) {
-        RemoveAccessControlRuleXMLOperation operation = new RemoveAccessControlRuleXMLOperation(
-                rule);
-        queueOperation(operation);
-        waitForOperation(operation);
-
     }
 
     /**

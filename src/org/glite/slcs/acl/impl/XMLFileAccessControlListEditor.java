@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileAccessControlListEditor.java,v 1.1 2007/01/30 13:40:06 vtschopp Exp $
+ * $Id: XMLFileAccessControlListEditor.java,v 1.2 2007/01/30 14:30:52 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -22,7 +22,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * 
  * @see org.glite.slcs.acl.AccessControlListEditor
  */
@@ -49,7 +49,9 @@ public class XMLFileAccessControlListEditor implements
      * @see org.glite.slcs.acl.AccessControlListEditor#addAccessControlRule(org.glite.slcs.acl.AccessControlRule)
      */
     public List addAccessControlRule(AccessControlRule rule) {
-        xmlProcessor_.addAccessControlRule(rule);
+        AddAccessControlRuleXMLOperation operation = new AddAccessControlRuleXMLOperation(
+                rule);
+        xmlProcessor_.process(operation);
         return getAccessControlRules(rule.getGroup());
     }
 
@@ -59,7 +61,10 @@ public class XMLFileAccessControlListEditor implements
      * @see org.glite.slcs.acl.AccessControlListEditor#getAccessControlRules(java.lang.String)
      */
     public List getAccessControlRules(String group) {
-        List rules = xmlProcessor_.getAccessControlRules(group);
+        ListAccessControlRulesXMLOperation operation = new ListAccessControlRulesXMLOperation(
+                group);
+        xmlProcessor_.process(operation);
+        List rules = operation.getAccessControlRules();
         return rules;
     }
 
@@ -69,7 +74,9 @@ public class XMLFileAccessControlListEditor implements
      * @see org.glite.slcs.acl.AccessControlListEditor#removeAccessControlRule(org.glite.slcs.acl.AccessControlRule)
      */
     public List removeAccessControlRule(AccessControlRule rule) {
-        xmlProcessor_.removeAccessControlRule(rule);
+        RemoveAccessControlRuleXMLOperation operation = new RemoveAccessControlRuleXMLOperation(
+                rule);
+        xmlProcessor_.process(operation);
         return getAccessControlRules(rule.getGroup());
     }
 
