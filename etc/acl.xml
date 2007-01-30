@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: acl.xml,v 1.1 2006/10/27 12:20:04 vtschopp Exp $ -->
+<!-- $Id: acl.xml,v 1.2 2007/01/30 14:38:22 vtschopp Exp $ -->
 
 <ShibbolethAccessControlList>
 	
-	<!-- ACL for the simple ShibbolethXMLAccessControlList -->
-	<AccessControlAttribute>
-		<AttributeName>Shib-SwissEP-UniqueID</AttributeName>
-		<AttributeValue>112358@switch.ch</AttributeValue>
-	</AccessControlAttribute>
+	<!-- simple rule example -->
+	<AccessControlRule id="1" group="switch.ch">
+		<Attribute name="Shib-SwissEP-UniqueID">112358@switch.ch</Attribute>
+	</AccessControlRule>
 
-	<AccessControlAttribute>
-		<AttributeName>Shib-SwissEP-HomeOrganization</AttributeName>
-		<AttributeValue>switch.ch</AttributeValue>
-	</AccessControlAttribute>
+	<!-- AND rule example -->
+	<AccessControlRule id="2" group="switch.ch">
+		<Attribute name="Shib-SwissEP-HomeOrganization">switch.ch</Attribute>
+		<Attribute name="Shib-EP-Affiliation">staff</Attribute>
+	</AccessControlRule>
 
+	<AccessControlRule id="3" group="switch.ch">
+		<Attribute name="Shib-SwissEP-HomeOrganization">vho-switchaai.ch</Attribute>
+	</AccessControlRule>
+
+	<AccessControlRule id="4" group="unizh.ch">
+		<Attribute name="Shib-SwissEP-HomeOrganization">unizh.ch</Attribute>
+		<Attribute name="Shib-EP-Affiliation">staff</Attribute>
+	</AccessControlRule>
 
 </ShibbolethAccessControlList>
