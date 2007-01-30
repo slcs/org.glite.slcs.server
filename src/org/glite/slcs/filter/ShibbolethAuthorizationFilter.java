@@ -1,5 +1,5 @@
 /*
- * $Id: ShibbolethAuthorizationFilter.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
+ * $Id: ShibbolethAuthorizationFilter.java,v 1.2 2007/01/30 14:41:45 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by tschopp
  *
@@ -8,9 +8,9 @@
 package org.glite.slcs.filter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.Filter;
@@ -22,41 +22,45 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.glite.slcs.SLCSException;
-import org.glite.slcs.acl.ShibbolethAccessControlList;
-import org.glite.slcs.acl.ShibbolethAccessControlListFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.Attribute;
+import org.glite.slcs.SLCSException;
+import org.glite.slcs.acl.AccessControlList;
+import org.glite.slcs.acl.AccessControlListFactory;
+import org.glite.slcs.util.Utils;
 
 /**
  * ShibbolethAuthorizationFilter is an ACL filter based on Shibboleth
- * attributes. The filter uses the underlying ShibbolethAccessControlList
- * implementation to checks if the user is authorized.
+ * attributes. The filter uses the underlying AccessControlList implementation
+ * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
- * @see org.glite.slcs.acl.ShibbolethAccessControlList
+ * @version $Revision: 1.2 $
+ * 
+ * @see org.glite.slcs.acl.AccessControlList
  */
 public class ShibbolethAuthorizationFilter implements Filter {
 
     /** Logging */
-    private static Log LOG= LogFactory.getLog(ShibbolethAuthorizationFilter.class);
+    private static Log LOG = LogFactory
+            .getLog(ShibbolethAuthorizationFilter.class);
 
     /** Shibboleth ACL */
-    private ShibbolethAccessControlList shibbolethACL_= null;
+    private AccessControlList accessControlList_ = null;
 
     /*
      * (non-Javadoc)
+     * 
      * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
      */
     public void init(FilterConfig filterConfig) throws ServletException {
         try {
-            LOG.info("instantiate and initialize ShibbolethAccessControlList");
-            shibbolethACL_= ShibbolethAccessControlListFactory.newInstance(filterConfig);
+            LOG.info("instantiate and initialize AccessControlList");
+            accessControlList_ = AccessControlListFactory.newInstance(filterConfig);
         } catch (SLCSException e) {
-            LOG.error("Failed to instantiate and initalize ShibbolethAccessControlList",
-                      e);
+            LOG.error("Failed to instantiate and initalize AccessControlList",
+                    e);
             throw new ServletException(e);
         }
 
@@ -70,70 +74,85 @@ public class ShibbolethAuthorizationFilter implements Filter {
         if (LOG.isDebugEnabled()) {
             LOG.debug("check authorization...");
         }
-        boolean authorized= true;
+        boolean authorized = true;
+        List userAttributes= null;
         if (request instanceof HttpServletRequest) {
-            authorized= false;
-            HttpServletRequest httpRequest= (HttpServletRequest) request;
+            authorized = false;
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
             // get shib user attributes
-            Map shibAttributes= getShibbolethAttributes(httpRequest);
+            userAttributes = getUserAttributes(httpRequest);
             // check if user is authorized
-            authorized= shibbolethACL_.isAuthorized(shibAttributes);
+            authorized = accessControlList_.isAuthorized(userAttributes);
 
         }
         if (!authorized) {
-            String remoteAddress= request.getRemoteAddr();
-            LOG.error("401: User in not authorized (IP:" + remoteAddress + ")" );
+            String remoteAddress = request.getRemoteAddr();
+            LOG.error(HttpServletResponse.SC_UNAUTHORIZED + ": User (IP:"
+                    + remoteAddress + ") is not authorized: " + userAttributes);
             // TODO: custom 401 error page
-            HttpServletResponse httpResponse= (HttpServletResponse) response;
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                   "Based on your Shibboleth attributes, you are not authorized to access this service");
+            HttpServletResponse httpResponse = (HttpServletResponse) response;
+            httpResponse
+                    .sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                            "Based on your attributes, you are not authorized to access this service");
         }
-        else {
-            // nothing to do, continue
-            chain.doFilter(request, response);
-        }
+        // nothing to do, continue
+        chain.doFilter(request, response);
     }
 
     /**
      * Releases all resources
      */
     public void destroy() {
-        LOG.info("shutdown Shibboleth ACL implementation");
-        shibbolethACL_.shutdown();
+        LOG.info("shutdown ACL implementation");
+        accessControlList_.shutdown();
     }
 
     /**
-     * Reads the required Shibboleth attributes from the request headers.
+     * Reads the required authorization Shibboleth attributes from the request
+     * headers.
      * 
      * @param req
      *            The HttpServletRequest to read attributes from.
-     * @return A Map of Shibboleth attributes name-value
-     * @see org.glite.slcs.acl.ShibbolethAccessControlList#getAuthorizationAttributeNames()
+     * @return A List of Shibboleth attributes
+     * 
+     * @see org.glite.slcs.acl.AccessControlList#getAuthorizationAttributeNames()
      */
-    private Map getShibbolethAttributes(HttpServletRequest req) {
+    private List getUserAttributes(HttpServletRequest req) {
         // optimization: read only Shibboleth attributes need for
         // authorization decision
-        Set authorizationAttributeNames= shibbolethACL_.getAuthorizationAttributeNames();
+        Set authorizationAttributeNames = accessControlList_
+                .getAuthorizationAttributeNames();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("ShibbolethAuthorizationAttributeNames="
+            LOG.debug("AuthorizationAttributeNames="
                     + authorizationAttributeNames);
         }
-        Map attributes= new HashMap();
-        Enumeration headers= req.getHeaderNames();
+        List attributes = new ArrayList();
+        Enumeration headers = req.getHeaderNames();
         while (headers.hasMoreElements()) {
-            String header= (String) headers.nextElement();
+            String header = (String) headers.nextElement();
             if (authorizationAttributeNames.contains(header)) {
-                String value= req.getHeader(header);
+                String headerValue = req.getHeader(header);
                 // add only not null and not empty attributes
-                if (value != null && !value.equals("")) {
+                if (headerValue != null && !headerValue.equals("")) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Shibboleth attribute: " + header + "="
-                                + value);
+                        LOG.debug("Attribute: " + header + "=" + headerValue);
                     }
-                    attributes.put(header, value);
+                    String decodedValue= Utils.convertShibbolethUTF8ToUnicode(headerValue);
+                    // multi-value attributes
+                    String[] attrValues = decodedValue.split(";");
+                    for (int i = 0; i < attrValues.length; i++) {
+                        String attrName= header;
+                        String attrValue = attrValues[i];
+                        attrValue = attrValue.trim();
+                        Attribute attribute = new Attribute(attrName, attrValue);
+                        attributes.add(attribute);
+                    }
                 }
 
             }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Attributes: " + attributes);
         }
         return attributes;
     }
