@@ -1,5 +1,5 @@
 /*
- * $Id: CertificatePolicyFactory.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
+ * $Id: CertificatePolicyFactory.java,v 1.2 2007/02/13 15:50:39 vtschopp Exp $
  * 
  * Created on Aug 4, 2006 by tschopp
  *
@@ -7,42 +7,43 @@
  */
 package org.glite.slcs.policy;
 
-import org.glite.slcs.SLCSException;
-import org.glite.slcs.config.SLCSServerConfiguration;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.SLCSException;
+import org.glite.slcs.config.SLCSServerConfiguration;
 
 /**
  * CertificatePolicyFactory is a factory to get the singleton CertificatePolicy
  * implementation based on the SLCSServerConfiguration.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class CertificatePolicyFactory {
 
     /** Logging */
-    private static Log LOG= LogFactory.getLog(CertificatePolicyFactory.class);
+    private static Log LOG = LogFactory.getLog(CertificatePolicyFactory.class);
 
     /** Singleton pattern */
-    private static CertificatePolicy SINGLETON= null;
+    private static CertificatePolicy SINGLETON = null;
 
     /**
      * Factory method to get the singleton instance of the
-     * <code>CertificatePolicy</code> implementation. The singleton implementation and
-     * initialization is defined in the <code>SCLSServerConfiguration</code>.
+     * <code>CertificatePolicy</code> implementation. The singleton
+     * implementation and initialization is defined in the
+     * <code>SCLSServerConfiguration</code>.
      * 
      * @return The CertificatePolicy implementation
      * @throws SLCSException
      *             If a configuration error and an instantiation error occurs.
      */
-    static synchronized public CertificatePolicy getInstance() throws SLCSException {
+    static synchronized public CertificatePolicy getInstance()
+            throws SLCSException {
         if (SINGLETON != null) {
             return SINGLETON;
         }
-        SLCSServerConfiguration config= SLCSServerConfiguration.getInstance();
-        SINGLETON= newInstance(config);
+        SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
+        SINGLETON = newInstance(config);
         return SINGLETON;
     }
 
@@ -56,18 +57,21 @@ public class CertificatePolicyFactory {
      * @throws SLCSException
      *             If a configuration error or an instantiation error occurs.
      */
-    protected static CertificatePolicy newInstance(SLCSServerConfiguration config)
-            throws SLCSException {
-        CertificatePolicy builder= null;
-        String className= config.getString("SLCSComponentConfiguration.CertificatePolicy[@implementation]");
+    protected static CertificatePolicy newInstance(
+            SLCSServerConfiguration config) throws SLCSException {
+        CertificatePolicy builder = null;
+        String className = config
+                .getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                        + ".CertificatePolicy[@implementation]");
         LOG.info("CertificatePolicy implementation=" + className);
         try {
-            builder= (CertificatePolicy) Class.forName(className).newInstance();
+            builder = (CertificatePolicy) Class.forName(className)
+                    .newInstance();
             builder.init(config);
         } catch (InstantiationException e) {
             LOG.error("Can not instantiate class: " + className, e);
             throw new SLCSException("Can not instantiate class: " + className,
-                                    e);
+                    e);
         } catch (IllegalAccessException e) {
             LOG.error("Illegal access for class: " + className, e);
             throw new SLCSException("Illegal access for class: " + className, e);
