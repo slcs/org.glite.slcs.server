@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.2 2007/01/30 15:05:29 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.3 2007/02/13 13:49:15 vtschopp Exp $
  * 
  * Created on Jul 28, 2006 by tschopp
  *
@@ -15,7 +15,7 @@ import javax.servlet.ServletContext;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
+import org.glite.slcs.AttributeDefinition;
 import org.glite.slcs.SLCSConfigurationException;
 
 /**
@@ -24,19 +24,19 @@ import org.glite.slcs.SLCSConfigurationException;
  * in the <code>web.xml</code> file.
  * 
  * <pre>
- *        &lt;web-app id=&quot;SLCS&quot; version=&quot;2.4&quot;&gt;
- *        &lt;display-name&gt;SLCS&lt;/display-name&gt;
- *        &lt;!-- webapps context parameters --&gt;
- *        &lt;context-param&gt;
- *             &lt;!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath --&gt;
- *             &lt;param-name&gt;SLCSServerConfigurationFile&lt;/param-name&gt;
- *             &lt;param-value&gt;/etc/glite/slcs.xml&lt;/param-value&gt;
- *        &lt;/context-param&gt;
- *        ...
+ *          &lt;web-app id=&quot;SLCS&quot; version=&quot;2.4&quot;&gt;
+ *          &lt;display-name&gt;SLCS&lt;/display-name&gt;
+ *          &lt;!-- webapps context parameters --&gt;
+ *          &lt;context-param&gt;
+ *               &lt;!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath --&gt;
+ *               &lt;param-name&gt;SLCSServerConfigurationFile&lt;/param-name&gt;
+ *               &lt;param-value&gt;/etc/glite/slcs.xml&lt;/param-value&gt;
+ *          &lt;/context-param&gt;
+ *          ...
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -80,9 +80,9 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     private List validAttributeNames_ = null;
 
     /**
-     * List of valid attributes
+     * List of attribute defintions (only name and displayName are set)
      */
-    private List validAttributes_ = null;
+    private List attributeDefinitions_ = null;
 
     /**
      * Initialize the singleton instance of the SLCSServerConfiguration.
@@ -147,7 +147,7 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
         // create the attribute names lists
         requiredAttributeNames_ = new ArrayList();
         validAttributeNames_ = new ArrayList();
-        validAttributes_= new ArrayList();
+        attributeDefinitions_ = new ArrayList();
 
         // populate both list
         List attributeNames = getList(ATTRIBUTESCONFIGURATION_PREFIX
@@ -166,33 +166,44 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
 
             // add to the valid attribute names list
             validAttributeNames_.add(name);
-            
-            // create a new named attribute
-            Attribute attribute = new Attribute(name);
-            String displayName = getString(prefix + "[@displayName]", false);
-            if (displayName != null && !displayName.equals("")) {
-                attribute.setDisplayName(displayName);
-            }
 
-            // add in the valid attributes list
-            validAttributes_.add(attribute);
+            // create a new attribute definition
+            String displayName = getString(prefix + "[@displayName]", false);
+            AttributeDefinition attributeDef = new AttributeDefinition(name,displayName);
+            if (required != null && required.equals("true")) {
+                attributeDef.setRequired(true);
+            }
+            // add in the attribute's definition list
+            attributeDefinitions_.add(attributeDef);
 
         }
         LOG.info("RequiredAttributeNames=" + requiredAttributeNames_);
         LOG.info("ValidAttributeNames=" + validAttributeNames_);
-        LOG.info("ValidAttributes=" + validAttributes_);
+        LOG.info("AttributeDefinitions=" + attributeDefinitions_);
     }
 
+    /**
+     * 
+     * @return
+     */
     public List getRequiredAttributeNames() {
         return requiredAttributeNames_;
     }
 
+    /**
+     * 
+     * @return
+     */
     public List getValidAttributeNames() {
         return validAttributeNames_;
     }
 
-    public List getValidAttributes() {
-        return validAttributes_;
+    /**
+     * 
+     * @return
+     */
+    public List getAttributeDefinitions() {
+        return attributeDefinitions_;
     }
 
     /*
