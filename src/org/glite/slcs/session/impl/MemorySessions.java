@@ -1,5 +1,5 @@
 /*
- * $Id: MemorySessions.java,v 1.2 2006/11/22 13:40:04 vtschopp Exp $
+ * $Id: MemorySessions.java,v 1.3 2007/02/13 15:58:07 vtschopp Exp $
  * 
  * Created on Aug 3, 2006 by tschopp
  *
@@ -27,7 +27,7 @@ import org.glite.slcs.util.Utils;
  * cleaning thread to delete expired sessions.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MemorySessions implements SLCSSessions {
 
@@ -67,16 +67,16 @@ public class MemorySessions implements SLCSSessions {
      */
     public void init(SLCSServerConfiguration config) {
         // read SessionTTL from config
-        if (config.contains("SLCSComponentConfiguration.SLCSSessions.SessionTTL")) {
-            int sessionTTL= config.getInt("SLCSComponentConfiguration.SLCSSessions.SessionTTL");
+        if (config.contains(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".SLCSSessions.SessionTTL")) {
+            int sessionTTL= config.getInt(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".SLCSSessions.SessionTTL");
             this.sessionTTL_= sessionTTL;
         }
         LOG.info("SLCSSessions.SessionTTL=" + sessionTTL_);
 
         // read CleaningInterval (in seconds) for the memory cleaner thread
         int cleaningInterval= 60; // default 1 minute
-        if (config.contains("SLCSComponentConfiguration.SLCSSessions.CleaningInterval")) {
-            cleaningInterval= config.getInt("SLCSComponentConfiguration.SLCSSessions.CleaningInterval");
+        if (config.contains(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".SLCSSessions.CleaningInterval")) {
+            cleaningInterval= config.getInt(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".SLCSSessions.CleaningInterval");
         }
         LOG.info("SLCSSessions.CleaningInterval=" + cleaningInterval);
         // and create/start the cleaning thread
@@ -91,8 +91,11 @@ public class MemorySessions implements SLCSSessions {
      */
     public void shutdown() {
         // stop the cleaning thread
-        LOG.info("stop cleaning thread");
-        memorySessionsCleaner_.shutdown();
+        if (memorySessionsCleaner_ != null ) {
+            LOG.info("stop cleaning thread");
+            memorySessionsCleaner_.shutdown();
+            memorySessionsCleaner_= null;
+        }
     }
 
     /*
@@ -255,7 +258,7 @@ public class MemorySessions implements SLCSSessions {
      * SessionEntry
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.2 $
+     * @version $Revision: 1.3 $
      */
     public class SessionEntry {
         private String dn_= null;
@@ -349,7 +352,7 @@ public class MemorySessions implements SLCSSessions {
      * TODO: parametrize the sleep interval
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.2 $
+     * @version $Revision: 1.3 $
      */
     private class MemorySessionsCleaner extends Thread {
         private volatile boolean running_= false;
