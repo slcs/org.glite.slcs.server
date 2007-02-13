@@ -1,5 +1,5 @@
 /*
- * $Id: FunctionalPatternBuilder.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
+ * $Id: FunctionalPatternBuilder.java,v 1.2 2007/02/13 13:28:16 vtschopp Exp $
  * 
  * Created on Sep 6, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -14,20 +14,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.ServiceException;
 import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.util.Utils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * FunctionalPatternBuilder TODO: document SLCSServerConfiguration parameters.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
@@ -50,13 +49,13 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
         mappedValues_= new HashMap();
 
         // look for all attributeNames mapped
-        List mappedAttributeNames= config.getList("SLCSComponentConfiguration.DNBuilder.MappedValues[@attributeName]");
-        LOG.info("DNBuilder.MappedValues@[attributeName]="
+        List mappedAttributeNames= config.getList(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".DNBuilder.MappedValues[@attributeName]");
+        LOG.info("DNBuilder.MappedValues[@attributeName]="
                 + mappedAttributeNames);
         Iterator attributeNames= mappedAttributeNames.iterator();
         for (int i= 0; attributeNames.hasNext(); i++) {
             String attributeName= (String) attributeNames.next();
-            List mappedAttributeValues= config.getList("SLCSComponentConfiguration.DNBuilder.MappedValues("
+            List mappedAttributeValues= config.getList(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".DNBuilder.MappedValues("
                     + i + ").MappedValue[@attributeValue]");
             if (LOG.isDebugEnabled()) {
                 LOG.debug("DNBuilder.MappedValues[" + attributeName
@@ -69,7 +68,7 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
             Iterator attributeValues= mappedAttributeValues.iterator();
             for (int j= 0; attributeValues.hasNext(); j++) {
                 String attributeValue= (String) attributeValues.next();
-                String attributeValueMapping= config.getString("SLCSComponentConfiguration.DNBuilder.MappedValues("
+                String attributeValueMapping= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".DNBuilder.MappedValues("
                         + i + ").MappedValue(" + j + ")");
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNBuilder.MappedValues[" + attributeName
