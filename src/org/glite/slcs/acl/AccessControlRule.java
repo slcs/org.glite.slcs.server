@@ -1,9 +1,11 @@
 /*
- * $Id: AccessControlRule.java,v 1.1 2007/01/30 13:38:33 vtschopp Exp $
+ * $Id: AccessControlRule.java,v 1.2 2007/02/13 16:20:14 vtschopp Exp $
  * 
  * Created on Aug 30, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.acl;
 
@@ -13,7 +15,7 @@ import java.util.List;
 import org.glite.slcs.Attribute;
 
 /**
- * Access control rule is a list of shibboleth attributes.
+ * Access control rule is a list of shibboleth attributes which define a group.
  * 
  * <pre>
  * <AccessControlRule id="2" group="switch.ch">
@@ -23,7 +25,7 @@ import org.glite.slcs.Attribute;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AccessControlRule {
 
@@ -154,6 +156,7 @@ public class AccessControlRule {
         result = PRIME * result
                 + ((attributes_ == null) ? 0 : attributes_.hashCode());
         result = PRIME * result + ((group_ == null) ? 0 : group_.hashCode());
+        result = PRIME * result + id_;
         return result;
     }
 
