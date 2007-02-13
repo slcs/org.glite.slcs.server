@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSSessionsFactory.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
+ * $Id: SLCSSessionsFactory.java,v 1.2 2007/02/13 15:55:42 vtschopp Exp $
  * 
  * Created on Aug 4, 2006 by tschopp
  *
@@ -7,26 +7,25 @@
  */
 package org.glite.slcs.session;
 
-import org.glite.slcs.SLCSException;
-import org.glite.slcs.config.SLCSServerConfiguration;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.SLCSException;
+import org.glite.slcs.config.SLCSServerConfiguration;
 
 /**
  * SLCSSessionsFactory is a factory to get the singleton implementation instance
  * as defined in the SLCSServerConfiguration.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SLCSSessionsFactory {
 
     /** Logging */
-    static private Log LOG= LogFactory.getLog(SLCSSessionsFactory.class);
+    static private Log LOG = LogFactory.getLog(SLCSSessionsFactory.class);
 
     /** singleton pattern */
-    static private SLCSSessions SINGLETON= null;
+    static private SLCSSessions SINGLETON = null;
 
     /**
      * Gets the singleton instance implemented as defined in the
@@ -41,8 +40,8 @@ public class SLCSSessionsFactory {
         if (SINGLETON != null) {
             return SINGLETON;
         }
-        SLCSServerConfiguration config= SLCSServerConfiguration.getInstance();
-        SINGLETON= newInstance(config);
+        SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
+        SINGLETON = newInstance(config);
         return SINGLETON;
     }
 
@@ -59,17 +58,19 @@ public class SLCSSessionsFactory {
      */
     protected static SLCSSessions newInstance(SLCSServerConfiguration config)
             throws SLCSException {
-        SLCSSessions impl= null;
+        SLCSSessions impl = null;
         // instantiate
-        String className= config.getString("SLCSComponentConfiguration.SLCSSessions[@implementation]");
+        String className = config
+                .getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                        + ".SLCSSessions[@implementation]");
         LOG.info("SLCSSessions implementation=" + className);
         try {
-            impl= (SLCSSessions) Class.forName(className).newInstance();
+            impl = (SLCSSessions) Class.forName(className).newInstance();
             impl.init(config);
         } catch (InstantiationException e) {
             LOG.error("Can not instantiate class: " + className, e);
             throw new SLCSException("Can not instantiate class: " + className,
-                                    e);
+                    e);
         } catch (IllegalAccessException e) {
             LOG.error("Illegal access for class: " + className, e);
             throw new SLCSException("Illegal access for class: " + className, e);

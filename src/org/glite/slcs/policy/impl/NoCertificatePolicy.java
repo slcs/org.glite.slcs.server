@@ -1,5 +1,5 @@
 /*
- * $Id: NoCertificatePolicy.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
+ * $Id: NoCertificatePolicy.java,v 1.2 2007/02/13 15:54:19 vtschopp Exp $
  * 
  * Created on Sep 13, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -7,7 +7,7 @@
  */
 package org.glite.slcs.policy.impl;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +20,7 @@ import org.glite.slcs.policy.CertificatePolicy;
  * NoCertificatePolicy implements a dummy empty certificate policy.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NoCertificatePolicy implements CertificatePolicy {
 
@@ -31,8 +31,18 @@ public class NoCertificatePolicy implements CertificatePolicy {
      */
     public List getRequiredCertificateExtensions(Map attributes) {
         // no required certificate extensions
-        return new ArrayList();
+        return Collections.EMPTY_LIST;
     }
+
+    
+    /* (non-Javadoc)
+     * @see org.glite.slcs.policy.CertificatePolicy#getRequiredCertificateExtensions(java.util.List)
+     */
+    public List getRequiredCertificateExtensions(List attributes) {
+        // no required certificate extensions
+        return Collections.EMPTY_LIST;
+    }
+
 
     /*
      * (non-Javadoc)
