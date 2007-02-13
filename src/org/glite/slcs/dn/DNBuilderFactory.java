@@ -1,5 +1,5 @@
 /*
- * $Id: DNBuilderFactory.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
+ * $Id: DNBuilderFactory.java,v 1.2 2007/02/13 13:26:11 vtschopp Exp $
  * 
  * Created on Aug 4, 2006 by tschopp
  *
@@ -7,26 +7,25 @@
  */
 package org.glite.slcs.dn;
 
-import org.glite.slcs.SLCSException;
-import org.glite.slcs.config.SLCSServerConfiguration;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.SLCSException;
+import org.glite.slcs.config.SLCSServerConfiguration;
 
 /**
  * DNBuilderFactory is a factory to get the singleton DNBuilder implementation
  * based on the SLCSServerConfiguration.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DNBuilderFactory {
 
     /** Logging */
-    private static Log LOG= LogFactory.getLog(DNBuilderFactory.class);
+    private static Log LOG = LogFactory.getLog(DNBuilderFactory.class);
 
     /** Singleton pattern */
-    private static DNBuilder SINGLETON= null;
+    private static DNBuilder SINGLETON = null;
 
     /**
      * Factory method to get the singleton instance of the
@@ -41,8 +40,8 @@ public class DNBuilderFactory {
         if (SINGLETON != null) {
             return SINGLETON;
         }
-        SLCSServerConfiguration config= SLCSServerConfiguration.getInstance();
-        SINGLETON= newInstance(config);
+        SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
+        SINGLETON = newInstance(config);
         return SINGLETON;
     }
 
@@ -58,16 +57,18 @@ public class DNBuilderFactory {
      */
     protected static DNBuilder newInstance(SLCSServerConfiguration config)
             throws SLCSException {
-        DNBuilder builder= null;
-        String className= config.getString("SLCSComponentConfiguration.DNBuilder[@implementation]");
+        DNBuilder builder = null;
+        String className = config
+                .getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                        + ".DNBuilder[@implementation]");
         LOG.info("DNBuilder implementation=" + className);
         try {
-            builder= (DNBuilder) Class.forName(className).newInstance();
+            builder = (DNBuilder) Class.forName(className).newInstance();
             builder.init(config);
         } catch (InstantiationException e) {
             LOG.error("Can not instantiate class: " + className, e);
             throw new SLCSException("Can not instantiate class: " + className,
-                                    e);
+                    e);
         } catch (IllegalAccessException e) {
             LOG.error("Illegal access for class: " + className, e);
             throw new SLCSException("Illegal access for class: " + className, e);
