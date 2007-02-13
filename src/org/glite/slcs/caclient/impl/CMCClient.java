@@ -1,5 +1,5 @@
 /*
- * $Id: CMCClient.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
+ * $Id: CMCClient.java,v 1.2 2007/02/13 13:45:59 vtschopp Exp $
  * 
  * Created on Jun 14, 2006 by tschopp
  *
@@ -9,17 +9,16 @@ package org.glite.slcs.caclient.impl;
 
 import java.io.IOException;
 
-import org.glite.slcs.SLCSException;
-import org.glite.slcs.caclient.CAClient;
-import org.glite.slcs.caclient.CAConnection;
-import org.glite.slcs.config.SLCSServerConfiguration;
-import org.glite.slcs.httpclient.ssl.ExtendedProtocolSocketFactory;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.SLCSException;
+import org.glite.slcs.caclient.CAClient;
+import org.glite.slcs.caclient.CAConnection;
+import org.glite.slcs.config.SLCSServerConfiguration;
+import org.glite.slcs.httpclient.ssl.ExtendedProtocolSocketFactory;
 
 /**
  * CMCClient is a RFC2797 compliant online CA client. This implementation uses a
@@ -27,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
  * reponses.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class CMCClient implements CAClient {
 
@@ -78,13 +77,13 @@ public class CMCClient implements CAClient {
     public void init(SLCSServerConfiguration config) throws SLCSException {
         // read config param from SLCSServerConfiguration
         // read and check validity of config
-        String caURL= config.getString("SLCSComponentConfiguration.CAClient.CAUrl");
+        String caURL= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.CAUrl");
         LOG.info("CAClient.CAUrl=" + caURL);
-        String keystoreFilename= config.getString("SLCSComponentConfiguration.CAClient.KeyStoreFile");
+        String keystoreFilename= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.KeyStoreFile");
         LOG.info("CAClient.KeyStoreFile=" + keystoreFilename);
-        String keystorePassword= config.getString("SLCSComponentConfiguration.CAClient.KeyStorePassword");
+        String keystorePassword= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.KeyStorePassword");
         LOG.info("CAClient.KeyStorePassword=" + keystorePassword);
-        String truststoreFilename= config.getString("SLCSComponentConfiguration.CAClient.TrustStoreFile");
+        String truststoreFilename= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.TrustStoreFile");
         LOG.info("CAClient.TrustStoreFile=" + truststoreFilename);
 
         // init the vars
@@ -106,6 +105,7 @@ public class CMCClient implements CAClient {
      * @see org.glite.slcs.SLCSServerComponent#shutdown()
      */
     public void shutdown() {
+      
     }
 
     /**
