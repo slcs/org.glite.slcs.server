@@ -1,5 +1,5 @@
 /*
- * $Id: ShibbolethAuthorizationFilter.java,v 1.2 2007/01/30 14:41:45 vtschopp Exp $
+ * $Id: ShibbolethAuthorizationFilter.java,v 1.3 2007/02/13 13:21:21 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by tschopp
  *
@@ -36,7 +36,7 @@ import org.glite.slcs.util.Utils;
  * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * 
  * @see org.glite.slcs.acl.AccessControlList
  */
@@ -56,8 +56,9 @@ public class ShibbolethAuthorizationFilter implements Filter {
      */
     public void init(FilterConfig filterConfig) throws ServletException {
         try {
-            LOG.info("instantiate and initialize AccessControlList");
-            accessControlList_ = AccessControlListFactory.newInstance(filterConfig);
+            LOG.info("create and initialize new AccessControlList");
+            accessControlList_ = AccessControlListFactory
+                    .newInstance(filterConfig);
         } catch (SLCSException e) {
             LOG.error("Failed to instantiate and initalize AccessControlList",
                     e);
@@ -71,14 +72,12 @@ public class ShibbolethAuthorizationFilter implements Filter {
      */
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("check authorization...");
-        }
         boolean authorized = true;
-        List userAttributes= null;
+        List userAttributes = null;
         if (request instanceof HttpServletRequest) {
             authorized = false;
             HttpServletRequest httpRequest = (HttpServletRequest) request;
+            LOG.info("check authorization: " + httpRequest.getRequestURI());
             // get shib user attributes
             userAttributes = getUserAttributes(httpRequest);
             // check if user is authorized
@@ -134,14 +133,12 @@ public class ShibbolethAuthorizationFilter implements Filter {
                 String headerValue = req.getHeader(header);
                 // add only not null and not empty attributes
                 if (headerValue != null && !headerValue.equals("")) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Attribute: " + header + "=" + headerValue);
-                    }
-                    String decodedValue= Utils.convertShibbolethUTF8ToUnicode(headerValue);
+                    String decodedValue = Utils
+                            .convertShibbolethUTF8ToUnicode(headerValue);
                     // multi-value attributes
                     String[] attrValues = decodedValue.split(";");
                     for (int i = 0; i < attrValues.length; i++) {
-                        String attrName= header;
+                        String attrName = header;
                         String attrValue = attrValues[i];
                         attrValue = attrValue.trim();
                         Attribute attribute = new Attribute(attrName, attrValue);
@@ -152,7 +149,7 @@ public class ShibbolethAuthorizationFilter implements Filter {
             }
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Attributes: " + attributes);
+            LOG.debug("UserAttributes=" + attributes);
         }
         return attributes;
     }
