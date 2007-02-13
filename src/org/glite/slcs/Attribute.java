@@ -1,5 +1,5 @@
 /*
- * $Id: Attribute.java,v 1.1 2007/01/30 13:34:14 vtschopp Exp $
+ * $Id: Attribute.java,v 1.2 2007/02/13 13:36:42 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -8,21 +8,15 @@
 package org.glite.slcs;
 
 /**
- * Shibobleth Attribute is a name-value tuple.
+ * A simple Attribute is a name-value tuple.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class Attribute {
-
-    /** The attribute name */
-    private String name_ = null;
-
-    /** The attribute human-readable name */
-    private String displayName_ = null;
+public class Attribute extends AttributeDefinition {
 
     /** The attribute value */
-    private String value_ = null;
+    String value_ = null;
 
     /**
      * Constructor
@@ -31,7 +25,7 @@ public class Attribute {
      *            The attribute name
      */
     public Attribute(String name) {
-        this.name_ = name;
+        super(name, null);
     }
 
     /**
@@ -43,40 +37,8 @@ public class Attribute {
      *            The attribute value
      */
     public Attribute(String name, String value) {
-        this.name_ = name;
-        this.value_ = value;
-    }
-
-    /**
-     * Returns the human-readable name
-     * 
-     * @return the display name
-     */
-    public String getDisplayName() {
-        return displayName_;
-    }
-
-    /**
-     * @param displayName
-     *            the human-readable name to set
-     */
-    public void setDisplayName(String displayName) {
-        displayName_ = displayName;
-    }
-
-    /**
-     * @return The attribute name
-     */
-    public String getName() {
-        return name_;
-    }
-
-    /**
-     * @param name
-     *            the name to set
-     */
-    public void setName(String name) {
-        name_ = name;
+        this(name);
+        setValue(value);
     }
 
     /**
@@ -86,8 +48,12 @@ public class Attribute {
      *            the not empty value to set
      */
     public void setValue(String value) {
-        if (!value.equals("")) {
-            value_ = value;
+        value_ = null;
+        if (value != null) {
+            String newValue = value.trim();
+            if (!newValue.equals("")) {
+                value_ = newValue;
+            }
         }
     }
 
@@ -102,28 +68,37 @@ public class Attribute {
      * @return <code>true</code> iff the value is set
      */
     public boolean hasValue() {
-        return value_ != null;
+        return value_ != null && !value_.equals("");
     }
 
+    /**
+     * @return <code>true</code> iff the name and the value is set
+     */
+    public boolean isValid() {
+        return hasName() && hasValue();
+    }
+
+    
     /*
      * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
+     * @see org.glite.slcs.AttributeDefinition#toString()
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("Attribute[");
-        sb.append(name_);
-        if (displayName_!=null) {
-            sb.append(" (").append(displayName_).append(")");
+        if (hasName()) {
+            sb.append(getName());
+        } else {
+            sb.append("Undefined");
         }
         if (hasValue()) {
-            sb.append("=").append(value_);
+            sb.append("=").append(getValue());
         }
         sb.append("]");
         return sb.toString();
-    }
 
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -138,8 +113,8 @@ public class Attribute {
     }
 
     /**
-     * Checks for equality. Two attributes are equal iff they have the same name
-     * and value.
+     * Checks for equality. Two attributes are equal if the name
+     * and value are equals.
      * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
