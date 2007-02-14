@@ -5,6 +5,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.acl.AccessControlRule;
 
+/**
+ * Removes an AccessControlRule from the ACL based on its ruleId.
+ * 
+ * @author Valery Tschopp <tschopp@switch.ch>
+ * @version $Revision: 1.2 $
+ */
 public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
 
     /** Logging */
@@ -15,6 +21,11 @@ public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
      * The AccessControlRule to remove
      */
     private AccessControlRule rule_ = null;
+    
+    /**
+     * The AccessControlRule ID to remove
+     */
+    private int ruleId_= -1;
 
     /**
      * Constructor
@@ -23,11 +34,20 @@ public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
      *            The AccessControlRule to remove.
      */
     public RemoveAccessControlRuleXMLOperation(AccessControlRule rule) {
-        super(rule.getGroup());
+        super();
         rule_ = rule;
+        ruleId_= rule.getId();
     }
 
-    public void process(XMLConfiguration config) {
+    /**
+     * 
+     */
+    
+    /*
+     * (non-Javadoc)
+     * @see org.glite.slcs.acl.impl.XMLOperation#doProcessing(org.apache.commons.configuration.XMLConfiguration)
+     */
+    protected void doProcessing(XMLConfiguration config) {
         
         LOG.info("RemoveAccessControlRule: " + rule_);
         
@@ -60,11 +80,10 @@ public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
             // save
             save(config);
         }
-
+        else {
+            LOG.error("rule to delete: " + rule_ + " not found!");
+        }
         
-
-        // signal done
-        setDone(true);
     }
 
 }
