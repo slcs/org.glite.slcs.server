@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.4 2007/02/27 13:15:07 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.5 2007/02/27 13:18:49 vtschopp Exp $
  * 
  * Created on Jul 28, 2006 by tschopp
  *
@@ -36,7 +36,7 @@ import org.glite.slcs.SLCSConfigurationException;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -225,7 +225,7 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
      */
     protected void checkConfiguration() throws SLCSConfigurationException {
         String filename = getFilename();
-        // Shibboleth configuration: Required attributes
+        // Shibboleth attributes definitions
         if (!contains(ATTRIBUTESCONFIGURATION_PREFIX + ".Attribute[@name]")) {
             LOG.error("SLCSServerConfiguration(" + filename + "): no "
                     + ATTRIBUTESCONFIGURATION_PREFIX + ".Attribute defined");
@@ -296,6 +296,18 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
                     + ".AccessControlListEditor[@implementation] not defined in "
                     + filename);
         }
-
+        // GroupManager
+        if (!contains(COMPONENTSCONFIGURATION_PREFIX
+                + ".GroupManager[@implementation]")) {
+            LOG.error("SLCSServerConfiguration(" + filename + "): "
+                    + COMPONENTSCONFIGURATION_PREFIX
+                    + ".GroupManager[@implementation] missing");
+            throw new SLCSConfigurationException("Element "
+                    + COMPONENTSCONFIGURATION_PREFIX
+                    + ".GroupManager[@implementation] not defined in "
+                    + filename);
+        }
+        
+        
     }
 }
