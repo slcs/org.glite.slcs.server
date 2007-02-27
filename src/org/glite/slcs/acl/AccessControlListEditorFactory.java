@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlListEditorFactory.java,v 1.2 2007/02/27 13:12:45 vtschopp Exp $
+ * $Id: AccessControlListEditorFactory.java,v 1.3 2007/02/27 13:24:10 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -16,7 +16,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * Factory for the Shibboleth access control list user and admin editors.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class AccessControlListEditorFactory {
 
@@ -25,13 +25,13 @@ public class AccessControlListEditorFactory {
             .getLog(AccessControlListEditorFactory.class);
 
     /** User ACL editor singleton */
-    static private AccessControlListEditor LOGIN_SINGLETON = null;
+    static private AccessControlListEditor SINGLETON = null;
 
     /**
      * XML element name in the configuration for the login ACL file.
-     * See configuration file AccessControlListEditor.LoginACLFile element. 
+     * See configuration file AccessControlListEditor.ACLFile element. 
      */
-    static private String LOGIN_ACLFILE_KEY= "LoginACLFile";
+    static private String ACLFILE_KEY= "ACLFile";
 
     /** User ACL editor singleton */
     static private AccessControlListEditor ADMIN_SINGLETON = null;
@@ -45,8 +45,8 @@ public class AccessControlListEditorFactory {
     
     /**
      * Gets the current implementation of the Shibboleth access control list
-     * editor for the login ACL referenced in the config by
-     * <code>LoginACLFile</code>.
+     * editor for the users ACL referenced in the config by
+     * <code>ACLFile</code>.
      * 
      * @return The {@link AccessControlListEditor} interface of the
      *         implementation.
@@ -54,7 +54,7 @@ public class AccessControlListEditorFactory {
      *             If an error occurs.
      * @deprecated Use {@link #getInstance()} instead
      */
-    static public synchronized AccessControlListEditor getLoginInstance()
+    static public synchronized AccessControlListEditor getUserInstance()
             throws SLCSException {
                 return getInstance();
             }
@@ -62,7 +62,7 @@ public class AccessControlListEditorFactory {
     /**
      * Gets the current implementation of the Shibboleth access control list
      * editor for the login ACL referenced in the config by
-     * <code>LoginACLFile</code>.
+     * <code>ACLFile</code>.
      * 
      * @return The {@link AccessControlListEditor} interface of the
      *         implementation.
@@ -71,13 +71,13 @@ public class AccessControlListEditorFactory {
      */
     static public synchronized AccessControlListEditor getInstance()
             throws SLCSException {
-        if (LOGIN_SINGLETON == null) {
+        if (SINGLETON == null) {
             SLCSServerConfiguration config = SLCSServerConfiguration
                     .getInstance();
-            LOGIN_SINGLETON = AccessControlListEditorFactory
-                    .newInstance(config, LOGIN_ACLFILE_KEY);
+            SINGLETON = AccessControlListEditorFactory
+                    .newInstance(config, ACLFILE_KEY);
         }
-        return LOGIN_SINGLETON;
+        return SINGLETON;
     }
 
     /**
