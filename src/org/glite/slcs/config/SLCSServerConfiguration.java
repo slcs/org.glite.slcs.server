@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.3 2007/02/13 13:49:15 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.4 2007/02/27 13:15:07 vtschopp Exp $
  * 
  * Created on Jul 28, 2006 by tschopp
  *
@@ -24,19 +24,19 @@ import org.glite.slcs.SLCSConfigurationException;
  * in the <code>web.xml</code> file.
  * 
  * <pre>
- *          &lt;web-app id=&quot;SLCS&quot; version=&quot;2.4&quot;&gt;
- *          &lt;display-name&gt;SLCS&lt;/display-name&gt;
- *          &lt;!-- webapps context parameters --&gt;
- *          &lt;context-param&gt;
- *               &lt;!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath --&gt;
- *               &lt;param-name&gt;SLCSServerConfigurationFile&lt;/param-name&gt;
- *               &lt;param-value&gt;/etc/glite/slcs.xml&lt;/param-value&gt;
- *          &lt;/context-param&gt;
- *          ...
+ *           &lt;web-app id=&quot;SLCS&quot; version=&quot;2.4&quot;&gt;
+ *           &lt;display-name&gt;SLCS&lt;/display-name&gt;
+ *           &lt;!-- webapps context parameters --&gt;
+ *           &lt;context-param&gt;
+ *                &lt;!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath --&gt;
+ *                &lt;param-name&gt;SLCSServerConfigurationFile&lt;/param-name&gt;
+ *                &lt;param-value&gt;/etc/glite/slcs.xml&lt;/param-value&gt;
+ *           &lt;/context-param&gt;
+ *           ...
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -75,14 +75,19 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     private List requiredAttributeNames_ = null;
 
     /**
-     * List of valid attribute names
+     * List of defined attribute names
      */
-    private List validAttributeNames_ = null;
+    private List definedAttributeNames_ = null;
 
     /**
      * List of attribute defintions (only name and displayName are set)
      */
     private List attributeDefinitions_ = null;
+
+    /**
+     * Helper for attributes
+     */
+    private AttributeDefintionsHelper attributeDefintionsHelper_ = null;
 
     /**
      * Initialize the singleton instance of the SLCSServerConfiguration.
@@ -102,7 +107,8 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
             }
             LOG.info(CONFIGURATION_FILE_KEY + "=" + filename);
             SINGLETON = new SLCSServerConfiguration(filename);
-        } else {
+        }
+        else {
             LOG.info("SLCSServerConfiguration already initialized");
         }
     }
@@ -114,8 +120,7 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
      */
     static public synchronized SLCSServerConfiguration getInstance() {
         if (SINGLETON == null) {
-            throw new IllegalStateException(
-                    "Not initialized: call SLCSServerConfiguration.initialize(ServletContext ctx) first.");
+            throw new IllegalStateException("Not initialized: call SLCSServerConfiguration.initialize(ServletContext ctx) first.");
         }
         return SINGLETON;
     }
@@ -146,7 +151,7 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     private void initAttributesLists() throws SLCSConfigurationException {
         // create the attribute names lists
         requiredAttributeNames_ = new ArrayList();
-        validAttributeNames_ = new ArrayList();
+        definedAttributeNames_ = new ArrayList();
         attributeDefinitions_ = new ArrayList();
 
         // populate both list
@@ -165,11 +170,11 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
             }
 
             // add to the valid attribute names list
-            validAttributeNames_.add(name);
+            definedAttributeNames_.add(name);
 
             // create a new attribute definition
             String displayName = getString(prefix + "[@displayName]", false);
-            AttributeDefinition attributeDef = new AttributeDefinition(name,displayName);
+            AttributeDefinition attributeDef = new AttributeDefinition(name, displayName);
             if (required != null && required.equals("true")) {
                 attributeDef.setRequired(true);
             }
@@ -177,13 +182,15 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
             attributeDefinitions_.add(attributeDef);
 
         }
-        LOG.info("RequiredAttributeNames=" + requiredAttributeNames_);
-        LOG.info("ValidAttributeNames=" + validAttributeNames_);
+        // create attributeDefinitionHelper
+        attributeDefintionsHelper_ = new AttributeDefintionsHelper(attributeDefinitions_);
+
         LOG.info("AttributeDefinitions=" + attributeDefinitions_);
+        LOG.info("DefinedAttributeNames=" + definedAttributeNames_);
+        LOG.info("RequiredAttributeNames=" + requiredAttributeNames_);
     }
 
     /**
-     * 
      * @return
      */
     public List getRequiredAttributeNames() {
@@ -191,19 +198,24 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     }
 
     /**
-     * 
-     * @return
+     * @return List of defined attribute names
      */
-    public List getValidAttributeNames() {
-        return validAttributeNames_;
+    public List getDefinedAttributeNames() {
+        return definedAttributeNames_;
     }
 
     /**
-     * 
-     * @return
+     * @return The list of {@link AttributeDefinition}s
      */
     public List getAttributeDefinitions() {
         return attributeDefinitions_;
+    }
+
+    /**
+     * @return The {@link AttributeDefintionsHelper}
+     */
+    public AttributeDefintionsHelper getAttributeDefintionsHelper() {
+        return attributeDefintionsHelper_;
     }
 
     /*
@@ -279,11 +291,10 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
             LOG.error("SLCSServerConfiguration(" + filename + "): "
                     + COMPONENTSCONFIGURATION_PREFIX
                     + ".AccessControlListEditor[@implementation] missing");
-            throw new SLCSConfigurationException(
-                    "Element "
-                            + COMPONENTSCONFIGURATION_PREFIX
-                            + ".AccessControlListEditor[@implementation] not defined in "
-                            + filename);
+            throw new SLCSConfigurationException("Element "
+                    + COMPONENTSCONFIGURATION_PREFIX
+                    + ".AccessControlListEditor[@implementation] not defined in "
+                    + filename);
         }
 
     }
