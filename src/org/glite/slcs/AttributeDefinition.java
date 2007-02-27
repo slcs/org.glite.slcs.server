@@ -4,7 +4,7 @@ package org.glite.slcs;
  * Defines an Attribute with a name, a displayName and a required flag.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AttributeDefinition {
 
@@ -73,6 +73,13 @@ public class AttributeDefinition {
      */
     public boolean hasName() {
         return name_ != null && !name_.equals("");
+    }
+
+    /**
+     * @return <code>true</code> iff the display name is set
+     */
+    public boolean hasDisplayName() {
+        return displayName_ != null && !displayName_.equals("");
     }
 
     /**
