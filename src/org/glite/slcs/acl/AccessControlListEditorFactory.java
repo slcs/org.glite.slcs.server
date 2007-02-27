@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlListEditorFactory.java,v 1.1 2007/01/30 13:38:33 vtschopp Exp $
+ * $Id: AccessControlListEditorFactory.java,v 1.2 2007/02/27 13:12:45 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -16,7 +16,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * Factory for the Shibboleth access control list user and admin editors.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AccessControlListEditorFactory {
 
@@ -52,8 +52,24 @@ public class AccessControlListEditorFactory {
      *         implementation.
      * @throws SLCSException
      *             If an error occurs.
+     * @deprecated Use {@link #getInstance()} instead
      */
     static public synchronized AccessControlListEditor getLoginInstance()
+            throws SLCSException {
+                return getInstance();
+            }
+
+    /**
+     * Gets the current implementation of the Shibboleth access control list
+     * editor for the login ACL referenced in the config by
+     * <code>LoginACLFile</code>.
+     * 
+     * @return The {@link AccessControlListEditor} interface of the
+     *         implementation.
+     * @throws SLCSException
+     *             If an error occurs.
+     */
+    static public synchronized AccessControlListEditor getInstance()
             throws SLCSException {
         if (LOGIN_SINGLETON == null) {
             SLCSServerConfiguration config = SLCSServerConfiguration

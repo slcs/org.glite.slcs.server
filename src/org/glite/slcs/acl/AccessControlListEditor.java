@@ -1,9 +1,7 @@
 /*
- * $Id: AccessControlListEditor.java,v 1.1 2007/01/30 13:38:33 vtschopp Exp $
- * 
- * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
- *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * $Id: AccessControlListEditor.java,v 1.2 2007/02/27 13:12:46 vtschopp Exp $
+ * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch> Copyright (c)
+ * 2006 SWITCH - http://www.switch.ch/
  */
 package org.glite.slcs.acl;
 
@@ -17,40 +15,71 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * Interface for the Shibboleth access control list editor.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface AccessControlListEditor extends SLCSServerComponent {
 
-    public String getACLFilename();
-    
     /**
-     * Returns the access control rules for the given group.
+     * @return The ACL absolute filename.
+     */
+    public String getACLFilename();
+
+    /**
+     * Returns the list of {@link AccessControlRule}s for the given group name.
      * 
      * @param group
-     *            The rules group. Use <code>null</code> for all rules.
+     *            The rules group name. Use <code>null</code> for all rules.
      * @return The list of {@link AccessControlRule}s for this group.
-     * 
-     * @see org.glite.slcs.acl.AccessControlRule
      */
-    public List getAccessControlRules(String group);
+    public List getAccessControlRules(String groupName);
+
+    /**
+     * Return the list of {@link AccessControlRule}s for the given list of
+     * group names.
+     * 
+     * @param groupNames
+     *            The list of group names.
+     * @return The list of {@link AccessControlRule}s for these group names.
+     */
+    public List getAccessControlRules(List groupNames);
+
+    /**
+     * Gets the rule identified by its ID.
+     * 
+     * @param ruleId
+     *            The rule ID.
+     * @return the {@link AccessControlRule} identified by the rule ID or
+     *         <code>null</code> if the rule was not found.
+     */
+    public AccessControlRule getAccessControlRule(int ruleId);
 
     /**
      * Adds an access control rule in the access control list.
      * 
      * @param rule
      *            The rule to add.
-     * @return The list of {@link AccessControlRule}s after the addition.
+     * @return <code>true</code> iff the operation succeed.
      */
-    public List addAccessControlRule(AccessControlRule rule);
+    public boolean addAccessControlRule(AccessControlRule rule);
 
     /**
-     * Removes a rule from the access control list.
+     * Replaces the existing rule identified by the ID and group.
      * 
      * @param rule
-     *            The rule to remove.
-     * @return The list of {@link AccessControlRule}s after the deletion.
+     *            The new rule replacing the old one
+     * @return <code>true</code> iff the operation succeed.
      */
-    public List removeAccessControlRule(AccessControlRule rule);
+    public boolean replaceAccessControlRule(AccessControlRule rule);
+
+    /**
+     * Removes a rule from the access control list and returns the result list
+     * of rules.
+     * 
+     * @param rule
+     *            The rule ID to remove.
+     * @return <code>true</code> iff the operation succeed.
+     */
+    public boolean removeAccessControlRule(int ruleId);
 
     /**
      * Checks the configuration and initializes the ACL file referenced in the
