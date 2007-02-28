@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.5 2007/02/27 13:18:49 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.6 2007/02/28 11:55:52 vtschopp Exp $
  * 
  * Created on Jul 28, 2006 by tschopp
  *
@@ -24,19 +24,19 @@ import org.glite.slcs.SLCSConfigurationException;
  * in the <code>web.xml</code> file.
  * 
  * <pre>
- *           &lt;web-app id=&quot;SLCS&quot; version=&quot;2.4&quot;&gt;
- *           &lt;display-name&gt;SLCS&lt;/display-name&gt;
- *           &lt;!-- webapps context parameters --&gt;
- *           &lt;context-param&gt;
- *                &lt;!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath --&gt;
- *                &lt;param-name&gt;SLCSServerConfigurationFile&lt;/param-name&gt;
- *                &lt;param-value&gt;/etc/glite/slcs.xml&lt;/param-value&gt;
- *           &lt;/context-param&gt;
- *           ...
+ *             &lt;web-app id=&quot;SLCS&quot; version=&quot;2.4&quot;&gt;
+ *             &lt;display-name&gt;SLCS&lt;/display-name&gt;
+ *             &lt;!-- webapps context parameters --&gt;
+ *             &lt;context-param&gt;
+ *                  &lt;!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath --&gt;
+ *                  &lt;param-name&gt;SLCSServerConfigurationFile&lt;/param-name&gt;
+ *                  &lt;param-value&gt;/etc/glite/slcs.xml&lt;/param-value&gt;
+ *             &lt;/context-param&gt;
+ *             ...
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -114,13 +114,33 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     }
 
     /**
+     * Initializes the singleton SLCSServerConfiguration object loaded with the
+     * given XML filename.
+     * 
+     * @param filename
+     *            The XML filename.
+     * @throws SLCSConfigurationException
+     *             If an error occurs.
+     */
+    static public synchronized void initialize(String filename)
+            throws SLCSConfigurationException {
+        if (SINGLETON == null) {
+            LOG.info(CONFIGURATION_FILE_KEY + "=" + filename);
+            SINGLETON = new SLCSServerConfiguration(filename);
+        }
+        else {
+            LOG.info("SLCSServerConfiguration already initialized");
+        }
+    }
+
+    /**
      * Returns the singleton instance of the SLCSServerConfiguration.
      * 
      * @return The SLCSServerConfiguration singleton.
      */
     static public synchronized SLCSServerConfiguration getInstance() {
         if (SINGLETON == null) {
-            throw new IllegalStateException("Not initialized: call SLCSServerConfiguration.initialize(ServletContext ctx) first.");
+            throw new IllegalStateException("Not initialized: call SLCSServerConfiguration.initialize(...) first.");
         }
         return SINGLETON;
     }
@@ -307,7 +327,6 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
                     + ".GroupManager[@implementation] not defined in "
                     + filename);
         }
-        
-        
+
     }
 }
