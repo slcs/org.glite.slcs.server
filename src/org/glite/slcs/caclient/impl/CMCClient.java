@@ -1,5 +1,5 @@
 /*
- * $Id: CMCClient.java,v 1.2 2007/02/13 13:45:59 vtschopp Exp $
+ * $Id: CMCClient.java,v 1.3 2007/02/28 11:45:46 vtschopp Exp $
  * 
  * Created on Jun 14, 2006 by tschopp
  *
@@ -26,7 +26,7 @@ import org.glite.slcs.httpclient.ssl.ExtendedProtocolSocketFactory;
  * reponses.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class CMCClient implements CAClient {
 
@@ -105,7 +105,7 @@ public class CMCClient implements CAClient {
      * @see org.glite.slcs.SLCSServerComponent#shutdown()
      */
     public void shutdown() {
-      
+        httpClient_= null;
     }
 
     /**
