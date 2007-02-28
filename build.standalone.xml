@@ -24,6 +24,9 @@
 	<property name="lib.dir" location="${build.dir}/lib" />
     <property name="external.lib.dir" location="${basedir}/../repository/externals" />
 
+	<!-- BouncyCastle SMIME/CMS library -->
+	<property name="bouncycastle.bcmail.jar" value="bouncycastle/1.34/noarch/jars/bcmail-${slcs.java.short.version}-134.jar"/>
+	
    <target name="javacheck">
         <!-- check JVM version -->
         <condition property="isJavaOk">
@@ -34,7 +37,7 @@
         <!-- check bouncycastle JDK version -->
         <available property="isBouncycastleOk"
                    filepath="${external.lib.dir}" 
-                   file="bouncycastle/1.34/noarch/jars/bcmail-${slcs.java.short.version}-134.jar"/>
+                   file="${bouncycastle.bcmail.jar}"/>
         <fail unless="isBouncycastleOk">BouncyCastle bcmail-${slcs.java.short.version}-134.jar is not available</fail>
         
     </target>
@@ -59,14 +62,22 @@
 
        <!-- slcs server external jar list (JRA1MW only) -->
         <fileset id="external.lib.jar.set" dir="${external.lib.dir}">
-            <include name="bouncycastle/1.34/noarch/jars/bcmail-jdk14-134.jar"/>
+            <include name="${bouncycastle.bcmail-mail.jar}"/>
             <include name="mm-mysql/3.1.8/noarch/mysql-connector-java-3.1.8-bin.jar"/>
         </fileset>
+
+        <!-- WEB-INF/lib additional library -->
+        <fileset id="web.lib.jar.set" dir="${websrc.dir}/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+        
 
         <!-- build classpath -->
         <path id="compile.classpath">
             <!-- SLCS common lib and all common third-party libs -->
             <fileset refid="slcs.common.lib.jar.set"/>
+            <!-- WEB-INF/lib libs -->
+            <fileset refid="web.lib.jar.set"/>
             <!-- tomcat common libs -->
             <fileset refid="tomcat.common.lib.jar.set"/>
             <!-- external third-party libs -->
@@ -109,6 +120,7 @@
         <!-- copy (flatten) all needed libraries -->
         <copy todir="${lib.dir}" flatten="true">
             <fileset refid="slcs.common.lib.jar.set" />
+            <fileset refid="web.lib.jar.set" />
             <fileset refid="external.lib.jar.set" />
         </copy>
         <!-- create the war file -->
@@ -116,14 +128,20 @@
              webxml="${websrc.dir}/WEB-INF/web.xml">
             <classes dir="${classes.dir}" />
             <classes dir="${etc.dir}">
-                <include name="*.xml" />
                 <include name="log4j.properties" />
             </classes>
             <lib dir="${lib.dir}" />
             <fileset dir="${websrc.dir}">
-                <exclude name="WEB-INF/**" />
+            	<include name="**/*.jsp" />
+            	<include name="css/*" />
+            	<include name="images/*" />
+            	<include name="js/*.js" />
+            	<include name="WEB-INF/*.xml" />
+                <exclude name="WEB-INF/web.xml" />
             </fileset>
 		</war>
+		<echo message="BouncyCastle libraries MUST go in TOMCAT common/lib directory!!!" />
+		
 	</target>
 
 	<target name="install" description="Installs the Web Application" depends="package">
