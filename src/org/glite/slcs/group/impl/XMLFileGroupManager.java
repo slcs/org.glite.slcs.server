@@ -26,7 +26,7 @@ import org.glite.slcs.group.GroupManager;
  * GroupManager implementation, based on XML file.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class XMLFileGroupManager implements GroupManager,
         FileConfigurationListener {
@@ -62,7 +62,6 @@ public class XMLFileGroupManager implements GroupManager,
             throws SLCSConfigurationException {
         XMLConfiguration config = null;
         try {
-            LOG.info("XMLConfiguration file=" + filename);
             config = new XMLConfiguration(filename);
             if (LOG.isDebugEnabled()) {
                 File configFile = config.getFile();
