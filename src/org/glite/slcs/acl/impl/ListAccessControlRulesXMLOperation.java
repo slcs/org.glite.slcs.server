@@ -11,22 +11,38 @@ import org.glite.slcs.acl.AccessControlRule;
 
 public class ListAccessControlRulesXMLOperation extends XMLOperation {
 
-    private static Log LOG = LogFactory
-            .getLog(ListAccessControlRulesXMLOperation.class);
+    /**
+     * Logging
+     */
+    private static Log LOG = LogFactory.getLog(ListAccessControlRulesXMLOperation.class);
 
+    /**
+     * Result list of rules
+     */
     private List accessControlRules_ = null;
 
+    /**
+     * The rules group to list
+     */
+    private String group_ = null;
+
+    /**
+     * Constructor
+     * 
+     * @param group
+     *            The group to list
+     */
     public ListAccessControlRulesXMLOperation(String group) {
-        super(group);
+        super();
+        group_ = group;
         accessControlRules_ = new LinkedList();
     }
 
-    public void process(XMLConfiguration config) {
-        
-        String myGroup = getGroup();        
-        LOG.info("ListAccessControlRules: " + myGroup);
+    protected void doProcessing(XMLConfiguration config) {
 
-        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("list rules(" + group_ + ")");
+        }
         // list all rules
         // populate the List with attribute values
         int i = 0;
@@ -42,7 +58,7 @@ public class ListAccessControlRulesXMLOperation extends XMLOperation {
                 break;
             }
 
-            if (myGroup != null && !ruleGroup.equals(myGroup)) {
+            if (group_ != null && !ruleGroup.equals(group_)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(rulePrefix + "[@group]=" + ruleGroup
                             + " skipping...");
@@ -51,7 +67,7 @@ public class ListAccessControlRulesXMLOperation extends XMLOperation {
                 continue;
 
             }
-            int ruleId= config.getInt(rulePrefix + "[@id]");
+            int ruleId = config.getInt(rulePrefix + "[@id]");
             AccessControlRule rule = new AccessControlRule(ruleId, ruleGroup);
 
             List attributeNames = config.getList(rulePrefix
@@ -70,13 +86,19 @@ public class ListAccessControlRulesXMLOperation extends XMLOperation {
             }
 
             accessControlRules_.add(rule);
-            
-        }
 
-        setDone(true);
+            // success, at least one rule
+            setStatus(true);
+
+        }
     }
 
-    public List getAccessControlRules() {
+    /**
+     * Oonce done, the list of rules can be retrieved.
+     * 
+     * @return List of rules
+     */
+    public List getResults() {
         return accessControlRules_;
     }
 

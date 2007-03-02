@@ -17,43 +17,43 @@ public class AddAccessControlRuleXMLOperation extends XMLOperation {
     /**
      * The AccessControlRule to add
      */
-    private AccessControlRule rule_= null;
-    
+    private AccessControlRule rule_ = null;
+
     /**
      * Constructor
-     * @param rule The AccessControlRule to add.
+     * 
+     * @param rule
+     *            The AccessControlRule to add.
      */
     public AddAccessControlRuleXMLOperation(AccessControlRule rule) {
-        super(rule.getGroup());
-        rule_= rule;
+        super();
+        rule_ = rule;
     }
 
-    public void process(XMLConfiguration config) {
-        
-        LOG.info("AddAccessControlRule: " + rule_);
-        
+    protected void doProcessing(XMLConfiguration config) {
+
+        if (LOG.isDebugEnabled())
+            LOG.debug("adding: " + rule_);
+
         // find max id in the list to determine new id for the rule
         // BETTER, generate a random and check the list...
-        List ruleIds= config.getList("AccessControlRule[@id]");
-        int max= Integer.MIN_VALUE;
-        Iterator ids= ruleIds.iterator();
+        List ruleIds = config.getList("AccessControlRule[@id]");
+        int max = Integer.MIN_VALUE;
+        Iterator ids = ruleIds.iterator();
         while (ids.hasNext()) {
             int id = Integer.parseInt((String) ids.next());
             if (id > max) {
-                max= id;
+                max = id;
             }
         }
-        // TODO: check if rule already exists
-                
-        // add the rule in the config
-        String newId= String.valueOf(max + 1);
-        int id= Integer.parseInt(newId);
-        rule_.setId(id);
+
+        // add the rule in the XML file
+        String newId = String.valueOf(max + 1);
         LOG.debug("adding AccessControlRule[@id]=" + newId);
         config.addProperty("AccessControlRule(-1)[@id]", newId);
         config.addProperty("AccessControlRule[@group]", rule_.getGroup());
-        List ruleAttributes= rule_.getAttributes();
-        Iterator attributes= ruleAttributes.iterator();
+        List ruleAttributes = rule_.getAttributes();
+        Iterator attributes = ruleAttributes.iterator();
         while (attributes.hasNext()) {
             Attribute attribute = (Attribute) attributes.next();
             config.addProperty("AccessControlRule.Attribute(-1)", attribute.getValue());
@@ -63,10 +63,9 @@ public class AddAccessControlRuleXMLOperation extends XMLOperation {
 
         // save config
         save(config);
-        
-        // signal done
-        setDone(true);
-    }
 
+        // success
+        setStatus(true);
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileProcessor.java,v 1.2 2007/01/30 14:30:52 vtschopp Exp $
+ * $Id: XMLFileProcessor.java,v 1.3 2007/03/02 17:24:34 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -20,7 +20,7 @@ import org.glite.slcs.SLCSException;
 /**
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class XMLFileProcessor {
 
@@ -168,7 +168,9 @@ public class XMLFileProcessor {
                         }
                     }
                     if (!operationsQueue_.isEmpty()) {
-                        LOG.info("get operation from queue");
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("get operation from queue");
+                        }
                         operation = (XMLOperation) operationsQueue_
                                 .removeLast();
                     }
@@ -178,7 +180,9 @@ public class XMLFileProcessor {
                 if (operation != null) {
                     // process and notify
                     synchronized (operation) {
-                        LOG.info("process operation...");
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("process operation...");
+                        }
                         operation.process(config_);
                         operation.notifyAll();
                     }

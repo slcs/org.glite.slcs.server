@@ -9,23 +9,17 @@ import org.glite.slcs.acl.AccessControlRule;
  * Removes an AccessControlRule from the ACL based on its ruleId.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
 
     /** Logging */
-    private static Log LOG = LogFactory
-            .getLog(RemoveAccessControlRuleXMLOperation.class);
+    private static Log LOG = LogFactory.getLog(RemoveAccessControlRuleXMLOperation.class);
 
-    /**
-     * The AccessControlRule to remove
-     */
-    private AccessControlRule rule_ = null;
-    
     /**
      * The AccessControlRule ID to remove
      */
-    private int ruleId_= -1;
+    private int ruleId_ = -1;
 
     /**
      * Constructor
@@ -35,22 +29,30 @@ public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
      */
     public RemoveAccessControlRuleXMLOperation(AccessControlRule rule) {
         super();
-        rule_ = rule;
-        ruleId_= rule.getId();
+        ruleId_ = rule.getId();
     }
 
     /**
+     * Constructor
      * 
+     * @param ruleId
+     *            The AccessControlRule ID to remove
      */
-    
+    public RemoveAccessControlRuleXMLOperation(int ruleId) {
+        super();
+        ruleId_ = ruleId;
+    }
+
     /*
      * (non-Javadoc)
+     * 
      * @see org.glite.slcs.acl.impl.XMLOperation#doProcessing(org.apache.commons.configuration.XMLConfiguration)
      */
     protected void doProcessing(XMLConfiguration config) {
-        
-        LOG.info("RemoveAccessControlRule: " + rule_);
-        
+
+        if (LOG.isDebugEnabled())
+            LOG.debug("remove AccessControlRule[id=" + ruleId_ + "]");
+
         // find index
         int i = 0;
         String ruleKey = null;
@@ -62,10 +64,9 @@ public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
                 // no more rules
                 break;
             }
-            String ruleGroup = config.getString(rulePrefix + "[@group]");
-            if (ruleGroup.equals(rule_.getGroup())) {
+            else {
                 int id = Integer.parseInt(ruleId);
-                if (id == rule_.getId()) {
+                if (id == ruleId_) {
                     ruleKey = rulePrefix;
                     break;
                 }
@@ -73,17 +74,20 @@ public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
         }
 
         if (ruleKey != null) {
-            LOG.info("delete " + ruleKey);
+            LOG.debug("delete AccessControlRule[id=" + ruleId_ + "]");
             // clear property/tree
             config.clearTree(ruleKey);
-        
             // save
             save(config);
+            // success
+            setStatus(true);
+
         }
         else {
-            LOG.error("rule to delete: " + rule_ + " not found!");
+            LOG.error("rule to delete not found: AccessControlRule[id="
+                    + ruleId_ + "]");
         }
-        
+
     }
 
 }

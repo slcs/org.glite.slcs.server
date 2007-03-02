@@ -1,12 +1,12 @@
 /*
- * $Id: XMLFileAccessControlListEditor.java,v 1.2 2007/01/30 14:30:52 vtschopp Exp $
- * 
- * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
- *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * $Id: XMLFileAccessControlListEditor.java,v 1.2 2007/01/30 14:30:52 vtschopp
+ * Exp $ Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch> Copyright
+ * (c) 2006 SWITCH - http://www.switch.ch/
  */
 package org.glite.slcs.acl.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -22,16 +22,13 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
- * 
+ * @version $Revision: 1.3 $
  * @see org.glite.slcs.acl.AccessControlListEditor
  */
-public class XMLFileAccessControlListEditor implements
-        AccessControlListEditor {
+public class XMLFileAccessControlListEditor implements AccessControlListEditor {
 
     /** Logging */
-    private static Log LOG = LogFactory
-            .getLog(XMLFileAccessControlListEditor.class);
+    private static Log LOG = LogFactory.getLog(XMLFileAccessControlListEditor.class);
 
     /** XML file processor */
     private XMLFileProcessor xmlProcessor_ = null;
@@ -48,11 +45,10 @@ public class XMLFileAccessControlListEditor implements
      * 
      * @see org.glite.slcs.acl.AccessControlListEditor#addAccessControlRule(org.glite.slcs.acl.AccessControlRule)
      */
-    public List addAccessControlRule(AccessControlRule rule) {
-        AddAccessControlRuleXMLOperation operation = new AddAccessControlRuleXMLOperation(
-                rule);
+    public boolean addAccessControlRule(AccessControlRule rule) {
+        XMLOperation operation = new AddAccessControlRuleXMLOperation(rule);
         xmlProcessor_.process(operation);
-        return getAccessControlRules(rule.getGroup());
+        return operation.getStatus();
     }
 
     /*
@@ -60,31 +56,67 @@ public class XMLFileAccessControlListEditor implements
      * 
      * @see org.glite.slcs.acl.AccessControlListEditor#getAccessControlRules(java.lang.String)
      */
-    public List getAccessControlRules(String group) {
-        ListAccessControlRulesXMLOperation operation = new ListAccessControlRulesXMLOperation(
-                group);
+    public List getAccessControlRules(String groupName) {
+        XMLOperation operation = new ListAccessControlRulesXMLOperation(groupName);
         xmlProcessor_.process(operation);
-        List rules = operation.getAccessControlRules();
+        List rules = operation.getResults();
         return rules;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.glite.slcs.acl.AccessControlListEditor#removeAccessControlRule(org.glite.slcs.acl.AccessControlRule)
+     * @see org.glite.slcs.acl.AccessControlListEditor#getAccessControlRules(java.util.List)
      */
-    public List removeAccessControlRule(AccessControlRule rule) {
-        RemoveAccessControlRuleXMLOperation operation = new RemoveAccessControlRuleXMLOperation(
-                rule);
+    public List getAccessControlRules(List groupNames) {
+        List allRules = new ArrayList();
+        Iterator iterator = groupNames.iterator();
+        while (iterator.hasNext()) {
+            String groupName = (String) iterator.next();
+            List rules = getAccessControlRules(groupName);
+            allRules.addAll(rules);
+        }
+        return allRules;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.acl.AccessControlListEditor#getAccessControlRule(int)
+     */
+    public AccessControlRule getAccessControlRule(int ruleId) {
+        XMLOperation operation = new GetAccessControlRuleXMLOperation(ruleId);
         xmlProcessor_.process(operation);
-        return getAccessControlRules(rule.getGroup());
+        AccessControlRule rule = (AccessControlRule) operation.getResult();
+        return rule;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.acl.AccessControlListEditor#removeAccessControlRule(int,
+     *      java.lang.String)
+     */
+    public boolean removeAccessControlRule(int ruleId) {
+        XMLOperation operation = new RemoveAccessControlRuleXMLOperation(ruleId);
+        xmlProcessor_.process(operation);
+        return operation.getStatus();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.acl.AccessControlListEditor#replaceAccessControlRule(org.glite.slcs.acl.AccessControlRule)
+     */
+    public boolean replaceAccessControlRule(AccessControlRule rule) {
+        XMLOperation operation = new ReplaceAccessControlRuleXMLOperation(rule);
+        xmlProcessor_.process(operation);
+        return operation.getStatus();
     }
 
     /*
      * Checks the configuration and initializes the filename referenced by the
-     * XML element <code>ACLFile</code>.
-     * 
-     * (non-Javadoc)
+     * XML element <code>ACLFile</code>. (non-Javadoc)
      * 
      * @see org.glite.slcs.SLCSServerComponent#init(org.glite.slcs.config.SLCSServerConfiguration)
      */
@@ -100,9 +132,8 @@ public class XMLFileAccessControlListEditor implements
      */
     public void init(SLCSServerConfiguration config, String fileElementName)
             throws SLCSException {
-        String xmlFilename = config
-                .getString( SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".AccessControlListEditor."
-                        + fileElementName);
+        String xmlFilename = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                + ".AccessControlListEditor." + fileElementName);
         LOG.info("AccessControlListEditor." + fileElementName + "="
                 + xmlFilename);
 
@@ -111,8 +142,6 @@ public class XMLFileAccessControlListEditor implements
 
     }
 
-    
-    
     /*
      * (non-Javadoc)
      * 

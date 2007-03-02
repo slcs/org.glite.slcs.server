@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileAccessControlList.java,v 1.1 2007/01/30 13:40:06 vtschopp Exp $
+ * $Id: XMLFileAccessControlList.java,v 1.2 2007/03/02 17:24:34 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -25,8 +25,8 @@ import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
-import org.glite.slcs.acl.AccessControlRule;
 import org.glite.slcs.acl.AccessControlList;
+import org.glite.slcs.acl.AccessControlRule;
 import org.glite.slcs.config.FileConfigurationEvent;
 import org.glite.slcs.config.FileConfigurationListener;
 import org.glite.slcs.config.FileConfigurationMonitor;
@@ -37,8 +37,7 @@ import org.glite.slcs.config.FileConfigurationMonitor;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
- * 
+ * @version $Revision: 1.2 $
  * @see org.glite.slcs.acl.AccessControlList
  * @see org.glite.slcs.config.FileConfigurationListener
  */
@@ -76,8 +75,7 @@ public class XMLFileAccessControlList implements AccessControlList,
         String filename = filterConfig.getInitParameter("ACLFile");
         LOG.info("ACLFile=" + filename);
         if (filename == null || filename.equals("")) {
-            throw new SLCSConfigurationException(
-                    "Filter parameter ACLFile is missing or empty");
+            throw new SLCSConfigurationException("Filter parameter ACLFile is missing or empty");
         }
 
         // load the XML file
@@ -90,12 +88,10 @@ public class XMLFileAccessControlList implements AccessControlList,
         aclAccessControlRules_ = createACLAccessControlRules(aclConfiguration_);
 
         // deals with the FileConfigurationMonitor
-        String monitoringInterval = filterConfig
-                .getInitParameter("ACLFileMonitoringInterval");
+        String monitoringInterval = filterConfig.getInitParameter("ACLFileMonitoringInterval");
         if (monitoringInterval != null) {
             LOG.info("ACLFileMonitoringInterval=" + monitoringInterval);
-            aclConfigurationMonitor_ = createACLConfigurationMonitor(
-                    aclConfiguration_, monitoringInterval, this);
+            aclConfigurationMonitor_ = FileConfigurationMonitor.createFileConfigurationMonitor(aclConfiguration_, monitoringInterval, this);
             // and start
             aclConfigurationMonitor_.start();
         }
@@ -113,52 +109,13 @@ public class XMLFileAccessControlList implements AccessControlList,
             FileConfiguration fileConfiguration) {
         HashSet aclAuthorizationAttributeNames = new HashSet();
         // get all attribute names from configuration
-        List aclAttributeNames = fileConfiguration
-                .getList("AccessControlRule.Attribute[@name]");
+        List aclAttributeNames = fileConfiguration.getList("AccessControlRule.Attribute[@name]");
         Iterator names = aclAttributeNames.iterator();
         while (names.hasNext()) {
             String attributeName = (String) names.next();
             aclAuthorizationAttributeNames.add(attributeName);
         }
         return aclAuthorizationAttributeNames;
-    }
-
-    /**
-     * Creates a FileConfigurationMonitor for the given FileConfiguration.
-     * 
-     * @param fileConfiguration
-     *            The FileConfiguration associated with the file to monitor.
-     * @param monitoringInterval
-     *            The time (is seconds) between to check.
-     * @param listener
-     *            The FileConfigurationListener (this).
-     * @return The new FileConfigurationMonitor object.
-     */
-    static private FileConfigurationMonitor createACLConfigurationMonitor(
-            FileConfiguration fileConfiguration, String monitoringInterval,
-            FileConfigurationListener listener) {
-        // parse ACLFileMonitoringInterval parameter
-        long interval = FileConfigurationMonitor.DEFAULT_MONITORING_INTERVAL;
-        try {
-            // interval is in seconds
-            interval = Integer.parseInt(monitoringInterval);
-            interval *= 1000;
-        } catch (NumberFormatException e) {
-            LOG
-                    .warn("ACLFileMonitoringInterval does not contain a valid interval time (second). Using default: "
-                            + interval);
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("file: " + fileConfiguration.getFileName()
-                    + " interval: " + interval + ")");
-        }
-
-        // create the FileConfigurationMontitor
-        FileConfigurationMonitor fileConfigurationMonitor = new FileConfigurationMonitor(
-                fileConfiguration, interval);
-        fileConfigurationMonitor.addFileConfigurationListener(listener);
-        return fileConfigurationMonitor;
     }
 
     /*
@@ -175,18 +132,20 @@ public class XMLFileAccessControlList implements AccessControlList,
      * 
      * @see org.glite.slcs.acl.AccessControlList#isAuthorized(java.util.Map)
      */
-    public boolean isAuthorized(Map attributes) {
+    public boolean isAuthorized(Map attributesMap) {
         // create list of user's attributes
-        List attributesList = new LinkedList();
-        Iterator attributeNames = attributes.keySet().iterator();
+        List attributes = new LinkedList();
+        Iterator attributeNames = attributesMap.keySet().iterator();
         while (attributeNames.hasNext()) {
             String attributeName = (String) attributeNames.next();
-            String attributeValue = (String) attributes.get(attributeName);
+            String attributeValue = (String) attributesMap.get(attributeName);
             Attribute attribute = new Attribute(attributeName, attributeValue);
-            attributesList.add(attribute);
+            attributes.add(attribute);
         }
-
-        return isAuthorized(attributesList);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("attributes=" + attributes);
+        }
+        return isAuthorized(attributes);
     }
 
     /*
@@ -195,7 +154,6 @@ public class XMLFileAccessControlList implements AccessControlList,
      * @see org.glite.slcs.acl.AccessControlList#isAuthorized(java.util.List)
      */
     public boolean isAuthorized(List userAttributes) {
-        // XXX
         if (LOG.isDebugEnabled()) {
             LOG.debug("userAttributes=" + userAttributes);
         }
@@ -204,7 +162,6 @@ public class XMLFileAccessControlList implements AccessControlList,
         while (!authorized && rules.hasNext()) {
             AccessControlRule rule = (AccessControlRule) rules.next();
             List ruleAttributes = rule.getAttributes();
-            // XXX
             if (LOG.isDebugEnabled()) {
                 LOG.debug("checking rule:" + rule);
             }
@@ -228,8 +185,8 @@ public class XMLFileAccessControlList implements AccessControlList,
      */
     public void shutdown() {
         // shutdown the FileConfigurationMonitor
-        LOG.info("shutdown file monitor");
         if (aclConfigurationMonitor_ != null) {
+            LOG.info("shutdown ACL file monitor");
             aclConfigurationMonitor_.removeFileConfigurationListener(this);
             aclConfigurationMonitor_.shutdown();
             aclConfigurationMonitor_ = null;
@@ -284,8 +241,8 @@ public class XMLFileAccessControlList implements AccessControlList,
             }
         } catch (ConfigurationException e) {
             LOG.error("Failed to create XMLConfiguration: " + filename, e);
-            throw new SLCSConfigurationException(
-                    "Failed to create XMLConfiguration: " + filename, e);
+            throw new SLCSConfigurationException("Failed to create XMLConfiguration: "
+                    + filename, e);
         }
         return config;
     }
