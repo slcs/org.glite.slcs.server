@@ -10,7 +10,7 @@ import org.glite.slcs.SLCSServerComponent;
 
 /**
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface GroupManager extends SLCSServerComponent {
 
@@ -46,5 +46,13 @@ public interface GroupManager extends SLCSServerComponent {
      */
     public boolean inGroup(String groupName, List userAttributes);
 
+    /**
+     * Checks if the user, identified by his {@link Attribute}s list, is an
+     * administrator.
+     * 
+     * @param userAttributes
+     * @return <code>true</code> if the user belong to the administrator
+     *         group.
+     */
     public boolean isAdministrator(List userAttributes);
 }
