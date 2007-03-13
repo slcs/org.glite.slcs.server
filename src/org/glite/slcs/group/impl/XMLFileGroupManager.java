@@ -26,7 +26,7 @@ import org.glite.slcs.group.GroupManager;
  * GroupManager implementation, based on XML file.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class XMLFileGroupManager implements GroupManager,
         FileConfigurationListener {
@@ -167,7 +167,7 @@ public class XMLFileGroupManager implements GroupManager,
                 }
             }
         }
-        //XXX: sort list
+        // sort the group names list
         Collections.sort(groupNames);
         
         return groupNames;
@@ -226,17 +226,17 @@ public class XMLFileGroupManager implements GroupManager,
         String groupsFileMonitoringInterval = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
                 + ".GroupManager.GroupsFileMonitoringInterval");
         LOG.info("GroupsFileMonitoringInterval=" + groupsFileMonitoringInterval);
-
-        // create the XML group configuration file
-        groupsConfiguration_ = createGroupsConfiguration(groupsFile);
-        // create the groups list
-        groups_ = createGroups(groupsConfiguration_);
         // get admin group name
         adminGroupName_= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + "GroupManager.AdministratorGroup", false);
         if (adminGroupName_ == null) {
             adminGroupName_= DEFAULT_ADMIN_GROUPNAME;
         }
         LOG.info("AdministratorGroup=" + adminGroupName_);
+
+        // create the XML group configuration file
+        groupsConfiguration_ = createGroupsConfiguration(groupsFile);
+        // create the groups list
+        groups_ = createGroups(groupsConfiguration_);
 
         // create and start the file monitor
         groupsFileMonitor_ = FileConfigurationMonitor.createFileConfigurationMonitor(groupsConfiguration_, groupsFileMonitoringInterval, this);
