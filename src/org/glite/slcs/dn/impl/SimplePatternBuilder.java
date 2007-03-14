@@ -1,9 +1,9 @@
 /*
- * $Id: SimplePatternBuilder.java,v 1.2 2007/02/13 13:28:16 vtschopp Exp $
- * 
- * Created on Aug 1, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: SimplePatternBuilder.java,v 1.3 2007/03/14 14:09:40 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.dn.impl;
 
@@ -29,7 +29,7 @@ import org.glite.slcs.util.Utils;
  * replaced by the corresponding Shibboleth attribute value.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SimplePatternBuilder implements DNBuilder {
 

@@ -1,9 +1,9 @@
 /*
- * $Id: FunctionalPatternBuilder.java,v 1.2 2007/02/13 13:28:16 vtschopp Exp $
- * 
- * Created on Sep 6, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: FunctionalPatternBuilder.java,v 1.3 2007/03/14 14:09:40 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.dn.impl;
 
@@ -25,16 +25,18 @@ import org.glite.slcs.util.Utils;
 /**
  * FunctionalPatternBuilder TODO: document SLCSServerConfiguration parameters.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
     /** Logging */
-    private static Log LOG= LogFactory.getLog(FunctionalPatternBuilder.class);
+    private static Log LOG = LogFactory.getLog(FunctionalPatternBuilder.class);
 
-    // TODO: Map(attributeName,Map(attributeValue,mappedValue))
-    private Map mappedValues_= null;
+    /**
+     * MappedValues Map(attributeName,Map(attributeValue,mappedValue))
+     */
+    private Map mappedValues_ = null;
 
     /*
      * (non-Javadoc)
@@ -46,37 +48,43 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
         super.init(config);
 
         // create the mapping map
-        mappedValues_= new HashMap();
+        mappedValues_ = new HashMap();
 
         // look for all attributeNames mapped
-        List mappedAttributeNames= config.getList(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".DNBuilder.MappedValues[@attributeName]");
+        List mappedAttributeNames = config.getList(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                + ".DNBuilder.MappedValues[@attributeName]");
         LOG.info("DNBuilder.MappedValues[@attributeName]="
                 + mappedAttributeNames);
-        Iterator attributeNames= mappedAttributeNames.iterator();
-        for (int i= 0; attributeNames.hasNext(); i++) {
-            String attributeName= (String) attributeNames.next();
-            List mappedAttributeValues= config.getList(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".DNBuilder.MappedValues("
-                    + i + ").MappedValue[@attributeValue]");
+        Iterator attributeNames = mappedAttributeNames.iterator();
+        for (int i = 0; attributeNames.hasNext(); i++) {
+            String attributeName = (String) attributeNames.next();
+            List mappedAttributeValues = config.getList(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                    + ".DNBuilder.MappedValues("
+                    + i
+                    + ").MappedValue[@attributeValue]");
             if (LOG.isDebugEnabled()) {
                 LOG.debug("DNBuilder.MappedValues[" + attributeName
                         + "].MappedValue[@attributeValue]="
                         + mappedAttributeValues);
             }
             // create the mapping for these values
-            Map attributeValueMappings= new TreeMap();
+            Map attributeValueMappings = new TreeMap();
             // look for all attributeValues mapped
-            Iterator attributeValues= mappedAttributeValues.iterator();
-            for (int j= 0; attributeValues.hasNext(); j++) {
-                String attributeValue= (String) attributeValues.next();
-                String attributeValueMapping= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".DNBuilder.MappedValues("
-                        + i + ").MappedValue(" + j + ")");
+            Iterator attributeValues = mappedAttributeValues.iterator();
+            for (int j = 0; attributeValues.hasNext(); j++) {
+                String attributeValue = (String) attributeValues.next();
+                String attributeValueMapping = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                        + ".DNBuilder.MappedValues("
+                        + i
+                        + ").MappedValue("
+                        + j
+                        + ")");
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNBuilder.MappedValues[" + attributeName
                             + "].MappedValue[" + attributeValue + "]="
                             + attributeValueMapping);
                 }
-                attributeValueMappings.put(attributeValue,
-                                           attributeValueMapping);
+                attributeValueMappings.put(attributeValue, attributeValueMapping);
             }
             LOG.info("DNBuilder.MappedValues[" + attributeName + "]="
                     + attributeValueMappings);
@@ -101,52 +109,52 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
      */
     public String createDN(Map attributes) throws SLCSException {
         // parse pattern and match with attributes
-        String dn= getPattern();
-        Set attributeNames= attributes.keySet();
-        Iterator names= attributeNames.iterator();
+        String dn = getPattern();
+        Set attributeNames = attributes.keySet();
+        Iterator names = attributeNames.iterator();
         while (names.hasNext()) {
             // get attribute name and value
-            String name= (String) names.next();
-            String value= (String) attributes.get(name);
+            String name = (String) names.next();
+            String value = (String) attributes.get(name);
 
             // variable placeholder
-            String placeholder= "${" + name + "}";
+            String placeholder = "${" + name + "}";
             // first look for functions hashValue(${attributeName}) and
             // mappedValue(${attributeName})
-            String matchHashValueFunction= ".*hashValue\\( *\\$\\{" + name
+            String matchHashValueFunction = ".*hashValue\\( *\\$\\{" + name
                     + "\\} *\\).*";
-            String matchMappedValueFunction= ".*mappedValue\\( *\\$\\{" + name
+            String matchMappedValueFunction = ".*mappedValue\\( *\\$\\{" + name
                     + "\\} *\\).*";
             if (getPattern().matches(matchHashValueFunction)) {
-                String replace= "hashValue\\( *\\$\\{" + name + "\\} *\\)";
+                String replace = "hashValue\\( *\\$\\{" + name + "\\} *\\)";
                 // replace value with hash code
-                value= hashValue(value);
+                value = hashValue(value);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNPattern replace regex: " + replace + " by: "
                             + value);
                 }
-                dn= dn.replaceAll(replace, value);
+                dn = dn.replaceAll(replace, value);
             }
             else if (getPattern().matches(matchMappedValueFunction)) {
-                String replace= "mappedValue\\( *\\$\\{" + name + "\\} *\\)";
+                String replace = "mappedValue\\( *\\$\\{" + name + "\\} *\\)";
                 // replace value with mapped value
-                value= mappedValue(name, value);
+                value = mappedValue(name, value);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNPattern replace regex: " + replace + " by: "
                             + value);
                 }
-                dn= dn.replaceAll(replace, value);
+                dn = dn.replaceAll(replace, value);
             }
             else if (getPattern().indexOf(placeholder) != -1) {
                 // replace accentuated chars
-                value= Utils.filterUnicodeAccentuedString(value);
+                value = Utils.filterUnicodeAccentuedString(value);
                 // replace placeholder with attribute value: REGEX 1.4
-                String replace= "\\$\\{" + name + "\\}";
+                String replace = "\\$\\{" + name + "\\}";
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNPattern replace regex: " + replace + " by: "
                             + value);
                 }
-                dn= dn.replaceAll(replace, value);
+                dn = dn.replaceAll(replace, value);
             }
         }
 
@@ -175,10 +183,10 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
      */
     protected String mappedValue(String attributeName, String attributeValue) {
         if (mappedValues_.containsKey(attributeName)) {
-            Map attributeValueMappings= (Map) mappedValues_.get(attributeName);
+            Map attributeValueMappings = (Map) mappedValues_.get(attributeName);
             if (attributeValueMappings != null
                     && attributeValueMappings.containsKey(attributeValue)) {
-                String attributeValueMapping= (String) attributeValueMappings.get(attributeValue);
+                String attributeValueMapping = (String) attributeValueMappings.get(attributeValue);
                 if (attributeValueMapping != null) {
                     return attributeValueMapping;
                 }
@@ -196,8 +204,8 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
      * @see java.lang.String#hashCode()
      */
     protected String hashValue(String attributeValue) {
-        int hashCode= attributeValue.hashCode();
-        String hashValue= Integer.toHexString(hashCode);
+        int hashCode = attributeValue.hashCode();
+        String hashValue = Integer.toHexString(hashCode);
         return hashValue.toUpperCase();
     }
 
