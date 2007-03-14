@@ -1,14 +1,13 @@
 /*
- * $Id: CertificatePolicy.java,v 1.2 2007/02/13 15:50:39 vtschopp Exp $
- * 
- * Created on Sep 6, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: CertificatePolicy.java,v 1.3 2007/03/14 13:52:14 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.policy;
 
 import java.util.List;
-import java.util.Map;
 
 import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
@@ -20,8 +19,8 @@ import org.glite.slcs.pki.CertificateRequest;
  * CertificatePolicy interface defines the policy applied to the certificate
  * request.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public interface CertificatePolicy extends SLCSServerComponent {
 
@@ -32,7 +31,7 @@ public interface CertificatePolicy extends SLCSServerComponent {
      *            The CertificateRequest object to validate.
      * @param attributes
      *            The user attributes perhap's needed to verfiy user dependent
-     *            extensions (SubjectAltName, ...).
+     *            extension values (SubjectAltName, ...).
      * @return <code>true</code> if and only if the certificate request is
      *         valid.
      * @throws SLCSException
@@ -40,23 +39,11 @@ public interface CertificatePolicy extends SLCSServerComponent {
      * @see org.glite.slcs.pki.CertificateRequest
      */
     public boolean isCertificateRequestValid(CertificateRequest request,
-            Map attributes) throws SLCSException;
+            List attributes) throws SLCSException;
 
     /**
      * Returns a List of {@link CertificateExtension}s required by the policy.
-     * As some extensions could be parametrized, the user's Shibboleth
-     * attributes are needed.
-     * 
-     * @param attributes
-     *            The user's Shibboleth attributes Map.
-     * @return The List of required cerificate extension.
-     * @see org.glite.slcs.pki.CertificateExtension
-     */
-    public List getRequiredCertificateExtensions(Map attributes);
-
-    /**
-     * Returns a List of {@link CertificateExtension}s required by the policy.
-     * As some extensions could be parametrized, the user's Shibboleth
+     * As some extensions could be parametrized, the lsit user's Shibboleth
      * attributes are needed.
      * 
      * @param attributes

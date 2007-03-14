@@ -1,21 +1,22 @@
 /*
- * $Id: SLCSSessions.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
- * 
- * Created on Aug 4, 2006 by tschopp
+ * $Id: SLCSSessions.java,v 1.2 2007/03/14 13:58:10 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.session;
 
-import java.util.Map;
+import java.util.List;
 
+import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSServerComponent;
 
 /**
  * SLCSSessions interface define the operation needed for the SLCS sessions.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.2 $
  */
 public interface SLCSSessions extends SLCSServerComponent {
 
@@ -61,14 +62,14 @@ public interface SLCSSessions extends SLCSServerComponent {
     public boolean isSessionValid(String token, String dn);
 
     /**
-     * Return the attributes Map associated with the session.
+     * Return the {@link Attribute}s list associated with the session.
      * 
      * @param token
      *            The authorization token.
-     * @return The attributes Map or <code>null</code> if the session doesn't
+     * @return The attributes list or <code>null</code> if the session doesn't
      *         exists.
      */
-    public Map getAttributes(String token);
+    public List getAttributes(String token);
 
     /**
      * Sets the attributes associated with an existing session.
@@ -76,8 +77,8 @@ public interface SLCSSessions extends SLCSServerComponent {
      * @param token
      *            The authorization token
      * @param attributes
-     *            The attributes Map to associated with the session.
+     *            The attributes list to associated with the session.
      */
-    public void setAttributes(String token, Map attributes);
+    public void setAttributes(String token, List attributes);
 
 }

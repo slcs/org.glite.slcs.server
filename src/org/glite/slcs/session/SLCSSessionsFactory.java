@@ -1,9 +1,9 @@
 /*
- * $Id: SLCSSessionsFactory.java,v 1.2 2007/02/13 15:55:42 vtschopp Exp $
- * 
- * Created on Aug 4, 2006 by tschopp
+ * $Id: SLCSSessionsFactory.java,v 1.3 2007/03/14 13:58:10 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.session;
 
@@ -16,8 +16,8 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * SLCSSessionsFactory is a factory to get the singleton implementation instance
  * as defined in the SLCSServerConfiguration.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public class SLCSSessionsFactory {
 

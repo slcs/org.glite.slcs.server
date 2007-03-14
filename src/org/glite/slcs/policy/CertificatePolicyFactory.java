@@ -1,9 +1,9 @@
 /*
- * $Id: CertificatePolicyFactory.java,v 1.2 2007/02/13 15:50:39 vtschopp Exp $
- * 
- * Created on Aug 4, 2006 by tschopp
+ * $Id: CertificatePolicyFactory.java,v 1.3 2007/03/14 13:52:14 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.policy;
 
@@ -16,8 +16,8 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * CertificatePolicyFactory is a factory to get the singleton CertificatePolicy
  * implementation based on the SLCSServerConfiguration.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public class CertificatePolicyFactory {
 

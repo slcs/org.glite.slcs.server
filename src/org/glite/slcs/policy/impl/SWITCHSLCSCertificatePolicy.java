@@ -1,9 +1,9 @@
 /*
- * $Id: SWITCHSLCSCertificatePolicy.java,v 1.2 2007/02/13 15:54:19 vtschopp Exp $
- * 
- * Created on Sep 6, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: SWITCHSLCSCertificatePolicy.java,v 1.3 2007/03/14 13:54:08 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.policy.impl;
 
@@ -35,14 +35,13 @@ import org.glite.slcs.policy.CertificatePolicy;
  * <li><code>SubjectAlternativeName: email:EMAIL_ADDRESS</code>
  * </ul>
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public class SWITCHSLCSCertificatePolicy implements CertificatePolicy {
 
     /** Logging */
-    private static Log LOG = LogFactory
-            .getLog(SWITCHSLCSCertificatePolicy.class);
+    private static Log LOG = LogFactory.getLog(SWITCHSLCSCertificatePolicy.class);
 
     /** Map of name-values certificate extension required by the policy */
     private Map requiredCertificateExtensionsMap_ = null;
@@ -55,36 +54,33 @@ public class SWITCHSLCSCertificatePolicy implements CertificatePolicy {
     public void init(SLCSServerConfiguration config) throws SLCSException {
         // read the extensions from the config
         requiredCertificateExtensionsMap_ = new HashMap();
-        List certificateExtensionNames = config
-                .getList(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
-                        + ".CertificatePolicy.CertificateExtensions.CertificateExtension[@id]");
+        List certificateExtensionNames = config.getList(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                + ".CertificatePolicy.CertificateExtensions.CertificateExtension[@id]");
         Iterator extensionNames = certificateExtensionNames.iterator();
         for (int i = 0; extensionNames.hasNext(); i++) {
             String extensionName = (String) extensionNames.next();
-            String extensionValues = config
-                    .getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
-                            + ".CertificatePolicy.CertificateExtensions.CertificateExtension("
-                            + i + ")");
-            requiredCertificateExtensionsMap_.put(extensionName,
-                    extensionValues);
+            String extensionValues = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                    + ".CertificatePolicy.CertificateExtensions.CertificateExtension("
+                    + i + ")");
+            requiredCertificateExtensionsMap_.put(extensionName, extensionValues);
         }
         LOG.info("RequiredCertificateExtensions="
                 + requiredCertificateExtensionsMap_);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Returns a list of required {@link CertificateExtension}s, already evaluated with
+     * the corresponding user attribute values.
      * 
-     * @see org.glite.slcs.policy.CertificatePolicy#getRequiredCertificateExtensions(java.util.Map)
+     * @param attributes Map of user attributes.
+     * @return List of {@link CertificateExtension}s
      */
-    public List getRequiredCertificateExtensions(Map attributes) {
+    private List getRequiredCertificateExtensions(Map attributes) {
         List requiredCertificateExtensions = new ArrayList();
-        Iterator extensionNames = requiredCertificateExtensionsMap_.keySet()
-                .iterator();
+        Iterator extensionNames = requiredCertificateExtensionsMap_.keySet().iterator();
         while (extensionNames.hasNext()) {
             String extensionName = (String) extensionNames.next();
-            String extensionValues = (String) requiredCertificateExtensionsMap_
-                    .get(extensionName);
+            String extensionValues = (String) requiredCertificateExtensionsMap_.get(extensionName);
             if (extensionValues.indexOf("${") != -1) {
                 // values contains Shibboleth attribute variable(s), substitute.
                 Iterator attributeNames = attributes.keySet().iterator();
@@ -93,21 +89,18 @@ public class SWITCHSLCSCertificatePolicy implements CertificatePolicy {
                     String placeholder = "${" + attributeName + "}";
                     if (extensionValues.indexOf(placeholder) != -1) {
                         String replace = "\\$\\{" + attributeName + "\\}";
-                        String attributeValue = (String) attributes
-                                .get(attributeName);
+                        String attributeValue = (String) attributes.get(attributeName);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("CertificateExtension values:"
                                     + extensionValues + " replace regex:"
                                     + replace + " by:" + attributeValue);
                         }
-                        extensionValues = extensionValues.replaceAll(replace,
-                                attributeValue);
+                        extensionValues = extensionValues.replaceAll(replace, attributeValue);
                     }
                 }
             }
             // create the extension with the values expanded.
-            CertificateExtension extension = CertificateExtensionFactory
-                    .createCertificateExtension(extensionName, extensionValues);
+            CertificateExtension extension = CertificateExtensionFactory.createCertificateExtension(extensionName, extensionValues);
             requiredCertificateExtensions.add(extension);
         }
         return requiredCertificateExtensions;
@@ -143,20 +136,17 @@ public class SWITCHSLCSCertificatePolicy implements CertificatePolicy {
      *      java.util.Map)
      */
     public boolean isCertificateRequestValid(CertificateRequest request,
-            Map attributes) throws SLCSException {
+            List attributes) throws SLCSException {
         // check validity of extensions
         List requiredCertificateExtensions = getRequiredCertificateExtensions(attributes);
         List certificateRequestExtensions = request.getCertificateExtensions();
-        if (!certificateRequestExtensions
-                .containsAll(requiredCertificateExtensions)) {
-            LOG
-                    .error("CertificateSigningRequest does not contains all required CertificateExtensions");
+        if (!certificateRequestExtensions.containsAll(requiredCertificateExtensions)) {
+            LOG.error("CertificateSigningRequest does not contain all required CertificateExtensions");
             return false;
 
-        } else if (!requiredCertificateExtensions
-                .containsAll(certificateRequestExtensions)) {
-            LOG
-                    .error("CertificateSigningRequest contains more CertificateExtensions than required");
+        }
+        else if (!requiredCertificateExtensions.containsAll(certificateRequestExtensions)) {
+            LOG.error("CertificateSigningRequest contains more CertificateExtensions than required");
             return false;
         }
 

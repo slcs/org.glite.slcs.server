@@ -1,23 +1,24 @@
 /*
- * $Id: MemorySessions.java,v 1.3 2007/02/13 15:58:07 vtschopp Exp $
- * 
- * Created on Aug 3, 2006 by tschopp
+ * $Id: MemorySessions.java,v 1.4 2007/03/14 13:59:46 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.session.impl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.Attribute;
 import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.session.SLCSSessions;
 import org.glite.slcs.util.Utils;
@@ -26,35 +27,39 @@ import org.glite.slcs.util.Utils;
  * MemorySessions is the memory implementation of the SLCSSessions. Uses a
  * cleaning thread to delete expired sessions.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.4 $
  */
 public class MemorySessions implements SLCSSessions {
 
     /** logging */
-    public static Log LOG= LogFactory.getLog(MemorySessions.class);
+    public static Log LOG = LogFactory.getLog(MemorySessions.class);
+    
+    /** Date format for toString */
+    static private SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
     /** hashtable to store the (token,SessionEntry) pair */
-    private Hashtable sessions_= null;
-    private Object sessionsMutex_= new Object();
+    private Hashtable sessions_ = null;
+
+    private Object sessionsMutex_ = new Object();
 
     /** random bytes generator */
-    private SecureRandom random_= null;
+    private SecureRandom random_ = null;
 
     /** memory sessions cleaning thread */
-    private MemorySessionsCleaner memorySessionsCleaner_= null;
+    private MemorySessionsCleaner memorySessionsCleaner_ = null;
 
     /** default TTL: 300 seconds */
-    private long sessionTTL_= 300;
+    private long sessionTTL_ = 300;
 
     /**
      * Constructor accessed only by factory
      */
     public MemorySessions() {
         super();
-        sessions_= new Hashtable();
+        sessions_ = new Hashtable();
         try {
-            random_= SecureRandom.getInstance("SHA1PRNG");
+            random_ = SecureRandom.getInstance("SHA1PRNG");
         } catch (NoSuchAlgorithmException e) {
             LOG.error(e);
         }
@@ -67,20 +72,24 @@ public class MemorySessions implements SLCSSessions {
      */
     public void init(SLCSServerConfiguration config) {
         // read SessionTTL from config
-        if (config.contains(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".SLCSSessions.SessionTTL")) {
-            int sessionTTL= config.getInt(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".SLCSSessions.SessionTTL");
-            this.sessionTTL_= sessionTTL;
+        if (config.contains(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                + ".SLCSSessions.SessionTTL")) {
+            int sessionTTL = config.getInt(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                    + ".SLCSSessions.SessionTTL");
+            this.sessionTTL_ = sessionTTL;
         }
         LOG.info("SLCSSessions.SessionTTL=" + sessionTTL_);
 
         // read CleaningInterval (in seconds) for the memory cleaner thread
-        int cleaningInterval= 60; // default 1 minute
-        if (config.contains(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".SLCSSessions.CleaningInterval")) {
-            cleaningInterval= config.getInt(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".SLCSSessions.CleaningInterval");
+        int cleaningInterval = 60; // default 1 minute
+        if (config.contains(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                + ".SLCSSessions.CleaningInterval")) {
+            cleaningInterval = config.getInt(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                    + ".SLCSSessions.CleaningInterval");
         }
         LOG.info("SLCSSessions.CleaningInterval=" + cleaningInterval);
         // and create/start the cleaning thread
-        memorySessionsCleaner_= new MemorySessionsCleaner(cleaningInterval);
+        memorySessionsCleaner_ = new MemorySessionsCleaner(cleaningInterval);
         memorySessionsCleaner_.start();
     }
 
@@ -91,10 +100,10 @@ public class MemorySessions implements SLCSSessions {
      */
     public void shutdown() {
         // stop the cleaning thread
-        if (memorySessionsCleaner_ != null ) {
+        if (memorySessionsCleaner_ != null) {
             LOG.info("stop cleaning thread");
             memorySessionsCleaner_.shutdown();
-            memorySessionsCleaner_= null;
+            memorySessionsCleaner_ = null;
         }
     }
 
@@ -105,14 +114,14 @@ public class MemorySessions implements SLCSSessions {
      */
     public String createSession(String dn) {
         // create a random token
-        String token= createRandomToken();
+        String token = createRandomToken();
         // store the pair
-        SessionEntry session= new SessionEntry(token, dn, sessionTTL_);
+        SessionEntry session = new SessionEntry(token, dn, sessionTTL_);
         if (LOG.isDebugEnabled()) {
             LOG.debug("add: " + session);
         }
         synchronized (sessionsMutex_) {
-            sessions_.put(token, session);            
+            sessions_.put(token, session);
         }
         // return the token
         return token;
@@ -128,7 +137,7 @@ public class MemorySessions implements SLCSSessions {
             LOG.debug("remove: " + token);
         }
         synchronized (sessionsMutex_) {
-            sessions_.remove(token);            
+            sessions_.remove(token);
         }
     }
 
@@ -140,32 +149,32 @@ public class MemorySessions implements SLCSSessions {
      * @param attributes
      *            The attributes Map to associated with the session.
      */
-    public void setAttributes(String token, Map attributes) {
+    public void setAttributes(String token, List attributes) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("session: " + token + " attributes: " + attributes);
         }
-        SessionEntry session= getSessionEntry(token);
+        SessionEntry session = getSessionEntry(token);
         if (session != null) {
             session.setAttributes(attributes);
         }
     }
 
     /**
-     * Return the attributes Map associated with the session.
+     * Return the {@link Attribute}s list associated with the session.
      * 
      * @param token
      *            The authorization token.
-     * @return The attributes Map or <code>null</code> if the session doesn't
+     * @return The attributes list or <code>null</code> if the session doesn't
      *         exists.
      */
-    public Map getAttributes(String token) {
+    public List getAttributes(String token) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("session: " + token);
         }
-        Map attributes= null;
-        SessionEntry session= getSessionEntry(token);
+        List attributes = null;
+        SessionEntry session = getSessionEntry(token);
         if (session != null) {
-            attributes= session.getAttributes();
+            attributes = session.getAttributes();
         }
         return attributes;
     }
@@ -180,9 +189,9 @@ public class MemorySessions implements SLCSSessions {
         if (LOG.isDebugEnabled()) {
             LOG.debug("token: " + token + " dn: " + dn);
         }
-        SessionEntry session= getSessionEntry(token);
+        SessionEntry session = getSessionEntry(token);
         if (session != null) {
-            String storedDN= session.getDN();
+            String storedDN = session.getDN();
             if (storedDN.equals(dn)) {
                 return true;
             }
@@ -200,7 +209,7 @@ public class MemorySessions implements SLCSSessions {
         if (LOG.isDebugEnabled()) {
             LOG.debug("token: " + token + " dn: " + dn);
         }
-        SessionEntry session= getSessionEntry(token, dn);
+        SessionEntry session = getSessionEntry(token, dn);
         if (session != null) {
             return session.isValid();
         }
@@ -216,7 +225,7 @@ public class MemorySessions implements SLCSSessions {
      */
     public SessionEntry getSessionEntry(String token) {
         if (sessions_.containsKey(token)) {
-            SessionEntry session= (SessionEntry) sessions_.get(token);
+            SessionEntry session = (SessionEntry) sessions_.get(token);
             return session;
         }
         return null;
@@ -233,9 +242,9 @@ public class MemorySessions implements SLCSSessions {
      * @return The session or <code>null</code> if the session doesn't exists.
      */
     private SessionEntry getSessionEntry(String token, String dn) {
-        SessionEntry session= getSessionEntry(token);
+        SessionEntry session = getSessionEntry(token);
         if (session != null) {
-            String storedDN= session.getDN();
+            String storedDN = session.getDN();
             if (storedDN.equals(dn)) {
                 return session;
             }
@@ -247,10 +256,10 @@ public class MemorySessions implements SLCSSessions {
      * @return A 64 chars random token
      */
     private String createRandomToken() {
-        byte[] randomBytes= null;
-        randomBytes= new byte[32];
+        byte[] randomBytes = null;
+        randomBytes = new byte[32];
         random_.nextBytes(randomBytes);
-        String token= Utils.toHexString(randomBytes);
+        String token = Utils.toHexString(randomBytes);
         return token;
     }
 
@@ -258,21 +267,20 @@ public class MemorySessions implements SLCSSessions {
      * SessionEntry
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.3 $
+     * @version $Revision: 1.4 $
      */
     public class SessionEntry {
-        private String dn_= null;
 
-        private String token_= null;
+        private String dn_ = null;
 
-        private long time_= 0;
+        private String token_ = null;
 
-        private Map attributes_= null;
+        private long time_ = 0;
 
-        private SimpleDateFormat dateFormatter_= new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+        private List attributes_ = null;
 
         /** millis */
-        private long ttl_= 0;
+        private long ttl_ = 0;
 
         /**
          * Constructor.
@@ -285,13 +293,13 @@ public class MemorySessions implements SLCSSessions {
          *            The time to live in seconds
          */
         public SessionEntry(String token, String dn, long ttl) {
-            this.dn_= dn;
-            this.token_= token;
-            this.time_= System.currentTimeMillis();
+            this.dn_ = dn;
+            this.token_ = token;
+            this.time_ = System.currentTimeMillis();
             // convert seconds to millis
-            this.ttl_= ttl * 1000;
+            this.ttl_ = ttl * 1000;
             // attributes store
-            this.attributes_= new HashMap();
+            this.attributes_ = new ArrayList();
         }
 
         public String getToken() {
@@ -302,26 +310,23 @@ public class MemorySessions implements SLCSSessions {
             return this.dn_;
         }
 
-        public void setAttributes(Map attributes) {
-            attributes_= attributes;
+        public void setAttributes(List attributes) {
+            attributes_ = attributes;
         }
 
-        public Map getAttributes() {
+        public List getAttributes() {
             return attributes_;
         }
 
         public void addAttribute(String name, String value) {
-            attributes_.put(name, value);
-        }
-
-        public String getAttribute(String name) {
-            return (String) attributes_.get(name);
+            Attribute attribute = new Attribute(name, value);
+            attributes_.add(attribute);
         }
 
         public boolean isValid() {
-            long currentTime= System.currentTimeMillis();
-            long deathTime= time_ + ttl_;
-            boolean valid= currentTime <= deathTime;
+            long currentTime = System.currentTimeMillis();
+            long deathTime = time_ + ttl_;
+            boolean valid = currentTime <= deathTime;
             return valid;
         }
 
@@ -330,16 +335,16 @@ public class MemorySessions implements SLCSSessions {
         }
 
         public String toString() {
-            StringBuffer sb= new StringBuffer();
+            StringBuffer sb = new StringBuffer();
             sb.append("Session[");
             sb.append(token_).append(':');
             sb.append(dn_).append(':');
             if (!attributes_.isEmpty()) {
                 sb.append(attributes_).append(':');
             }
-            long deathTime= time_ + ttl_;
-            Date date= new Date(deathTime);
-            sb.append(dateFormatter_.format(date));
+            long deathTime = time_ + ttl_;
+            Date date = new Date(deathTime);
+            sb.append(DATE_FORMATTER.format(date));
             sb.append(']');
             return sb.toString();
         }
@@ -349,34 +354,34 @@ public class MemorySessions implements SLCSSessions {
      * MemorySessionsCleaner is a cleaning thread which delete all exipried SLCS
      * sessions.
      * 
-     * TODO: parametrize the sleep interval
-     * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.3 $
+     * @version $Revision: 1.4 $
      */
     private class MemorySessionsCleaner extends Thread {
-        private volatile boolean running_= false;
-        private long cleaningInterval_= 60 * 1000; // one minute
+        private volatile boolean running_ = false;
+
+        private long cleaningInterval_ = 60 * 1000; // one minute
 
         public MemorySessionsCleaner() {
             this(60);
         }
-        
+
         public MemorySessionsCleaner(int seconds) {
             super("MemorySessionsCleaner");
-            this.cleaningInterval_= seconds * 1000;
-            this.running_= true;
+            this.cleaningInterval_ = seconds * 1000;
+            this.running_ = true;
             setDaemon(true);
-            
+
         }
 
         public void shutdown() {
-            this.running_= false;
+            this.running_ = false;
             interrupt();
         }
 
         public void run() {
-            LOG.info("MemorySessionsCleaner started");
+            LOG.info("MemorySessionsCleaner (" + cleaningInterval_
+                    + " ms) started");
             while (running_) {
                 synchronized (sessionsMutex_) {
                     if (!sessions_.isEmpty()) {
@@ -384,9 +389,9 @@ public class MemorySessions implements SLCSSessions {
                             LOG.debug("MemorySessionsCleaner cleaning sessions: "
                                     + sessions_.size());
                         }
-                        Enumeration sessionEntries= sessions_.elements();
+                        Enumeration sessionEntries = sessions_.elements();
                         while (sessionEntries.hasMoreElements()) {
-                            SessionEntry session= (SessionEntry) sessionEntries.nextElement();
+                            SessionEntry session = (SessionEntry) sessionEntries.nextElement();
                             if (session.isExpired()) {
                                 LOG.info("Removing expired session: " + session);
                                 sessions_.remove(session.getToken());
@@ -399,7 +404,7 @@ public class MemorySessions implements SLCSSessions {
                     sleep(this.cleaningInterval_);
                 } catch (InterruptedException e) {
                     // LOG.debug("MemorySessionsCleaner interrupted");
-                    running_= false;
+                    running_ = false;
                 }
             }
             LOG.info("MemorySessionsCleaner terminated.");
