@@ -1,20 +1,19 @@
 /*
- * $Id: AbstractSLCSServlet.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
- * 
- * Created on Sep 17, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: AbstractServlet.java,v 1.1 2007/03/14 14:04:01 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletConfig;
@@ -23,6 +22,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.SLCSServerComponent;
 import org.glite.slcs.audit.Auditor;
@@ -32,32 +34,28 @@ import org.glite.slcs.session.SLCSSessions;
 import org.glite.slcs.session.SLCSSessionsFactory;
 import org.glite.slcs.util.Utils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
- * 
- * AbstractSLCSServlet
+ * AbstractServlet is the base class for the SLCS servlets.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
  * @version $Revision: 1.1 $
  */
-public abstract class AbstractSLCSServlet extends HttpServlet {
+public abstract class AbstractServlet extends HttpServlet {
 
     /** Logging */
-    private static Log LOG= LogFactory.getLog(AbstractSLCSServlet.class);
+    private static Log LOG = LogFactory.getLog(AbstractServlet.class);
 
     /** SLCS Server configuration */
-    private SLCSServerConfiguration configuration_= null;
+    private SLCSServerConfiguration configuration_ = null;
 
     /** SCLS Sessions */
-    private SLCSSessions sessions_= null;
+    private SLCSSessions sessions_ = null;
 
     /** Auditor */
-    private Auditor auditor_= null;
+    private Auditor auditor_ = null;
 
-    /** List of registered SLCSComponents */
-    private Vector components_= new Vector();
+    /** List of registered {@link SLCSServerComponent}s */
+    private Vector components_ = new Vector();
 
     /*
      * (non-Javadoc)
@@ -70,14 +68,14 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
             // initialize the SLCS config
             LOG.info("initialize and instantiate SLCSServerConfiguration...");
             SLCSServerConfiguration.initialize(this.getServletContext());
-            configuration_= SLCSServerConfiguration.getInstance();
+            configuration_ = SLCSServerConfiguration.getInstance();
 
             LOG.info("instantiate SCLSSessions...");
-            sessions_= SLCSSessionsFactory.getInstance();
+            sessions_ = SLCSSessionsFactory.getInstance();
             registerSLCSServerComponent(sessions_);
 
             LOG.info("instantiate Auditor...");
-            auditor_= AuditorFactory.getInstance();
+            auditor_ = AuditorFactory.getInstance();
             registerSLCSServerComponent(auditor_);
 
         } catch (SLCSException e) {
@@ -95,9 +93,9 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
     public void destroy() {
         super.destroy();
         LOG.info("shutdown all registered SLCS components...");
-        Enumeration serverComponents= components_.elements();
+        Enumeration serverComponents = components_.elements();
         while (serverComponents.hasMoreElements()) {
-            SLCSServerComponent component= (SLCSServerComponent) serverComponents.nextElement();
+            SLCSServerComponent component = (SLCSServerComponent) serverComponents.nextElement();
             component.shutdown();
         }
     }
@@ -158,8 +156,8 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
      *            The servlet path relative to the context root.
      * @return The URL of the servlet.
      */
-    protected String getServletUrl(HttpServletRequest req, String servletPath) {
-        StringBuffer sb= new StringBuffer();
+    protected String getContextUrl(HttpServletRequest req, String servletPath) {
+        StringBuffer sb = new StringBuffer();
         sb.append(req.getScheme()).append("://");
         sb.append(req.getServerName()).append(':').append(req.getServerPort());
         sb.append(req.getContextPath());
@@ -168,72 +166,81 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
     }
 
     /**
-     * Return the Map of required user's Shibboleth attributes name and value.
-     * The required attributes are defined in a List of required attribute
-     * names.
+     * Return the list of required user's {@link Attribute}s. The required
+     * attributes are defined in a list of required attribute names.
      * 
      * @param req
      *            The HttpServletRequest object
      * @param requiredShibbolethAttributeNames
      *            List of required Shibboleth attribute names.
-     * @return The user's Shibboleth attributes name-value map
+     * @return The list of user's attributes
      */
-    protected Map getShibbolethAttributes(HttpServletRequest req,
+    protected List getShibbolethAttributes(HttpServletRequest req,
             List requiredShibbolethAttributeNames) {
-        Map requiredAttributes= new HashMap();
-        Enumeration headers= req.getHeaderNames();
+        List userAttributes = new ArrayList();
+        Enumeration headers = req.getHeaderNames();
         while (headers.hasMoreElements()) {
-            String header= (String) headers.nextElement();
+            String header = (String) headers.nextElement();
             if (requiredShibbolethAttributeNames.contains(header)) {
-                String shibUTF8= req.getHeader(header);
+                String shibUTF8 = req.getHeader(header);
                 if (shibUTF8 != null && !shibUTF8.equals("")) {
                     // convert Shibboleth UTF8 to unicode
-                    String value= Utils.convertShibbolethUTF8ToUnicode(shibUTF8);
-                    requiredAttributes.put(header, value);
-                    LOG.debug("Shibboleth attribute: " + header + "=" + value);
+                    String value = Utils.convertShibbolethUTF8ToUnicode(shibUTF8);
+                    // multi-value attributes
+                    String[] attrValues = value.split(";");
+                    for (int i = 0; i < attrValues.length; i++) {
+                        String attrName = header;
+                        String attrValue = attrValues[i];
+                        attrValue = attrValue.trim();
+                        Attribute attribute = new Attribute(attrName, attrValue);
+                        // String displayName =
+                        // helper.getDisplayName(attribute);
+                        // attribute.setDisplayName(displayName);
+                        userAttributes.add(attribute);
+                    }
                 }
 
             }
         }
-        return requiredAttributes;
-    }
-
-    /**
-     * Returns a Map of all user's Shibboleth attribute name and value. A
-     * Shibboleth attribute name is prefixed with 'Shib-'.
-     * 
-     * @param req
-     *            The HttpServletRequest object.
-     * @return The Map of all Shibboleth attributes.
-     */
-    protected Map getShibbolethAttributes(HttpServletRequest req) {
-        Map allAttributes= new HashMap();
-        Enumeration headers= req.getHeaderNames();
-        while (headers.hasMoreElements()) {
-            String header= (String) headers.nextElement();
-            if (header.startsWith("Shib-")) {
-                String shibValue= req.getHeader(header);
-                if (shibValue != null && !shibValue.equals("")) {
-                    // convert Shibboleth UTF8 to unicode
-                    String value= Utils.convertShibbolethUTF8ToUnicode(shibValue);
-                    LOG.info("Shibboleth attribute: " + header + "=" + value);
-                    allAttributes.put(header, value);
-                }
-
-            }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("attributes: " + userAttributes);
         }
-        return allAttributes;
+        return userAttributes;
     }
 
     /**
-     * Returns the User-Agent header.
+     * Returns the User-Agent header as Attribute.
      * 
      * @param req
      *            The HttpServletRequest object
-     * @return The User-Agent string or <code>null</code> if not set.
+     * @return The User-Agent attribute or <code>null</code> if not set.
      */
-    protected String getUserAgent(HttpServletRequest req) {
-        return req.getHeader("User-Agent");
+    protected Attribute getUserAgentAttribute(HttpServletRequest req) {
+        String userAgent = req.getHeader("User-Agent");
+        if (userAgent != null) {
+            return new Attribute("UserAgent", userAgent);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the Remote-Address header as Attribute
+     * 
+     * @param req
+     *            The {@link HttpServletRequest} object
+     * @return The Remote-Address attribute or <code>null</code> if not set.
+     */
+    protected Attribute getRemoteAddressAttribute(HttpServletRequest req) {
+        String remoteAddress = req.getRemoteAddr();
+        if (remoteAddress != null) {
+            return new Attribute("RemoteAddress", remoteAddress);
+        }
+        else {
+            return null;
+        }
+
     }
 
     /**
@@ -241,8 +248,8 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
      * 
      * @param res
      *            The HttpServletResponse object.
-     * @param name
-     *            The name of the response.
+     * @param type
+     *            The type of the response.
      * @param message
      *            The error message.
      * @param cause
@@ -250,13 +257,14 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
      * @throws IOException
      *             If an error occurs while sending the error.
      */
-    protected void sendXMLErrorResponse(HttpServletResponse res, String name,
-            String message, Throwable cause) throws IOException {
-        StringWriter sw= new StringWriter();
-        PrintWriter pw= new PrintWriter(sw);
+    protected void sendXMLErrorResponse(HttpServletRequest req,
+            HttpServletResponse res, String type, String message,
+            Throwable cause) throws IOException {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
         pw.println(getXMLDeclaration());
         pw.print("<");
-        pw.print(name);
+        pw.print(type);
         pw.println(">");
         pw.println("<Status>Error</Status>");
         pw.print("<Error>");
@@ -268,14 +276,14 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
             pw.print("</StackTrace>");
         }
         pw.print("</");
-        pw.print(name);
+        pw.print(type);
         pw.println(">");
-        
-        LOG.info("sending " + name + ":\n" + sw.getBuffer().toString());
+
+        LOG.info("sending " + type + ":\n" + sw.getBuffer().toString());
 
         // send response
         res.setContentType("text/xml");
-        PrintWriter out= res.getWriter();
+        PrintWriter out = res.getWriter();
         out.println(sw.getBuffer().toString());
         out.close();
     }
@@ -284,8 +292,7 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
      * @return List of required Shibboleth attribute names.
      */
     protected List getRequiredShibbolethAttributeNames() {
-        List requiredAttributeNames= configuration_.getList("ShibbolethConfiguration.RequiredAttributeName");
-        return requiredAttributeNames;
+        return configuration_.getRequiredAttributeNames();
     }
 
     /**
@@ -293,18 +300,27 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
      * 
      * @param requiredShibbolethAttributeNames
      *            List of required Shibboleth attribute name.
-     * @param shibbolethAttributes
-     *            Map of user's Shibboleth attributes.
+     * @param userAttributes
+     *            List of user's attributes.
      * @throws SLCSException
      *             If a required Shibboleth attribute is missing
      */
     protected void checkRequiredShibbolethAttributes(
-            List requiredShibbolethAttributeNames, Map shibbolethAttributes)
+            List requiredShibbolethAttributeNames, List userAttributes)
             throws SLCSException {
-        Iterator requiredAttributeNames= requiredShibbolethAttributeNames.iterator();
+        // the list of user attribute names
+        List attributeNames= new ArrayList();
+        Iterator attributes= userAttributes.iterator();
+        while (attributes.hasNext()) {
+            Attribute attribute = (Attribute) attributes.next();
+            String attributeName= attribute.getName();
+            attributeNames.add(attributeName);
+        }
+        // compare with the required attribute names
+        Iterator requiredAttributeNames = requiredShibbolethAttributeNames.iterator();
         while (requiredAttributeNames.hasNext()) {
-            String requiredAttributeName= (String) requiredAttributeNames.next();
-            if (!shibbolethAttributes.containsKey(requiredAttributeName)) {
+            String requiredAttributeName = (String) requiredAttributeNames.next();
+            if (!attributeNames.contains(requiredAttributeName)) {
                 LOG.error("Required Shibboleth attribute "
                         + requiredAttributeName + " missing");
                 throw new SLCSException("Required Shibboleth attribute "
@@ -338,7 +354,7 @@ public abstract class AbstractSLCSServlet extends HttpServlet {
      * Returns the XML declaration header:
      * 
      * <pre>
-     * &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+     *      &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
      * </pre>
      * 
      * @return The XML declation header.

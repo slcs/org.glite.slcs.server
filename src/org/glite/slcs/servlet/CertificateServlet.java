@@ -1,3 +1,10 @@
+/*
+ * $Id: CertificateServlet.java,v 1.2 2007/03/14 14:04:01 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
+ */
 package org.glite.slcs.servlet;
 
 import java.io.IOException;
@@ -6,13 +13,15 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
-import java.util.Map;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.audit.event.AuditEvent;
 import org.glite.slcs.audit.event.CertificateEvent;
@@ -27,30 +36,25 @@ import org.glite.slcs.policy.CertificatePolicy;
 import org.glite.slcs.policy.CertificatePolicyFactory;
 import org.glite.slcs.session.SLCSSessions;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Servlet implementation class for Servlet: CertificateServlet
  * 
- * @web.servlet name="CertificateServlet" display-name="CertificateServlet"
- * 
- * @web.servlet-mapping url-pattern="/certificate"
- * 
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.2 $
  */
-public class CertificateServlet extends AbstractSLCSServlet {
+public class CertificateServlet extends AbstractServlet {
 
     /** serial version */
-    private static final long serialVersionUID= -8237981418682802857L;
+    private static final long serialVersionUID = -8237981418682802857L;
 
     /** Logging */
-    private static Log LOG= LogFactory.getLog(CertificateServlet.class);
+    private static Log LOG = LogFactory.getLog(CertificateServlet.class);
 
     /** Online CA client */
-    private CAClient onlineCA_= null;
+    private CAClient onlineCA_ = null;
 
     /** Certificate policy */
-    private CertificatePolicy policy_= null;
+    private CertificatePolicy policy_ = null;
 
     /**
      * Default constructor.
@@ -62,18 +66,18 @@ public class CertificateServlet extends AbstractSLCSServlet {
     /*
      * (non-Javadoc)
      * 
-     * @see org.glite.slcs.servlet.AbstractSLCSServlet#init(javax.servlet.ServletConfig)
+     * @see org.glite.slcs.servlet.AbstractServlet#init(javax.servlet.ServletConfig)
      */
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
         try {
             // get the online CA client
             LOG.info("instantiate CAClient...");
-            onlineCA_= CAClientFactory.getInstance();
+            onlineCA_ = CAClientFactory.getInstance();
             registerSLCSServerComponent(onlineCA_);
 
             LOG.info("instantiate CertificatePolicy...");
-            policy_= CertificatePolicyFactory.getInstance();
+            policy_ = CertificatePolicyFactory.getInstance();
             registerSLCSServerComponent(policy_);
 
         } catch (SLCSException e) {
@@ -97,62 +101,55 @@ public class CertificateServlet extends AbstractSLCSServlet {
         try {
 
             // get parameters
-            String authorizationToken= getSLCSCertificateRequestParameter(request,
-                                                                          "AuthorizationToken");
-            String pemCertificateRequest= getSLCSCertificateRequestParameter(request,
-                                                                             "CertificateSigningRequest");
+            String authorizationToken = getSLCSCertificateRequestParameter(request, "AuthorizationToken");
+            String pemCertificateRequest = getSLCSCertificateRequestParameter(request, "CertificateSigningRequest");
             LOG.info("AuthorizationToken=" + authorizationToken);
             LOG.info("CertificateSigningRequest=\n" + pemCertificateRequest);
 
             // decode PEM certificate signing request
-            CertificateRequest certificateRequest= null;
+            CertificateRequest certificateRequest = null;
             try {
-                StringReader reader= new StringReader(pemCertificateRequest);
-                certificateRequest= CertificateRequest.readPEM(reader);
+                StringReader reader = new StringReader(pemCertificateRequest);
+                certificateRequest = CertificateRequest.readPEM(reader);
             } catch (GeneralSecurityException e) {
-                LOG.error("Failed to rebuild the PEM CertificateSigningRequest",
-                          e);
-                throw new SLCSException("Failed to decode PEM CertificateSigningRequest",
-                                        e);
+                LOG.error("Failed to rebuild the PEM CertificateSigningRequest", e);
+                throw new SLCSException("Failed to decode PEM CertificateSigningRequest", e);
             }
 
             // check SLCS sessions
-            Principal principal= certificateRequest.getPrincipal();
-            String certificateSubject= principal.getName();
+            Principal principal = certificateRequest.getPrincipal();
+            String certificateSubject = principal.getName();
             LOG.debug("Subject=" + certificateSubject);
 
-            AuditEvent newRequest= new CertificateEvent("New certificate request: "
+            AuditEvent newRequest = new CertificateEvent("New certificate request: "
                     + certificateSubject);
             getAuditor().logEvent(newRequest);
 
             LOG.debug("check session...");
-            SLCSSessions sessions= getSLCSSessions();
+            SLCSSessions sessions = getSLCSSessions();
             if (sessions.isSessionValid(authorizationToken, certificateSubject)) {
                 LOG.debug("SLCSSession(" + authorizationToken + ","
                         + certificateSubject + ") is valid");
 
                 // check certificate against policy
                 LOG.debug("check certificate request against policy...");
-                Map userAttributes= sessions.getAttributes(authorizationToken);
-                if (policy_.isCertificateRequestValid(certificateRequest,
-                                                      userAttributes)) {
+                List userAttributes = sessions.getAttributes(authorizationToken);
+                if (policy_.isCertificateRequestValid(certificateRequest, userAttributes)) {
 
                     // request certificate
                     LOG.debug("get CA connection");
-                    CAConnection connection= onlineCA_.getConnection();
+                    CAConnection connection = onlineCA_.getConnection();
                     LOG.debug("create CA request");
-                    CARequest csrRequest= connection.createRequest(certificateRequest);
-                    LOG.debug("send CA request");
+                    CARequest csrRequest = connection.createRequest(certificateRequest);
+                    LOG.info("send certificate request to CA server");
                     connection.sendRequest(csrRequest);
-                    LOG.debug("get CA response");
-                    CAResponse csrResponse= connection.getResponse();
+                    LOG.info("read CA server response");
+                    CAResponse csrResponse = connection.getResponse();
                     LOG.debug("get certificate");
-                    Certificate cert= csrResponse.getCertificate(principal);
+                    Certificate cert = csrResponse.getCertificate(principal);
 
                     // send response
-                    sendXMLCerfificateResponse(response,
-                                               certificateSubject,
-                                               cert);
+                    sendXMLCerfificateResponse(request, response, certificateSubject, cert);
                 }
                 else {
                     throw new SLCSException("CertificateSigningRequest is not conform to CertificatePolicy");
@@ -165,10 +162,7 @@ public class CertificateServlet extends AbstractSLCSServlet {
 
         } catch (SLCSException e) {
             LOG.error(e);
-            sendXMLErrorResponse(response,
-                                 "SLCSCertificateResponse",
-                                 e.getMessage(),
-                                 e);
+            sendXMLErrorResponse(request, response, "SLCSCertificateResponse", e.getMessage(), e);
         }
 
     }
@@ -187,7 +181,7 @@ public class CertificateServlet extends AbstractSLCSServlet {
      */
     protected String getSLCSCertificateRequestParameter(
             HttpServletRequest request, String name) throws SLCSException {
-        String value= request.getParameter(name);
+        String value = request.getParameter(name);
         if (value == null || value.equals("")) {
             LOG.error("Request parameter " + name + " is missing or empty.");
             throw new SLCSException("Request parameter " + name
@@ -199,6 +193,8 @@ public class CertificateServlet extends AbstractSLCSServlet {
     /**
      * Sends a SLCSCertificateResponse back to the client.
      * 
+     * @param req
+     *            The HttpServerRequest object
      * @param res
      *            The HttpServletResponse object.
      * @param subject
@@ -208,16 +204,17 @@ public class CertificateServlet extends AbstractSLCSServlet {
      * @throws IOException
      *             If an error occurs while sending the response.
      */
-    protected void sendXMLCerfificateResponse(HttpServletResponse res,
-            String dn, Certificate certificate) throws IOException {
+    protected void sendXMLCerfificateResponse(HttpServletRequest req,
+            HttpServletResponse res, String dn, Certificate certificate)
+            throws IOException {
         // build response
-        StringWriter sw= new StringWriter();
-        PrintWriter pw= new PrintWriter(sw);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
         pw.println(getXMLDeclaration());
         pw.println("<SLCSCertificateResponse>");
         pw.println("<Status>Success</Status>");
         pw.println("<Subject>" + dn + "</Subject>");
-        String pemCertificate= certificate.getPEM();
+        String pemCertificate = certificate.getPEM();
         pw.println("<Certificate format=\"PEM\">" + pemCertificate
                 + "</Certificate>");
         pw.println("</SLCSCertificateResponse>");
@@ -226,7 +223,7 @@ public class CertificateServlet extends AbstractSLCSServlet {
 
         // write response back to client
         res.setContentType("text/xml");
-        PrintWriter out= res.getWriter();
+        PrintWriter out = res.getWriter();
         out.println(sw.getBuffer().toString());
         out.close();
 
