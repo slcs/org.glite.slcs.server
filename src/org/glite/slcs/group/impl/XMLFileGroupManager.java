@@ -1,3 +1,10 @@
+/*
+ * $Id: XMLFileGroupManager.java,v 1.4 2007/03/14 13:56:25 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
+ */
 package org.glite.slcs.group.impl;
 
 import java.io.File;
@@ -21,12 +28,15 @@ import org.glite.slcs.config.FileConfigurationMonitor;
 import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.group.Group;
 import org.glite.slcs.group.GroupManager;
+import org.glite.slcs.group.GroupMember;
 
 /**
  * GroupManager implementation, based on XML file.
  * 
+ * TODO: describe XML format
+ * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class XMLFileGroupManager implements GroupManager,
         FileConfigurationListener {
@@ -35,17 +45,17 @@ public class XMLFileGroupManager implements GroupManager,
     static private Log LOG = LogFactory.getLog(XMLFileGroupManager.class);
 
     /** Name of the special administrator group */
-    static private String DEFAULT_ADMIN_GROUPNAME= "admin"; 
+    static private String DEFAULT_ADMIN_GROUPNAME = "admin";
 
     /** XML file */
     private XMLConfiguration groupsConfiguration_ = null;
 
     /** Name of the sepcial admin group */
-    private String adminGroupName_= DEFAULT_ADMIN_GROUPNAME;
-    
+    private String adminGroupName_ = DEFAULT_ADMIN_GROUPNAME;
+
     /** List of {@link Group}s */
     private List groups_ = null;
-    
+
     /** File change monitor */
     private FileConfigurationMonitor groupsFileMonitor_ = null;
 
@@ -87,40 +97,82 @@ public class XMLFileGroupManager implements GroupManager,
         List groups = new LinkedList();
         // list all groups
         int i = 0;
-        while (true) {
+        boolean moreGroup = true;
+        while (moreGroup) {
             String groupPrefix = "Group(" + i + ")";
             i++;
             // get the name of the group
             String groupName = config.getString(groupPrefix + "[@name]");
-            if (groupName == null) {
+            if (groupName != null) {
+                // create an empty named group
+                Group group = new Group(groupName);
+                // list all members of this group
+                int j = 0;
+                boolean moreMember = true;
+                while (moreMember) {
+                    String memberPrefix = groupPrefix + ".GroupMember(" + j
+                            + ")";
+                    j++;
+                    // get the attributes name and value for the group member
+                    List attributeNames = config.getList(memberPrefix
+                            + ".Attribute[@name]");
+                    if (!attributeNames.isEmpty()) {
+                        // create an empty member
+                        GroupMember member = new GroupMember();
+                        // list and add the attributes
+                        List attributeValues = config.getList(memberPrefix
+                                + ".Attribute");
+                        for (int k = 0; k < attributeNames.size(); k++) {
+                            String name = (String) attributeNames.get(k);
+                            String value = (String) attributeValues.get(k);
+                            Attribute attribute = new Attribute(name, value);
+                            // add attribute to the group membership
+                            member.addAttribute(attribute);
+                        }
+                        // add the member to the group
+                        group.addGroupMember(member);
+                    }
+                    else {
+                        moreMember = false;
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(memberPrefix + ": no more group members");
+                        }
+                    }
+                } // while all members
+
+                // get all constrained attributes for the group ACL rules
+                String constraintPrefix = groupPrefix
+                        + ".AccessControlRuleConstraint";
+                // get the attributes name and value for the group ACL rule
+                // constraint
+                List attributeNames = config.getList(constraintPrefix
+                        + ".Attribute[@name]");
+                if (!attributeNames.isEmpty()) {
+                    // list and add the ACL rule attributes constraints
+                    List attributeValues = config.getList(constraintPrefix
+                            + ".Attribute");
+                    for (int k = 0; k < attributeNames.size(); k++) {
+                        String name = (String) attributeNames.get(k);
+                        String value = (String) attributeValues.get(k);
+                        Attribute attribute = new Attribute(name, value);
+                        // add attribute to the group ACL rule constraint list
+                        group.addRuleConstraint(attribute);
+                    }
+                }
+
+                // add the group to the list
+                // TODO: check for group without members
+                groups.add(group);
+
+            }
+            else {
+                moreGroup = false;
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(groupPrefix + ": no more groups");
                 }
-                // no more group to read, exit while loop
-                break;
             }
-            // create an empty named group
-            Group group = new Group(groupName);
-            // get the attributes name-value for the group
-            List attributeNames = config.getList(groupPrefix
-                    + ".Attribute[@name]");
-            if (attributeNames.isEmpty()) {
-                LOG.error(groupPrefix + ": no attribute in rule, skipping...");
-                // error, skipping
-                continue;
-            }
-            List attributeValues = config.getList(groupPrefix + ".Attribute");
-            for (int j = 0; j < attributeNames.size(); j++) {
-                String name = (String) attributeNames.get(j);
-                String value = (String) attributeValues.get(j);
-                Attribute attribute = new Attribute(name, value);
-                // add attribute to the rule
-                group.addAttribute(attribute);
-            }
-            // add the group to the list
-            groups.add(group);
 
-        } // while
+        } // while all groups
 
         return groups;
     }
@@ -142,7 +194,7 @@ public class XMLFileGroupManager implements GroupManager,
         Iterator iter = groups_.iterator();
         while (iter.hasNext()) {
             Group group = (Group) iter.next();
-            if (group.matches(userAttributes)) {
+            if (group.isMember(userAttributes)) {
                 userGroups.add(group);
             }
         }
@@ -159,17 +211,14 @@ public class XMLFileGroupManager implements GroupManager,
         Iterator iter = groups_.iterator();
         while (iter.hasNext()) {
             Group group = (Group) iter.next();
-            if (group.matches(userAttributes)) {
+            if (group.isMember(userAttributes)) {
                 String groupName = group.getName();
-                // only list each name once
-                if (!groupNames.contains(groupName)) {
-                    groupNames.add(groupName);
-                }
+                groupNames.add(groupName);
             }
         }
         // sort the group names list
         Collections.sort(groupNames);
-        
+
         return groupNames;
     }
 
@@ -185,19 +234,38 @@ public class XMLFileGroupManager implements GroupManager,
             Group group = (Group) iter.next();
             String name = group.getName();
             if (name.equals(groupName)) {
-                if (group.matches(userAttributes)) {
+                if (group.isMember(userAttributes)) {
                     return true;
                 }
             }
         }
         return false;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.glite.slcs.group.GroupManager#isAdministrator(java.util.List)
      */
     public boolean isAdministrator(List userAttributes) {
         return inGroup(adminGroupName_, userAttributes);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.group.GroupManager#getGroup(java.lang.String)
+     */
+    public Group getGroup(String name) {
+        Iterator iter = groups_.iterator();
+        while (iter.hasNext()) {
+            Group group = (Group) iter.next();
+            String groupName = group.getName();
+            if (groupName.equals(name)) {
+                return group;
+            }
+        }
+        return null;
     }
 
     /*
@@ -227,9 +295,10 @@ public class XMLFileGroupManager implements GroupManager,
                 + ".GroupManager.GroupsFileMonitoringInterval");
         LOG.info("GroupsFileMonitoringInterval=" + groupsFileMonitoringInterval);
         // get admin group name
-        adminGroupName_= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + "GroupManager.AdministratorGroup", false);
+        adminGroupName_ = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                + "GroupManager.AdministratorGroup", false);
         if (adminGroupName_ == null) {
-            adminGroupName_= DEFAULT_ADMIN_GROUPNAME;
+            adminGroupName_ = DEFAULT_ADMIN_GROUPNAME;
         }
         LOG.info("AdministratorGroup=" + adminGroupName_);
 
@@ -243,6 +312,9 @@ public class XMLFileGroupManager implements GroupManager,
         groupsFileMonitor_.start();
     }
 
+    /**
+     * Reloads the {@link XMLConfiguration} file
+     */
     private synchronized void reloadGroupsConfiguration() {
         LOG.info("reload file: " + groupsConfiguration_.getFileName());
         // reload the FileConfiguration
