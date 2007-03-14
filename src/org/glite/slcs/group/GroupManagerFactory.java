@@ -1,9 +1,9 @@
 /*
- * $Id: GroupManagerFactory.java,v 1.1 2007/02/26 16:56:32 vtschopp Exp $
- * 
- * Created on Aug 30, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: GroupManagerFactory.java,v 1.2 2007/03/14 13:49:05 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.group;
 
@@ -16,8 +16,8 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * GroupManagerFactory is a factory to get the singleton instance implementing
  * the GroupManager.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.2 $
  */
 public class GroupManagerFactory {
 

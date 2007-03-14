@@ -1,5 +1,9 @@
 /*
- * 
+ * $Id: GroupManager.java,v 1.3 2007/03/14 13:49:05 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.group;
 
@@ -9,10 +13,19 @@ import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSServerComponent;
 
 /**
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public interface GroupManager extends SLCSServerComponent {
+
+    /**
+     * Returns the {@link Group} by its name.
+     * 
+     * @param name
+     *            The group name.
+     * @return The group or <code>null</code> if not found.
+     */
+    public Group getGroup(String name);
 
     /**
      * Returns the list of {@link Group} where the user, identified by his
