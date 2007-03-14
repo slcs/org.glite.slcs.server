@@ -1,19 +1,22 @@
 /*
- * $Id: SLCSServerComponent.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
+ * $Id: SLCSServerComponent.java,v 1.2 2007/03/14 13:26:34 vtschopp Exp $
  * 
  * Created on Aug 6, 2006 by tschopp
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html
  */
 package org.glite.slcs;
 
 import org.glite.slcs.config.SLCSServerConfiguration;
 
 /**
- * SLCSServerComponent
+ * SLCSServerComponent is the interface that all SLCS server components must
+ * implement.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.2 $
  */
 public interface SLCSServerComponent {
 
@@ -28,7 +31,7 @@ public interface SLCSServerComponent {
     public void init(SLCSServerConfiguration config) throws SLCSException;
 
     /**
-     * Shutdowns the allocated resources.
+     * Shutdowns the resources allocated in init.
      */
     public void shutdown();
 }

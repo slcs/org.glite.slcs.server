@@ -1,17 +1,17 @@
 /*
- * $Id: Attribute.java,v 1.2 2007/02/13 13:36:42 vtschopp Exp $
+ * $Id: Attribute.java,v 1.3 2007/03/14 13:26:34 vtschopp Exp $
  * 
- * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
- *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html
  */
 package org.glite.slcs;
 
 /**
  * A simple Attribute is a name-value tuple.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public class Attribute extends AttributeDefinition {
 

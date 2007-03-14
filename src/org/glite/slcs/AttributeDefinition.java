@@ -1,10 +1,17 @@
+/*
+ * $Id: AttributeDefinition.java,v 1.3 2007/03/14 13:26:34 vtschopp Exp $
+ * 
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html
+ */
 package org.glite.slcs;
 
 /**
  * Defines an Attribute with a name, a displayName and a required flag.
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public class AttributeDefinition {
 
