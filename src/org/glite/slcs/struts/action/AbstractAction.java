@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractAction.java,v 1.1 2007/03/16 08:58:33 vtschopp Exp $
+ * $Id: AbstractAction.java,v 1.2 2007/03/16 10:03:19 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -33,7 +33,7 @@ public abstract class AbstractAction extends Action {
 
     static private String SAVE_RULE_ACTION_KEY = "org.glite.slcs.struts.action.SAVE_RULE";
 
-    static private String ADD_RULE_ACTION_KEY = "org.glite.slcs.struts.action.ADD_RULE";
+    static private String CREATE_RULE_ACTION_KEY = "org.glite.slcs.struts.action.CREATE_RULE";
 
     static private String EDIT_RULE_ACTION_KEY = "org.glite.slcs.struts.action.EDIT_RULE";
 
@@ -207,8 +207,8 @@ public abstract class AbstractAction extends Action {
         return getIndexedParameterIndex(request, SAVE_RULE_ACTION_KEY);
     }
 
-    protected boolean isAddRuleAction(HttpServletRequest req) {
-        return (req.getParameter(ADD_RULE_ACTION_KEY) != null);
+    protected boolean isCreateRuleAction(HttpServletRequest req) {
+        return (req.getParameter(CREATE_RULE_ACTION_KEY) != null);
     }
 
     protected boolean isEditRuleAction(HttpServletRequest request) {

@@ -1,5 +1,5 @@
 /*
- * $Id: AddAccessControlRuleAction.java,v 1.1 2007/03/16 08:58:33 vtschopp Exp $
+ * $Id: CreateAccessControlRuleAction.java,v 1.1 2007/03/16 10:03:19 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -31,12 +31,12 @@ import org.glite.slcs.group.GroupManagerFactory;
 import org.glite.slcs.struts.form.AccessControlRuleForm;
 import org.glite.slcs.struts.view.AccessControlRuleBean;
 
-public class AddAccessControlRuleAction extends AbstractAccessControlRuleAction {
+public class CreateAccessControlRuleAction extends AbstractAccessControlRuleAction {
 
     /**
      * Logging
      */
-    static private Log LOG = LogFactory.getLog(AddAccessControlRuleAction.class);
+    static private Log LOG = LogFactory.getLog(CreateAccessControlRuleAction.class);
 
     /*
      * (non-Javadoc)
@@ -56,7 +56,7 @@ public class AddAccessControlRuleAction extends AbstractAccessControlRuleAction 
             return mapping.findForward("admin.go.listRules");
         }
 
-        if (isAddRuleAction(request)) {
+        if (isCreateRuleAction(request)) {
             LOG.info("new rule");
             AccessControlRuleForm ruleForm = (AccessControlRuleForm) form;
             AccessControlRuleBean ruleBean = newRule(ruleForm, request);
