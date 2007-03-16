@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: attributes-def.xml,v 1.1 2007/03/16 13:50:33 vtschopp Exp $ -->
+<!-- $Id: attributes-def.xml,v 1.2 2007/03/16 15:05:10 vtschopp Exp $ -->
 
 <AttributeDefinitions>
 	<AttributeDefinition
@@ -14,8 +14,8 @@
 		required="true" 
 		displayName="Lastname" />
 	<AttributeDefinition 
-		name="Shib-InetOrgPerson-givenName"
-		header="urn:mace:dir:attribute-def:givenName" 
+		name="urn:mace:dir:attribute-def:givenName" 
+		header="Shib-InetOrgPerson-givenName"
 		required="true"
 		displayName="Firstname" />
 	<AttributeDefinition 
@@ -24,8 +24,8 @@
 		required="true" 
 		displayName="Email" />
 	<AttributeDefinition 
-		name="Shib-EP-Affiliation"
-		header="urn:mace:dir:attribute-def:eduPersonAffiliation"
+		name="urn:mace:dir:attribute-def:eduPersonAffiliation"
+		header="Shib-EP-Affiliation"
 		required="false" 
 		displayName="Affiliation" />
 	<AttributeDefinition
