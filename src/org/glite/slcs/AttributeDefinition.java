@@ -1,5 +1,5 @@
 /*
- * $Id: AttributeDefinition.java,v 1.3 2007/03/14 13:26:34 vtschopp Exp $
+ * $Id: AttributeDefinition.java,v 1.4 2007/03/16 11:08:53 vtschopp Exp $
  * 
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -8,15 +8,19 @@
 package org.glite.slcs;
 
 /**
- * Defines an Attribute with a name, a displayName and a required flag.
+ * Defines an Attribute with a name, a HTTP request header name, a displayName
+ * and a required flag.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class AttributeDefinition {
 
     /** The attribute name */
     protected String name_ = null;
+
+    /** The attribute HTTP request header name */
+    private String header_ = null;
 
     /** The attribute human-readable name */
     private String displayName_ = null;
@@ -76,6 +80,21 @@ public class AttributeDefinition {
     }
 
     /**
+     * @return The attribute HTTP request header name
+     */
+    public String getHeader() {
+        return header_;
+    }
+
+    /**
+     * @param name
+     *            the HTTP request header name to set
+     */
+    public void setHeader(String header) {
+        header_ = header;
+    }
+
+    /**
      * @return <code>true</code> iff the name is set
      */
     public boolean hasName() {
@@ -114,7 +133,8 @@ public class AttributeDefinition {
         sb.append("AttributeDefinition[");
         if (hasName()) {
             sb.append(name_);
-        } else {
+        }
+        else {
             sb.append("Undefined");
         }
         if (displayName_ != null) {
