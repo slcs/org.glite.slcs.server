@@ -1,5 +1,5 @@
 /*
- * $Id: ShibbolethAuthorizationFilter.java,v 1.3 2007/02/13 13:21:21 vtschopp Exp $
+ * $Id: AttributesAuthorizationFilter.java,v 1.1 2007/03/16 13:05:19 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by tschopp
  *
@@ -24,27 +24,27 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.acl.AccessControlList;
 import org.glite.slcs.acl.AccessControlListFactory;
+import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.util.Utils;
 
 /**
- * ShibbolethAuthorizationFilter is an ACL filter based on Shibboleth
+ * AttributesAuthorizationFilter is an ACL filter based on Shibboleth
  * attributes. The filter uses the underlying AccessControlList implementation
  * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.1 $
  * 
  * @see org.glite.slcs.acl.AccessControlList
  */
-public class ShibbolethAuthorizationFilter implements Filter {
+public class AttributesAuthorizationFilter implements Filter {
 
     /** Logging */
     private static Log LOG = LogFactory
-            .getLog(ShibbolethAuthorizationFilter.class);
+            .getLog(AttributesAuthorizationFilter.class);
 
     /** Shibboleth ACL */
     private AccessControlList accessControlList_ = null;
