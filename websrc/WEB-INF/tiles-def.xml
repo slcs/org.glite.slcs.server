@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE tiles-definitions PUBLIC
+		"-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+		"http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+		
+<tiles-definitions>
+
+	<definition name="tiles.layout" path="/admin/layout.jsp">
+		<put name="title" value="SLCS Administrator Interface"/>
+		<put name="header" value="/admin/header.jsp"/>
+		<put name="navbar" value="/admin/navigation.jsp"/>
+		<put name="footer" value="/admin/footer.jsp"/>
+	</definition>
+	
+	
+	<definition name="tiles.home" extends="tiles.layout">
+		<put name="title" value="SLCS - Admin Home"/>
+		<put name="body" value="/admin/home.jsp"/>
+	</definition>
+	
+	<definition name="tiles.listRules" extends="tiles.layout">
+		<put name="title" value="SLCS - User Access Control Rules"/>
+		<put name="body"  value="/admin/listRules.jsp"/>
+	</definition>
+
+	<definition name="tiles.createRule" extends="tiles.layout">
+		<put name="title" value="SLCS - New Access Control Rule"/>
+		<put name="body"  value="/admin/createRule.jsp"/>
+	</definition>
+
+	<definition name="tiles.editRule" extends="tiles.layout">
+		<put name="title" value="SLCS - Edit Access Control Rule"/>
+		<put name="body"  value="/admin/editRule.jsp"/>
+	</definition>
+	
+
+</tiles-definitions>
