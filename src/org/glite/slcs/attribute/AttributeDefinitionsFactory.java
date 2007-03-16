@@ -1,3 +1,10 @@
+/*
+ * $Id: AttributeDefinitionsFactory.java,v 1.2 2007/03/16 14:33:23 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
+ */
 package org.glite.slcs.attribute;
 
 import org.apache.commons.logging.Log;
