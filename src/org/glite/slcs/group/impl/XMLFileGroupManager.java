@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileGroupManager.java,v 1.4 2007/03/14 13:56:25 vtschopp Exp $
+ * $Id: XMLFileGroupManager.java,v 1.5 2007/03/18 18:34:23 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -19,9 +19,10 @@ import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
+import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.attribute.AttributeDefinitions;
 import org.glite.slcs.config.FileConfigurationEvent;
 import org.glite.slcs.config.FileConfigurationListener;
 import org.glite.slcs.config.FileConfigurationMonitor;
@@ -31,12 +32,10 @@ import org.glite.slcs.group.GroupManager;
 import org.glite.slcs.group.GroupMember;
 
 /**
- * GroupManager implementation, based on XML file.
- * 
- * TODO: describe XML format
+ * GroupManager implementation, based on XML file. TODO: describe XML format
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class XMLFileGroupManager implements GroupManager,
         FileConfigurationListener {
@@ -94,6 +93,11 @@ public class XMLFileGroupManager implements GroupManager,
      * @return The list of {@link Group}s.
      */
     static private List createGroups(FileConfiguration config) {
+        // get the attribute definition helper for the attribute display name
+        SLCSServerConfiguration slcsConfig = SLCSServerConfiguration.getInstance();
+        AttributeDefinitions attributeDefinitions = slcsConfig.getAttributeDefinitions();
+
+        // create an empty groups list
         List groups = new LinkedList();
         // list all groups
         int i = 0;
@@ -119,17 +123,21 @@ public class XMLFileGroupManager implements GroupManager,
                     if (!attributeNames.isEmpty()) {
                         // create an empty member
                         GroupMember member = new GroupMember();
-                        // list and add the attributes
+                        List memberAttributes = new ArrayList();
+                        // list and add the membership attributes
                         List attributeValues = config.getList(memberPrefix
                                 + ".Attribute");
                         for (int k = 0; k < attributeNames.size(); k++) {
                             String name = (String) attributeNames.get(k);
                             String value = (String) attributeValues.get(k);
                             Attribute attribute = new Attribute(name, value);
-                            // add attribute to the group membership
-                            member.addAttribute(attribute);
+                            // add attribute to the group membership attributes
+                            // list
+                            memberAttributes.add(attribute);
                         }
-                        // add the member to the group
+                        // set the membership attributes list
+                        member.setAttributes(memberAttributes);
+                        // and add the member to the group
                         group.addGroupMember(member);
                     }
                     else {
@@ -148,6 +156,7 @@ public class XMLFileGroupManager implements GroupManager,
                 List attributeNames = config.getList(constraintPrefix
                         + ".Attribute[@name]");
                 if (!attributeNames.isEmpty()) {
+                    List constrainedAttributes = new ArrayList();
                     // list and add the ACL rule attributes constraints
                     List attributeValues = config.getList(constraintPrefix
                             + ".Attribute");
@@ -155,12 +164,16 @@ public class XMLFileGroupManager implements GroupManager,
                         String name = (String) attributeNames.get(k);
                         String value = (String) attributeValues.get(k);
                         Attribute attribute = new Attribute(name, value);
-                        // add attribute to the group ACL rule constraint list
-                        group.addRuleConstraint(attribute);
+                        // add attribute constraint list
+                        constrainedAttributes.add(attribute);
                     }
+                    // set the display name to all constrained attribute
+                    attributeDefinitions.setDisplayNames(constrainedAttributes);
+                    // set the group ACL rule constraint
+                    group.setRuleAttributesConstraint(constrainedAttributes);
                 }
 
-                // add the group to the list
+                // add the group to the groups list
                 // TODO: check for group without members
                 groups.add(group);
 
@@ -187,6 +200,15 @@ public class XMLFileGroupManager implements GroupManager,
     /*
      * (non-Javadoc)
      * 
+     * @see org.glite.slcs.group.GroupManager#getGroups()
+     */
+    public List getGroups() {
+        return groups_;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.glite.slcs.group.GroupManager#getGroups(java.util.List)
      */
     public List getGroups(List userAttributes) {
@@ -199,6 +221,27 @@ public class XMLFileGroupManager implements GroupManager,
             }
         }
         return userGroups;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.group.GroupManager#getGroupNames()
+     */
+    public List getGroupNames() {
+        List groupNames = new ArrayList();
+        Iterator iter = groups_.iterator();
+        while (iter.hasNext()) {
+            Group group = (Group) iter.next();
+            String groupName = group.getName();
+            groupNames.add(groupName);
+        }
+        // sort the group names list
+        Collections.sort(groupNames);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("groupNames=" + groupNames);
+        }
+        return groupNames;
     }
 
     /*
@@ -218,7 +261,9 @@ public class XMLFileGroupManager implements GroupManager,
         }
         // sort the group names list
         Collections.sort(groupNames);
-
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("groupNames=" + groupNames);
+        }
         return groupNames;
     }
 
