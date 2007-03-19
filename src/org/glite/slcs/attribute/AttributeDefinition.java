@@ -1,5 +1,5 @@
 /*
- * $Id: AttributeDefinition.java,v 1.1 2007/03/16 14:33:23 vtschopp Exp $
+ * $Id: AttributeDefinition.java,v 1.2 2007/03/19 09:05:53 vtschopp Exp $
  * 
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -12,7 +12,7 @@ package org.glite.slcs.attribute;
  * and a required flag.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AttributeDefinition {
 
@@ -75,7 +75,7 @@ public class AttributeDefinition {
      * @param name
      *            the name to set
      */
-    protected void setName(String name) {
+    public void setName(String name) {
         name_ = null;
         if (name != null) {
             name_ = name.trim();
@@ -105,6 +105,13 @@ public class AttributeDefinition {
      */
     public boolean hasName() {
         return name_ != null && !name_.equals("");
+    }
+
+    /**
+     * @return <code>true</code> iff the header name is set
+     */
+    public boolean hasHeader() {
+        return header_ != null && !header_.equals("");
     }
 
     /**
@@ -141,10 +148,25 @@ public class AttributeDefinition {
             sb.append(name_);
         }
         else {
-            sb.append("Undefined");
+            sb.append("null");
         }
-        if (displayName_ != null) {
-            sb.append("(").append(displayName_).append(")");
+        if (hasHeader()) {
+            sb.append(":").append(header_);
+        }
+        else {
+            sb.append(":null");            
+        }
+        if (hasDisplayName()) {
+            sb.append(":").append(displayName_);
+        }
+        else {
+            sb.append(":null");            
+        }
+        if (isRequired()) {
+            sb.append(":true");
+        }
+        else {
+            sb.append(":false");
         }
         sb.append("]");
         return sb.toString();

@@ -1,5 +1,5 @@
 /*
- * $Id: AttributeDefinitionsFactory.java,v 1.2 2007/03/16 14:33:23 vtschopp Exp $
+ * $Id: AttributeDefinitionsFactory.java,v 1.3 2007/03/19 09:05:53 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -40,7 +40,7 @@ public class AttributeDefinitionsFactory {
      */
     static protected AttributeDefinitions newInstance(String filename)
             throws SLCSException {
-        LOG.info("instantiate AttributeDefinitions(" + filename + ")...");
+        LOG.info("AttributeDefinitions filename=" + filename);
         AttributeDefinitions impl = new AttributeDefinitionsImpl(filename);
         return impl;
     }
