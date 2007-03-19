@@ -1,9 +1,9 @@
 /*
- * $Id: AccessControlListEditorFactory.java,v 1.3 2007/02/27 13:24:10 vtschopp Exp $
- * 
- * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: AccessControlListEditorFactory.java,v 1.4 2007/03/19 13:57:57 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.acl;
 
@@ -16,7 +16,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * Factory for the Shibboleth access control list user and admin editors.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class AccessControlListEditorFactory {
 
