@@ -1,9 +1,9 @@
 /*
- * $Id: DNBuilderFactory.java,v 1.2 2007/02/13 13:26:11 vtschopp Exp $
- * 
- * Created on Aug 4, 2006 by tschopp
+ * $Id: DNBuilderFactory.java,v 1.3 2007/03/19 15:39:30 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.dn;
 
@@ -17,7 +17,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * based on the SLCSServerConfiguration.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class DNBuilderFactory {
 
