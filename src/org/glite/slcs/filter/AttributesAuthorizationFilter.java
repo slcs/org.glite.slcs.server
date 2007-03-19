@@ -1,5 +1,5 @@
 /*
- * $Id: AttributesAuthorizationFilter.java,v 1.1 2007/03/16 13:05:19 vtschopp Exp $
+ * $Id: AttributesAuthorizationFilter.java,v 1.2 2007/03/19 15:35:21 vtschopp Exp $
  * 
  * Created on Aug 18, 2006 by tschopp
  *
@@ -8,10 +8,7 @@
 package org.glite.slcs.filter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,8 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.acl.AccessControlList;
 import org.glite.slcs.acl.AccessControlListFactory;
-import org.glite.slcs.attribute.Attribute;
-import org.glite.slcs.util.Utils;
+import org.glite.slcs.attribute.AttributeDefinitions;
+import org.glite.slcs.attribute.AttributeDefinitionsFactory;
 
 /**
  * AttributesAuthorizationFilter is an ACL filter based on Shibboleth
@@ -36,18 +33,19 @@ import org.glite.slcs.util.Utils;
  * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
- * 
+ * @version $Revision: 1.2 $
  * @see org.glite.slcs.acl.AccessControlList
  */
 public class AttributesAuthorizationFilter implements Filter {
 
     /** Logging */
-    private static Log LOG = LogFactory
-            .getLog(AttributesAuthorizationFilter.class);
+    private static Log LOG = LogFactory.getLog(AttributesAuthorizationFilter.class);
 
-    /** Shibboleth ACL */
+    /** Attributes ACL */
     private AccessControlList accessControlList_ = null;
+
+    /** Attribute definitions */
+    private AttributeDefinitions attributeDefinitions_ = null;
 
     /*
      * (non-Javadoc)
@@ -57,14 +55,21 @@ public class AttributesAuthorizationFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         try {
             LOG.info("create and initialize new AccessControlList");
-            accessControlList_ = AccessControlListFactory
-                    .newInstance(filterConfig);
+            accessControlList_ = AccessControlListFactory.newInstance(filterConfig);
         } catch (SLCSException e) {
-            LOG.error("Failed to instantiate and initalize AccessControlList",
-                    e);
-            throw new ServletException(e);
+            LOG.error("Failed to instantiate and initalize AccessControlList", e);
+            throw new ServletException("Failed to instantiate and initalize AccessControlList: "
+                    + e, e);
         }
-
+        String attributeDefinitionFile = filterConfig.getInitParameter("AttributeDefinitions");
+        try {
+            attributeDefinitions_ = AttributeDefinitionsFactory.getInstance(attributeDefinitionFile);
+        } catch (SLCSException e) {
+            LOG.error("Failed to instantiate AttributeDefinitions("
+                    + attributeDefinitionFile + ")", e);
+            throw new ServletException("Failed to instantiate AttributeDefinitions("
+                    + attributeDefinitionFile + "): " + e, e);
+        }
     }
 
     /**
@@ -90,9 +95,7 @@ public class AttributesAuthorizationFilter implements Filter {
                     + remoteAddress + ") is not authorized: " + userAttributes);
             // TODO: custom 401 error page
             HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse
-                    .sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                            "Based on your attributes, you are not authorized to access this service");
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Based on your attributes, you are not authorized to access this service");
         }
         // nothing to do, continue
         chain.doFilter(request, response);
@@ -107,51 +110,18 @@ public class AttributesAuthorizationFilter implements Filter {
     }
 
     /**
-     * Reads the required authorization Shibboleth attributes from the request
-     * headers.
+     * Reads the required authorization attributes from the request headers.
      * 
      * @param req
      *            The HttpServletRequest to read attributes from.
-     * @return A List of Shibboleth attributes
-     * 
+     * @return A List of attributes
      * @see org.glite.slcs.acl.AccessControlList#getAuthorizationAttributeNames()
      */
     private List getUserAttributes(HttpServletRequest req) {
-        // optimization: read only Shibboleth attributes need for
-        // authorization decision
-        Set authorizationAttributeNames = accessControlList_
-                .getAuthorizationAttributeNames();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("AuthorizationAttributeNames="
-                    + authorizationAttributeNames);
-        }
-        List attributes = new ArrayList();
-        Enumeration headers = req.getHeaderNames();
-        while (headers.hasMoreElements()) {
-            String header = (String) headers.nextElement();
-            if (authorizationAttributeNames.contains(header)) {
-                String headerValue = req.getHeader(header);
-                // add only not null and not empty attributes
-                if (headerValue != null && !headerValue.equals("")) {
-                    String decodedValue = Utils
-                            .convertShibbolethUTF8ToUnicode(headerValue);
-                    // multi-value attributes
-                    String[] attrValues = decodedValue.split(";");
-                    for (int i = 0; i < attrValues.length; i++) {
-                        String attrName = header;
-                        String attrValue = attrValues[i];
-                        attrValue = attrValue.trim();
-                        Attribute attribute = new Attribute(attrName, attrValue);
-                        attributes.add(attribute);
-                    }
-                }
-
-            }
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("UserAttributes=" + attributes);
-        }
-        return attributes;
+        // uses the AttributeDefinitions engine to read the attributes from
+        // the request
+        List userAttributes = attributeDefinitions_.getUserAttributes(req);
+        return userAttributes;
     }
 
 }
