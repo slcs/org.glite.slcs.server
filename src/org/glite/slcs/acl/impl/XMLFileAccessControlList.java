@@ -1,19 +1,16 @@
 /*
- * $Id: XMLFileAccessControlList.java,v 1.2 2007/03/02 17:24:34 vtschopp Exp $
- * 
- * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: XMLFileAccessControlList.java,v 1.3 2007/03/19 14:05:50 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.acl.impl;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.FilterConfig;
 
@@ -22,11 +19,11 @@ import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.acl.AccessControlList;
 import org.glite.slcs.acl.AccessControlRule;
+import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.config.FileConfigurationEvent;
 import org.glite.slcs.config.FileConfigurationListener;
 import org.glite.slcs.config.FileConfigurationMonitor;
@@ -37,7 +34,7 @@ import org.glite.slcs.config.FileConfigurationMonitor;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @see org.glite.slcs.acl.AccessControlList
  * @see org.glite.slcs.config.FileConfigurationListener
  */
@@ -49,9 +46,6 @@ public class XMLFileAccessControlList implements AccessControlList,
 
     /** XML file based authorization */
     private FileConfiguration aclConfiguration_ = null;
-
-    /** Shibboleth attribute names involved in authorization decision */
-    private Set aclAuthorizationAttributeNames_ = null;
 
     /** List of Access Control Rules */
     private List aclAccessControlRules_ = null;
@@ -81,9 +75,6 @@ public class XMLFileAccessControlList implements AccessControlList,
         // load the XML file
         aclConfiguration_ = createACLConfiguration(filename);
 
-        // create the authorization attribute list
-        aclAuthorizationAttributeNames_ = createACLAuthorizationAttributeNames(aclConfiguration_);
-
         // create the access control rules list
         aclAccessControlRules_ = createACLAccessControlRules(aclConfiguration_);
 
@@ -95,57 +86,6 @@ public class XMLFileAccessControlList implements AccessControlList,
             // and start
             aclConfigurationMonitor_.start();
         }
-    }
-
-    /**
-     * Create the Set of Shibboleth attribute names involved in the
-     * authorization decision.
-     * 
-     * @param fileConfiguration
-     *            The ACL FileConfiguration.
-     * @return The new Set of Shibboleth attribute names.
-     */
-    static private Set createACLAuthorizationAttributeNames(
-            FileConfiguration fileConfiguration) {
-        HashSet aclAuthorizationAttributeNames = new HashSet();
-        // get all attribute names from configuration
-        List aclAttributeNames = fileConfiguration.getList("AccessControlRule.Attribute[@name]");
-        Iterator names = aclAttributeNames.iterator();
-        while (names.hasNext()) {
-            String attributeName = (String) names.next();
-            aclAuthorizationAttributeNames.add(attributeName);
-        }
-        return aclAuthorizationAttributeNames;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.glite.slcs.acl.AccessControlList#getAuthorizationAttributeNames()
-     */
-    public Set getAuthorizationAttributeNames() {
-        return aclAuthorizationAttributeNames_;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.glite.slcs.acl.AccessControlList#isAuthorized(java.util.Map)
-     */
-    public boolean isAuthorized(Map attributesMap) {
-        // create list of user's attributes
-        List attributes = new LinkedList();
-        Iterator attributeNames = attributesMap.keySet().iterator();
-        while (attributeNames.hasNext()) {
-            String attributeName = (String) attributeNames.next();
-            String attributeValue = (String) attributesMap.get(attributeName);
-            Attribute attribute = new Attribute(attributeName, attributeValue);
-            attributes.add(attribute);
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("attributes=" + attributes);
-        }
-        return isAuthorized(attributes);
     }
 
     /*
@@ -213,8 +153,6 @@ public class XMLFileAccessControlList implements AccessControlList,
         LOG.info("reload file: " + aclConfiguration_.getFileName());
         // reload the FileConfiguration
         aclConfiguration_.reload();
-        // recreate the authorization attributes list
-        aclAuthorizationAttributeNames_ = createACLAuthorizationAttributeNames(aclConfiguration_);
         // recreate the ACL access control rules
         aclAccessControlRules_ = createACLAccessControlRules(aclConfiguration_);
     }

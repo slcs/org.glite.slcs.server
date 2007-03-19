@@ -1,9 +1,9 @@
 /*
- * $Id: XMLFileProcessor.java,v 1.3 2007/03/02 17:24:34 vtschopp Exp $
- * 
- * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch>
+ * $Id: XMLFileProcessor.java,v 1.4 2007/03/19 14:05:50 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.acl.impl;
 
@@ -18,9 +18,10 @@ import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
 
 /**
+ * XML file processor to process XMLOperation to be applied on the XML file.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class XMLFileProcessor {
 

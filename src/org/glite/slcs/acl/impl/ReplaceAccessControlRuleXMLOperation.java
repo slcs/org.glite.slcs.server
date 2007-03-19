@@ -1,3 +1,10 @@
+/*
+ * $Id: ReplaceAccessControlRuleXMLOperation.java,v 1.2 2007/03/19 14:05:50 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
+ */
 package org.glite.slcs.acl.impl;
 
 import java.util.Iterator;
@@ -6,14 +13,15 @@ import java.util.List;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.acl.AccessControlRule;
+import org.glite.slcs.attribute.Attribute;
 
 /**
- * Replace an existing rule, identified by its id, with a new one.
+ * XMLOpertation to replace an existing rule, identified by its id, with a new
+ * one.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ReplaceAccessControlRuleXMLOperation extends XMLOperation {
 

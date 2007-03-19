@@ -1,3 +1,10 @@
+/*
+ * $Id: RemoveAccessControlRuleXMLOperation.java,v 1.4 2007/03/19 14:05:50 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
+ */
 package org.glite.slcs.acl.impl;
 
 import org.apache.commons.configuration.XMLConfiguration;
@@ -6,10 +13,11 @@ import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.acl.AccessControlRule;
 
 /**
- * Removes an AccessControlRule from the ACL based on its ruleId.
+ * XMLOpertaion to remove an AccessControlRule from the XML ACL based on its
+ * ruleId.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class RemoveAccessControlRuleXMLOperation extends XMLOperation {
 

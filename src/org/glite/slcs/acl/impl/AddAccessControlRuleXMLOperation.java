@@ -1,3 +1,10 @@
+/*
+ * $Id: AddAccessControlRuleXMLOperation.java,v 1.3 2007/03/19 14:05:50 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
+ */
 package org.glite.slcs.acl.impl;
 
 import java.util.Iterator;
@@ -6,9 +13,15 @@ import java.util.List;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.acl.AccessControlRule;
+import org.glite.slcs.attribute.Attribute;
 
+/**
+ * XMLOpertation to add an AccessControlRule to the XML ACL file.
+ * 
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
+ */
 public class AddAccessControlRuleXMLOperation extends XMLOperation {
 
     /** Logging */

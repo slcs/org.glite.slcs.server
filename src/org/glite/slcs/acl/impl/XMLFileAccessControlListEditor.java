@@ -1,7 +1,9 @@
 /*
- * $Id: XMLFileAccessControlListEditor.java,v 1.2 2007/01/30 14:30:52 vtschopp
- * Exp $ Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch> Copyright
- * (c) 2006 SWITCH - http://www.switch.ch/
+ * $Id: XMLFileAccessControlListEditor.java,v 1.4 2007/03/19 14:05:50 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.acl.impl;
 
@@ -22,7 +24,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @see org.glite.slcs.acl.AccessControlListEditor
  */
 public class XMLFileAccessControlListEditor implements AccessControlListEditor {
@@ -49,6 +51,18 @@ public class XMLFileAccessControlListEditor implements AccessControlListEditor {
         XMLOperation operation = new AddAccessControlRuleXMLOperation(rule);
         xmlProcessor_.process(operation);
         return operation.getStatus();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.acl.AccessControlListEditor#getAccessControlRules()
+     */
+    public List getAccessControlRules() {
+        XMLOperation operation = new ListAccessControlRulesXMLOperation(null);
+        xmlProcessor_.process(operation);
+        List rules = operation.getResults();
+        return rules;
     }
 
     /*

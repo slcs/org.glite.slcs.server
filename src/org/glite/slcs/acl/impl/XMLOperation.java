@@ -1,9 +1,9 @@
 /*
- * $Id: XMLOperation.java,v 1.2 2007/03/02 17:24:34 vtschopp Exp $ 
- * 
- * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch> 
- * 
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * $Id: XMLOperation.java,v 1.3 2007/03/19 14:05:50 vtschopp Exp $
+ *
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.acl.impl;
 
@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  * Abstract XMLOperation processed by the XMLFileProcessor.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class XMLOperation {
 
