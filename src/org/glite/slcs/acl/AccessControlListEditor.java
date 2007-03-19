@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlListEditor.java,v 1.2 2007/02/27 13:12:46 vtschopp Exp $
+ * $Id: AccessControlListEditor.java,v 1.3 2007/03/19 13:56:44 vtschopp Exp $
  * Created on Aug 18, 2006 by Valery Tschopp <tschopp@switch.ch> Copyright (c)
  * 2006 SWITCH - http://www.switch.ch/
  */
@@ -15,7 +15,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * Interface for the Shibboleth access control list editor.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface AccessControlListEditor extends SLCSServerComponent {
 
@@ -23,6 +23,13 @@ public interface AccessControlListEditor extends SLCSServerComponent {
      * @return The ACL absolute filename.
      */
     public String getACLFilename();
+
+    /**
+     * Return the list of all {@link AccessControlRule}s.
+     * 
+     * @return The list of all {@link AccessControlRule}s
+     */
+    public List getAccessControlRules();
 
     /**
      * Returns the list of {@link AccessControlRule}s for the given group name.

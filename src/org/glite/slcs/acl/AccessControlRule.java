@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlRule.java,v 1.2 2007/02/13 16:20:14 vtschopp Exp $
+ * $Id: AccessControlRule.java,v 1.3 2007/03/19 13:56:44 vtschopp Exp $
  * 
  * Created on Aug 30, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -12,20 +12,21 @@ package org.glite.slcs.acl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.glite.slcs.Attribute;
+import org.glite.slcs.attribute.Attribute;
 
 /**
- * Access control rule is a list of shibboleth attributes which define a group.
+ * Access control rule is a list of attributes which define access rule if the
+ * user attributes match all the rule attributes.
  * 
  * <pre>
- * <AccessControlRule id="2" group="switch.ch">
- *    <Attribute name="Shib-SwissEP-HomeOrganization">switch.ch</Attribute>
- *    <Attribute name="Shib-EP-Affiliation">staff</Attribute>
- * </AccessControlRule>
+ *  &lt;AccessControlRule id=&quot;2&quot; group=&quot;SWITCH&quot;&gt;
+ *     &lt;Attribute name=&quot;Shib-SwissEP-HomeOrganization&quot;&gt;switch.ch&lt;/Attribute&gt;
+ *     &lt;Attribute name=&quot;Shib-EP-Affiliation&quot;&gt;staff&lt;/Attribute&gt;
+ *  &lt;/AccessControlRule&gt;
  * </pre>
  * 
- * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.3 $
  */
 public class AccessControlRule {
 
@@ -66,8 +67,7 @@ public class AccessControlRule {
      * Returns the list of Shibboleth attributes in the rule.
      * 
      * @return The List of {@link Attribute}s
-     * 
-     * @see org.glite.slcs.Attribute
+     * @see org.glite.slcs.attribute.Attribute
      */
     public List getAttributes() {
         return attributes_;
@@ -105,7 +105,8 @@ public class AccessControlRule {
     /**
      * Sets the group of the rule.
      * 
-     * @param group The group of the rule.
+     * @param group
+     *            The group of the rule.
      */
     public void setGroup(String group) {
         group_ = group;
@@ -123,15 +124,16 @@ public class AccessControlRule {
     /**
      * Sets the rule id.
      * 
-     * @param id The rule id.
+     * @param id
+     *            The rule id.
      */
     public void setId(int id) {
         id_ = id;
     }
 
- 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     public String toString() {
@@ -148,6 +150,7 @@ public class AccessControlRule {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
@@ -176,12 +179,14 @@ public class AccessControlRule {
         if (attributes_ == null) {
             if (other.attributes_ != null)
                 return false;
-        } else if (!attributes_.equals(other.attributes_))
+        }
+        else if (!attributes_.equals(other.attributes_))
             return false;
         if (group_ == null) {
             if (other.group_ != null)
                 return false;
-        } else if (!group_.equals(other.group_))
+        }
+        else if (!group_.equals(other.group_))
             return false;
         return true;
     }
