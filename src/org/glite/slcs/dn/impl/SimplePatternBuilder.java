@@ -1,5 +1,5 @@
 /*
- * $Id: SimplePatternBuilder.java,v 1.3 2007/03/14 14:09:40 vtschopp Exp $
+ * $Id: SimplePatternBuilder.java,v 1.4 2007/03/19 15:45:55 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -15,21 +15,21 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.ServiceException;
+import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.dn.DNBuilder;
 import org.glite.slcs.util.Utils;
 
 /**
  * SimplePatternBuilder builds a DN based on a string pattern, containing
- * <code>${Shibboleth-attributeName}</code> variables. These variables will be
- * replaced by the corresponding Shibboleth attribute value.
+ * <code>${attribute-name}</code> variables. These variables will be
+ * replaced by the corresponding attribute value.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SimplePatternBuilder implements DNBuilder {
 

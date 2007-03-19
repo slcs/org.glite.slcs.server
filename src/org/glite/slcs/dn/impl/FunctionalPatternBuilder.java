@@ -1,5 +1,5 @@
 /*
- * $Id: FunctionalPatternBuilder.java,v 1.3 2007/03/14 14:09:40 vtschopp Exp $
+ * $Id: FunctionalPatternBuilder.java,v 1.4 2007/03/19 15:45:55 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -23,10 +23,21 @@ import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.util.Utils;
 
 /**
- * FunctionalPatternBuilder TODO: document SLCSServerConfiguration parameters.
+ * FunctionalPatternBuilder extends the SimplePatternBuilder by adding
+ * functions. Your pattern can now contains the following functions:
+ * <p>
+ * Available pattern functions:<br>
+ * <ul>
+ * <li><code>mappedValue(attributeName)</code>: returns the defined mapped
+ * value of the given attribute name, or simply the attribute value if no
+ * mapping is defined.
+ * <li><code>hashValue(attributeName)</code>: returns a hash of the
+ * attribute value.
+ * </ul>
+ * TODO: document SLCSServerConfiguration parameters.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
