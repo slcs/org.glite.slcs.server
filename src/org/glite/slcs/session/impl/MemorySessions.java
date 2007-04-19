@@ -1,5 +1,5 @@
 /*
- * $Id: MemorySessions.java,v 1.4 2007/03/14 13:59:46 vtschopp Exp $
+ * $Id: MemorySessions.java,v 1.5 2007/04/19 15:59:12 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -18,8 +18,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.config.SLCSServerConfiguration;
+import org.glite.slcs.session.SLCSSession;
 import org.glite.slcs.session.SLCSSessions;
 import org.glite.slcs.util.Utils;
 
@@ -28,13 +28,13 @@ import org.glite.slcs.util.Utils;
  * cleaning thread to delete expired sessions.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class MemorySessions implements SLCSSessions {
 
     /** logging */
     public static Log LOG = LogFactory.getLog(MemorySessions.class);
-    
+
     /** Date format for toString */
     static private SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 
@@ -112,19 +112,19 @@ public class MemorySessions implements SLCSSessions {
      * 
      * @see org.glite.slcs.session.SLCSSessions#createSession(java.lang.String)
      */
-    public String createSession(String dn) {
+    public SLCSSession createSession(String dn) {
         // create a random token
         String token = createRandomToken();
         // store the pair
-        SessionEntry session = new SessionEntry(token, dn, sessionTTL_);
+        SLCSSession session = new SessionEntry(token, dn, sessionTTL_);
         if (LOG.isDebugEnabled()) {
             LOG.debug("add: " + session);
         }
         synchronized (sessionsMutex_) {
             sessions_.put(token, session);
         }
-        // return the token
-        return token;
+        // return the session
+        return session;
     }
 
     /*
@@ -142,88 +142,13 @@ public class MemorySessions implements SLCSSessions {
     }
 
     /**
-     * Sets the attributes associated with an existing session.
-     * 
-     * @param token
-     *            The authorization token
-     * @param attributes
-     *            The attributes Map to associated with the session.
-     */
-    public void setAttributes(String token, List attributes) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("session: " + token + " attributes: " + attributes);
-        }
-        SessionEntry session = getSessionEntry(token);
-        if (session != null) {
-            session.setAttributes(attributes);
-        }
-    }
-
-    /**
-     * Return the {@link Attribute}s list associated with the session.
-     * 
-     * @param token
-     *            The authorization token.
-     * @return The attributes list or <code>null</code> if the session doesn't
-     *         exists.
-     */
-    public List getAttributes(String token) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("session: " + token);
-        }
-        List attributes = null;
-        SessionEntry session = getSessionEntry(token);
-        if (session != null) {
-            attributes = session.getAttributes();
-        }
-        return attributes;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.glite.slcs.session.SLCSSessions#sessionExists(java.lang.String,
-     *      java.lang.String)
-     */
-    public boolean sessionExists(String token, String dn) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("token: " + token + " dn: " + dn);
-        }
-        SessionEntry session = getSessionEntry(token);
-        if (session != null) {
-            String storedDN = session.getDN();
-            if (storedDN.equals(dn)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.glite.slcs.session.SLCSSessions#isValidSession(java.lang.String,
-     *      java.lang.String)
-     */
-    public boolean isSessionValid(String token, String dn) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("token: " + token + " dn: " + dn);
-        }
-        SessionEntry session = getSessionEntry(token, dn);
-        if (session != null) {
-            return session.isValid();
-        }
-        return false;
-    }
-
-    /**
      * Returns the SessionEntry for this token.
      * 
      * @param token
      *            The session token (id)
      * @return The session or <code>null</code> if the session doesn't exists.
      */
-    public SessionEntry getSessionEntry(String token) {
+    private SessionEntry getSessionEntry(String token) {
         if (sessions_.containsKey(token)) {
             SessionEntry session = (SessionEntry) sessions_.get(token);
             return session;
@@ -232,7 +157,7 @@ public class MemorySessions implements SLCSSessions {
     }
 
     /**
-     * Returns the SessionEntry if and only if the token-dn pair exists in the
+     * Returns the session if and only if the token-dn pair exists in the
      * sessions.
      * 
      * @param token
@@ -241,7 +166,7 @@ public class MemorySessions implements SLCSSessions {
      *            The subject DN.
      * @return The session or <code>null</code> if the session doesn't exists.
      */
-    private SessionEntry getSessionEntry(String token, String dn) {
+    public SLCSSession getSession(String token, String dn) {
         SessionEntry session = getSessionEntry(token);
         if (session != null) {
             String storedDN = session.getDN();
@@ -264,22 +189,26 @@ public class MemorySessions implements SLCSSessions {
     }
 
     /**
-     * SessionEntry
+     * SessionEntry implements the SLCSSession interface.
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.4 $
+     * @version $Revision: 1.5 $
      */
-    public class SessionEntry {
+    public class SessionEntry implements SLCSSession {
 
+        /** Cerificate DN */
         private String dn_ = null;
 
+        /** Authorisation token */
         private String token_ = null;
 
+        /** Creation time (milis) */
         private long time_ = 0;
 
+        /** Attributes list */
         private List attributes_ = null;
 
-        /** millis */
+        /** TTL in millis */
         private long ttl_ = 0;
 
         /**
@@ -302,27 +231,47 @@ public class MemorySessions implements SLCSSessions {
             this.attributes_ = new ArrayList();
         }
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.glite.slcs.session.SLCSSession#getToken()
+         */
         public String getToken() {
             return this.token_;
         }
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.glite.slcs.session.SLCSSession#getDN()
+         */
         public String getDN() {
             return this.dn_;
         }
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.glite.slcs.session.SLCSSession#setAttributes(java.util.List)
+         */
         public void setAttributes(List attributes) {
             attributes_ = attributes;
         }
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.glite.slcs.session.SLCSSession#getAttributes()
+         */
         public List getAttributes() {
             return attributes_;
         }
 
-        public void addAttribute(String name, String value) {
-            Attribute attribute = new Attribute(name, value);
-            attributes_.add(attribute);
-        }
-
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.glite.slcs.session.SLCSSession#isValid()
+         */
         public boolean isValid() {
             long currentTime = System.currentTimeMillis();
             long deathTime = time_ + ttl_;
@@ -330,10 +279,18 @@ public class MemorySessions implements SLCSSessions {
             return valid;
         }
 
+        /**
+         * @return <code>true</code> iff the session is expired.
+         */
         public boolean isExpired() {
             return !isValid();
         }
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#toString()
+         */
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("Session[");
@@ -351,11 +308,11 @@ public class MemorySessions implements SLCSSessions {
     }
 
     /**
-     * MemorySessionsCleaner is a cleaning thread which delete all exipried SLCS
+     * MemorySessionsCleaner is a cleaning thread which delete all expired SLCS
      * sessions.
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.4 $
+     * @version $Revision: 1.5 $
      */
     private class MemorySessionsCleaner extends Thread {
         private volatile boolean running_ = false;
