@@ -1,52 +1,42 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: slcs.xml,v 1.3 2007/01/30 15:08:39 vtschopp Exp $ -->
+<!-- $Id: slcs.xml,v 1.4 2007/04/19 11:02:08 vtschopp Exp $ -->
 
 <SLCSServerConfiguration>
 
-    <!-- Shibboleth Attributes Configuration -->
-    <AttributesConfiguration>
-        <Attribute name="Shib-SwissEP-UniqueID" required="true" 
-                   displayName="AAI UniqueID"/>
-	    <Attribute name="Shib-Person-surname" required="true" 
-	               displayName="Lastname"/>
-	    <Attribute name="Shib-InetOrgPerson-givenName" required="true" 
-	               displayName="Firstname"/>
-	    <Attribute name="Shib-InetOrgPerson-mail" required="true" 
-	               displayName="Email"/>
-	    <Attribute name="Shib-EP-Affiliation" required="false"
-	               displayName="Affiliation"/>
-	    <Attribute name="Shib-SwissEP-HomeOrganization" required="true" 
-	               displayName="Home Organization"/>
-	    <Attribute name="Shib-SwissEP-HomeOrganizationType" required="false"
-	               displayName="Home Organization Type"/>
-    </AttributesConfiguration>
+    <!-- Shibboleth Attributes Definition -->
+    <AttributeDefinitions filename="/etc/slcs/attributes-def.xml" />
 
     <!-- SLCS Server Components Configuration -->
     <SLCSComponentsConfiguration>
-    
         <!-- 
         SLCS Sessions: 
-        	SessionTTL: session time to live (second)
-        	CleaningInterval: time between 2 memory cleaning rounds (second)
+            SessionTTL: session time to live (second)
+            CleaningInterval: time between 2 memory cleaning rounds (second)
         -->
         <SLCSSessions implementation="org.glite.slcs.session.impl.MemorySessions">
-           <SessionTTL>60</SessionTTL>
-           <CleaningInterval>30</CleaningInterval>
+            <SessionTTL>60</SessionTTL>
+            <CleaningInterval>30</CleaningInterval>
         </SLCSSessions>
-        
+
         <DNBuilder implementation="org.glite.slcs.dn.impl.FunctionalPatternBuilder">
-            <DNPattern>DC=ch\,DC=switch\,DC=slcs\,mappedValue(${Shib-SwissEP-HomeOrganization})\,CN=${Shib-InetOrgPerson-givenName} ${Shib-Person-surname} hashValue(${Shib-SwissEP-UniqueID})</DNPattern>
-            <MappedValues attributeName="Shib-SwissEP-HomeOrganization">
+            <DNPattern>DC=ch\,DC=switch\,DC=slcs\,mappedValue(${urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization})\,CN=${urn:mace:dir:attribute-def:givenName} ${urn:mace:dir:attribute-def:sn} hashValue(${urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID})</DNPattern>
+            <MappedValues attributeName="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">
                 <MappedValue attributeValue="switch.ch">O=Switch - Teleinformatikdienste fuer Lehre und Forschung</MappedValue>
                 <MappedValue attributeValue="vho-switchaai.ch">OU=SWITCHaai Virtual Home Organization</MappedValue>
                 <MappedValue attributeValue="ethz.ch">O=ETH Zuerich</MappedValue>
+                <MappedValue attributeValue="epfl.ch">O=EPFL</MappedValue>
                 <MappedValue attributeValue="unibas.ch">O=Universitaet Basel</MappedValue>
                 <MappedValue attributeValue="unibe.ch">O=Universitaet Bern</MappedValue>
+                <MappedValue attributeValue="unifr.ch">O=Universite de Fribourg</MappedValue>
+                <MappedValue attributeValue="unige.ch">O=Universite de Geneve</MappedValue>
                 <MappedValue attributeValue="unil.ch">O=Universite de Lausanne</MappedValue>
+                <MappedValue attributeValue="unilu.ch">O=Universitaet Luzern</MappedValue>
+                <MappedValue attributeValue="unine.ch">O=Universite de Neuchatel</MappedValue>
+                <MappedValue attributeValue="unisg.ch">O=Universitaet St. Gallen</MappedValue>
+                <MappedValue attributeValue="unisi.ch">O=Universita della Svizzera Italiana</MappedValue>
                 <MappedValue attributeValue="unizh.ch">O=Universitaet Zuerich</MappedValue>
             </MappedValues>
-
         </DNBuilder>
 
         <!-- Dummy implementation
@@ -56,19 +46,19 @@
         <CertificatePolicy implementation="org.glite.slcs.policy.impl.SWITCHSLCSCertificatePolicy">
             <CertificateExtensions>
                 <CertificateExtension id="KeyUsage" critical="true">DigitalSignature\,KeyEncipherment</CertificateExtension>
-                <CertificateExtension id="SubjectAltName" critical="false">email:${Shib-InetOrgPerson-mail}</CertificateExtension>
-                <CertificateExtension id="CertificatePolicies" critical="false">2.16.756.1.2.6.4.0.5</CertificateExtension>
+                <CertificateExtension id="SubjectAltName" critical="false">email:${urn:mace:dir:attribute-def:mail}</CertificateExtension>
+                <CertificateExtension id="CertificatePolicies" critical="false">2.16.756.1.2.6.4.1.0</CertificateExtension>
                 <CertificateExtension id="ExtendedKeyUsage" critical="false">ClientAuth</CertificateExtension>
             </CertificateExtensions>
         </CertificatePolicy>
 
         <CAClient implementation="org.glite.slcs.caclient.impl.CMCClient">
             <CAUrl>https://test.ca.slcs.switch.ch/cmcs.aspx</CAUrl>
-            <KeyStoreFile>/opt/glite/etc/slcs/keystore.cmc.jks</KeyStoreFile>
+            <KeyStoreFile>/etc/slcs/keystore.cmc.jks</KeyStoreFile>
             <KeyStorePassword>switchgrid</KeyStorePassword>
-            <TrustStoreFile>/opt/glite/etc/slcs/truststore.cmc.jks</TrustStoreFile> 
+            <TrustStoreFile>/etc/slcs/truststore.swisssignca.jks</TrustStoreFile> 
         </CAClient>
-        
+
         <Auditor implementation="org.glite.slcs.audit.impl.DatabaseAuditor">
             <JDBCDriver>com.mysql.jdbc.Driver</JDBCDriver>
             <ConnectionUrl>jdbc:mysql://localhost/slcs</ConnectionUrl>
@@ -77,10 +67,17 @@
         </Auditor>
         
         <AccessControlListEditor implementation="org.glite.slcs.acl.impl.XMLFileAccessControlListEditor">
-			<LoginACLFile>/opt/glite/etc/slcs-test/acl.xml</LoginACLFile>
-			<AdminACLFile>/opt/glite/etc/slcs-test/acl-admin.xml</AdminACLFile>
+            <ACLFile>/etc/slcs/acl.xml</ACLFile>
+            <AdminACLFile>/etc/slcs/admin-acl.xml</AdminACLFile>
         </AccessControlListEditor>
+
+        <GroupManager implementation="org.glite.slcs.group.impl.XMLFileGroupManager">
+            <AdministratorGroup>admin</AdministratorGroup>
+            <GroupsFile>/etc/slcs/admin-groups.xml</GroupsFile>
+            <GroupsFileMonitoringInterval>600</GroupsFileMonitoringInterval>
+        </GroupManager>
 
     </SLCSComponentsConfiguration>
 
 </SLCSServerConfiguration>
+
