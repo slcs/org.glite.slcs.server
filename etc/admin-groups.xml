@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: admin-groups.xml,v 1.1 2007/04/19 11:32:25 vtschopp Exp $ -->
+<Groups>
+
+    <!-- administrator group (root) -->
+    <Group name="admin">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID">112358@switch.ch</Attribute>
+        </GroupMember>
+    </Group>
+
+    <Group name="SWITCH">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">switch.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">switch.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="VHO">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">switch.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">vho-switchaai.ch</Attribute>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganizationType">vho</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="ETHZ">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">ethz.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">ethz.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="EPFL">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">epfl.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">epfl.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniBAS">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unibas.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unibas.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniBE">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unibe.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unibe.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniFR">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unifr.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unifr.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniGE">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unige.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unige.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniL">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unil.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unil.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniLU">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unilu.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unilu.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniNE">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unine.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unine.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniSG">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unisg.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unisg.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniSI">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unisi.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unisi.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+    <Group name="UniZH">
+        <GroupMember>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unizh.ch</Attribute>
+            <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+        </GroupMember>
+        <AccessControlRuleConstraint>
+            <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">unizh.ch</Attribute>
+        </AccessControlRuleConstraint>
+    </Group>
+
+</Groups>
