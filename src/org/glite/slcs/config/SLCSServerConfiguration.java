@@ -1,9 +1,9 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.7 2007/03/19 13:14:13 vtschopp Exp $
- * 
- * Created on Jul 28, 2006 by tschopp
+ * $Id: SLCSServerConfiguration.java,v 1.8 2007/04/19 16:00:53 vtschopp Exp $
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Copyright (c) Members of the EGEE Collaboration. 2004.
+ * See http://eu-egee.org/partners/ for details on the copyright holders.
+ * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.config;
 
@@ -38,7 +38,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
