@@ -1,0 +1,240 @@
+/*
+ *   $Id: switch.css,v 1.1 2007/04/20 12:52:21 vtschopp Exp $
+ */
+
+body {
+  	background-color: white;
+  	font-family: Verdana, Arial, Helvetica, sans-serif;
+  	font-size: 12px;
+}
+
+h1, h2, h3 {
+	color: rgb(0,43,127);
+}
+
+.logo {
+  	color: white;
+  	text-decoration: none;
+}
+
+.logo-width {
+	width: 170;
+}
+
+.body-width {
+	margin-left: 5px;	
+}
+
+.blue {
+    color: rgb(0,43,127);
+}
+
+.orange {
+    color: rgb(226,140,5);
+}
+
+.error {
+	color: rgb(255,0,0);
+}
+
+.border-blue {
+	border-style: solid;
+	border-width: 1px;
+    border-color: rgb(0,43,127);
+    padding: 2px;
+}
+
+.border-orange {
+	border-style: solid;
+	border-width: 1px;
+    border-color: rgb(226,140,5);
+    padding: 2px;
+}
+
+/* table for attributes */
+
+.rule-box {
+/*	width: 400px; */
+    padding: 3px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    border-color: rgb(0,43,127);
+    border-style: solid;
+    border-width: thin;
+    border-spacing: 5px;
+    -moz-border-radius: 5px;
+}
+
+.group-name {
+    text-align: right;
+    color: rgb(0,43,127);
+    padding: 2px;
+}
+
+.group-value {
+    text-align: left;
+    color: rgb(226,140,5);
+    padding: 2px;
+}
+
+.button-edit {
+   float: right;
+}
+
+.button-delete {
+   float: right;
+}
+
+.attributes-box {
+    padding: 3px;
+    margin-top: 10px;
+    border-color: rgb(0,43,127);
+    border-style: dotted;
+    border-width: thin;
+    border-spacing: 5px;
+    clear: both;
+}
+
+.attributes-box-header {
+    color: rgb(0,43,127);
+    font-weight: bold;
+    text-align: left;
+}
+
+.attribute {
+    padding: 2px;
+    width: 100%;
+}
+
+.attribute-name {
+    width: 50%;
+    white-space: nowrap;
+    text-align: right;
+    color: rgb(0,43,127);
+    padding: 2px;
+}
+
+.attribute-value {
+    width: 50%;
+    text-align: left;
+    color: rgb(226,140,5);
+    border-style: solid;
+    border-width: thin;
+    padding: 2px;
+}
+
+.attribute-name-select {
+    text-align: right;
+	color: rgb(0,43,127);
+    padding: 2px;
+}
+
+.attribute-value-input {
+    text-align: left;
+    color: rgb(226,140,5);
+    padding: 2px;
+}
+
+/* input buttons */
+/*
+input[type=text], input[type=password]
+{
+	color: #000000;
+	border: 1px #9c9a9c solid;
+	padding: 2px 2px 2px 2px;
+	font-size: 11px;
+}
+
+input[type=text]:hover, input[type=password]:hover, input[type=text]:focus, input[type=text]:active, textarea:hover, textare:active, textarea:focus
+{
+	color: #FE911B;
+	border: 1px #FE911B solid;
+}
+*/
+
+.button {
+    color: rgb(0,43,127);
+ 	text-align: center;
+	text-decoration: none;
+	border-color: #FFC280 #FFB480 #FFB480 #FFC280;
+	border-width: 1px;
+	border-style: solid;
+	padding: 2px 2px 2px 2px;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+.nav-item {
+    color: rgb(0,43,127);
+    display: block;
+	text-align: center;
+	text-decoration: none;
+	border-color: #FFC280 #FFB480 #FFB480 #FFC280;
+	border-width: 1px;
+	border-style: solid;
+	padding: 2px 2px 2px 2px;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+.nav-item:hover, .button:hover {
+	border-color: #FEA94C #FF6900 #FF6900 #FEA94C;
+	background-color: #FFF3E5;	
+}
+
+input[type=submit], input[type=reset], button
+{
+    color: rgb(0,43,127);
+	background-color: white;
+    text-decoration: none;
+	border-color: #FFC280 #FFB480 #FFB480 #FFC280;
+	border-width: 1px;
+	border-style: solid;
+}
+
+input[type=submit]:hover, input[type=reset]:hover, button:hover
+{
+	color: #000;
+	text-decoration: none;
+	border-color: #FEA94C #FF6900 #FF6900 #FEA94C;
+	background-color: #FFF3E5;
+}
+
+
+/* AAI login box */
+td.top-left {
+    background-image: url('images/obenlinks.gif');
+    height: 14px;
+    width: 14px;
+}
+td.top-middle {
+    background-image: url('images/obenmitte.gif');
+    height: 14px;
+}
+td.top-right {
+    background-image: url('images/obenrechts.gif');
+    height: 14px;
+    width: 14px;
+}
+td.middle-left {
+    background-image: url('images/mittelinks.gif');
+    width: 14px;
+}
+td.middle-right {
+    background-image: url('images/mitterechts.gif');
+    width: 14px;
+}
+td.bottom-left {
+    background-image: url('images/untenlinks.gif');
+    height: 14px;
+    width: 14px;
+}
+td.bottom-middle {
+    background-image: url('images/untenmitte.gif');
+    height: 14px;
+}
+td.bottom-right {
+    background-image: url('images/untenrechts.gif');
+    height: 14px;
+    width: 14px;
+}
