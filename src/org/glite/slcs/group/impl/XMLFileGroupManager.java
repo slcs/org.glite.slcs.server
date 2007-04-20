@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileGroupManager.java,v 1.5 2007/03/18 18:34:23 vtschopp Exp $
+ * $Id: XMLFileGroupManager.java,v 1.6 2007/04/20 13:03:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -35,7 +35,7 @@ import org.glite.slcs.group.GroupMember;
  * GroupManager implementation, based on XML file. TODO: describe XML format
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class XMLFileGroupManager implements GroupManager,
         FileConfigurationListener {
@@ -165,6 +165,7 @@ public class XMLFileGroupManager implements GroupManager,
                         String value = (String) attributeValues.get(k);
                         Attribute attribute = new Attribute(name, value);
                         // add attribute constraint list
+                        attribute.setRequired(true);
                         constrainedAttributes.add(attribute);
                     }
                     // set the display name to all constrained attribute
