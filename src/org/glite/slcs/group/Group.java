@@ -1,5 +1,5 @@
 /*
- * $Id: Group.java,v 1.2 2007/03/14 13:49:05 vtschopp Exp $
+ * $Id: Group.java,v 1.3 2007/04/20 13:01:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.acl.AccessControlRule;
+import org.glite.slcs.attribute.Attribute;
 
 /**
  * Named group defined by a list of {@link GroupMember}s. A user is a group
@@ -23,7 +23,7 @@ import org.glite.slcs.acl.AccessControlRule;
  * {@link Attribute}s list required for each rule, can be added.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Group {
 
@@ -37,7 +37,7 @@ public class Group {
     private List members_ = null;
 
     /** AccessControlRule constraints */
-    private List ruleConstraints_ = null;
+    private List ruleAttributesConstraint_ = null;
 
     /**
      * Constructor of a named group without member and without rule constraint.
@@ -48,7 +48,7 @@ public class Group {
     public Group(String name) {
         name_ = name;
         members_ = new ArrayList();
-        ruleConstraints_ = new ArrayList();
+        ruleAttributesConstraint_ = new ArrayList();
     }
 
     /**
@@ -62,6 +62,7 @@ public class Group {
     public Group(String name, List members) {
         name_ = name;
         members_ = members;
+        ruleAttributesConstraint_ = new ArrayList();
     }
 
     /**
@@ -75,7 +76,7 @@ public class Group {
      * @param members
      *            set the list of {@link GroupMember}s.
      */
-    public void setAttributes(List members) {
+    public void setGroupMembers(List members) {
         members_ = members;
     }
 
@@ -134,8 +135,11 @@ public class Group {
      * @return the list of attributes defining the rule constraints. An empty
      *         list if no constaint are defined.
      */
-    public List getRuleConstraints() {
-        return ruleConstraints_;
+    public List getRuleAttributesConstraint() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("ruleAttributesConstraint=" + ruleAttributesConstraint_);
+        }
+        return ruleAttributesConstraint_;
     }
 
     /**
@@ -145,16 +149,17 @@ public class Group {
      * @param attribute
      *            The attribute to add as rule constraint.
      */
-    public void addRuleConstraint(Attribute attribute) {
-        ruleConstraints_.add(attribute);
+    public void addRuleAttributesConstraint(Attribute attribute) {
+        attribute.setRequired(true);
+        ruleAttributesConstraint_.add(attribute);
     }
 
     /**
      * @param ruleConstraints
      *            the ruleConstraints to set
      */
-    public void setRuleConstraints(List ruleConstraints) {
-        ruleConstraints_ = ruleConstraints;
+    public void setRuleAttributesConstraint(List ruleConstraints) {
+        ruleAttributesConstraint_ = ruleConstraints;
     }
 
     /*

@@ -1,5 +1,5 @@
 /*
- * $Id: GroupMember.java,v 1.1 2007/03/14 13:49:05 vtschopp Exp $
+ * $Id: GroupMember.java,v 1.2 2007/04/20 13:01:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -10,14 +10,14 @@ package org.glite.slcs.group;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.glite.slcs.Attribute;
+import org.glite.slcs.attribute.Attribute;
 
 /**
  * GroupMember defines the membership {@link Attribute}s list needed to be
  * member of a group.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class GroupMember {
 
