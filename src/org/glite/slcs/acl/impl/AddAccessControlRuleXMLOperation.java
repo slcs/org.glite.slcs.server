@@ -1,5 +1,5 @@
 /*
- * $Id: AddAccessControlRuleXMLOperation.java,v 1.3 2007/03/19 14:05:50 vtschopp Exp $
+ * $Id: AddAccessControlRuleXMLOperation.java,v 1.4 2007/04/20 12:57:14 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -20,7 +20,7 @@ import org.glite.slcs.attribute.Attribute;
  * XMLOpertation to add an AccessControlRule to the XML ACL file.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class AddAccessControlRuleXMLOperation extends XMLOperation {
 
@@ -64,7 +64,7 @@ public class AddAccessControlRuleXMLOperation extends XMLOperation {
         String newId = String.valueOf(max + 1);
         LOG.debug("adding AccessControlRule[@id]=" + newId);
         config.addProperty("AccessControlRule(-1)[@id]", newId);
-        config.addProperty("AccessControlRule[@group]", rule_.getGroup());
+        config.addProperty("AccessControlRule[@group]", rule_.getGroupName());
         List ruleAttributes = rule_.getAttributes();
         Iterator attributes = ruleAttributes.iterator();
         while (attributes.hasNext()) {

@@ -1,5 +1,5 @@
 /*
- * $Id: ReplaceAccessControlRuleXMLOperation.java,v 1.2 2007/03/19 14:05:50 vtschopp Exp $
+ * $Id: ReplaceAccessControlRuleXMLOperation.java,v 1.3 2007/04/20 12:57:14 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -21,7 +21,7 @@ import org.glite.slcs.attribute.Attribute;
  * one.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ReplaceAccessControlRuleXMLOperation extends XMLOperation {
 
@@ -83,7 +83,7 @@ public class ReplaceAccessControlRuleXMLOperation extends XMLOperation {
         if (ruleKey != null) {
             LOG.debug("replace AccessControlRule[" + ruleId + "]: " + rule_);
             // replace group
-            config.setProperty(ruleKey + "[@group]", rule_.getGroup());
+            config.setProperty(ruleKey + "[@group]", rule_.getGroupName());
             // clear all existing rule attributes
             config.clearTree(ruleKey + ".Attribute");
             // add new rule attributes

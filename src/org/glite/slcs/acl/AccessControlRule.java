@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlRule.java,v 1.3 2007/03/19 13:56:44 vtschopp Exp $
+ * $Id: AccessControlRule.java,v 1.4 2007/04/20 12:55:54 vtschopp Exp $
  * 
  * Created on Aug 30, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -26,15 +26,15 @@ import org.glite.slcs.attribute.Attribute;
  * </pre>
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class AccessControlRule {
 
     /** The rule id */
     private int id_ = -1;
 
-    /** The rule group */
-    private String group_ = null;
+    /** The rule group name */
+    private String groupName_ = null;
 
     /** The attributes in the rule */
     private List attributes_ = null;
@@ -42,11 +42,11 @@ public class AccessControlRule {
     /**
      * Constructor of a empty rule.
      * 
-     * @param group
-     *            The rule group.
+     * @param groupName
+     *            The rule group name.
      */
-    public AccessControlRule(String group) {
-        this(-1, group);
+    public AccessControlRule(String groupName) {
+        this(-1, groupName);
     }
 
     /**
@@ -57,9 +57,9 @@ public class AccessControlRule {
      * @param group
      *            The rule group.
      */
-    public AccessControlRule(int id, String group) {
+    public AccessControlRule(int id, String groupName) {
         id_ = id;
-        group_ = group;
+        groupName_ = groupName;
         attributes_ = new ArrayList();
     }
 
@@ -98,8 +98,8 @@ public class AccessControlRule {
      * 
      * @return The group of the rule.
      */
-    public String getGroup() {
-        return group_;
+    public String getGroupName() {
+        return groupName_;
     }
 
     /**
@@ -108,8 +108,8 @@ public class AccessControlRule {
      * @param group
      *            The group of the rule.
      */
-    public void setGroup(String group) {
-        group_ = group;
+    public void setGroupName(String groupName) {
+        groupName_ = groupName;
     }
 
     /**
@@ -141,7 +141,7 @@ public class AccessControlRule {
         sb.append("AccessControlRule[");
         sb.append(id_);
         sb.append(":");
-        sb.append(group_);
+        sb.append(groupName_);
         sb.append(":");
         sb.append(attributes_);
         sb.append("]");
@@ -158,7 +158,7 @@ public class AccessControlRule {
         int result = 1;
         result = PRIME * result
                 + ((attributes_ == null) ? 0 : attributes_.hashCode());
-        result = PRIME * result + ((group_ == null) ? 0 : group_.hashCode());
+        result = PRIME * result + ((groupName_ == null) ? 0 : groupName_.hashCode());
         result = PRIME * result + id_;
         return result;
     }
@@ -182,11 +182,11 @@ public class AccessControlRule {
         }
         else if (!attributes_.equals(other.attributes_))
             return false;
-        if (group_ == null) {
-            if (other.group_ != null)
+        if (groupName_ == null) {
+            if (other.groupName_ != null)
                 return false;
         }
-        else if (!group_.equals(other.group_))
+        else if (!groupName_.equals(other.groupName_))
             return false;
         return true;
     }
