@@ -1,5 +1,5 @@
 /*
- * $Id: GroupManager.java,v 1.3 2007/03/14 13:49:05 vtschopp Exp $
+ * $Id: GroupManager.java,v 1.4 2007/04/20 13:01:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -9,12 +9,12 @@ package org.glite.slcs.group;
 
 import java.util.List;
 
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSServerComponent;
+import org.glite.slcs.attribute.Attribute;
 
 /**
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface GroupManager extends SLCSServerComponent {
 
@@ -28,6 +28,13 @@ public interface GroupManager extends SLCSServerComponent {
     public Group getGroup(String name);
 
     /**
+     * Returns the list of all {@link Group}s.
+     * 
+     * @return The list of {@link Group}.
+     */
+    public List getGroups();
+    
+    /**
      * Returns the list of {@link Group} where the user, identified by his
      * {@link Attribute}s list, belong.
      * 
@@ -36,6 +43,13 @@ public interface GroupManager extends SLCSServerComponent {
      * @return The list of {@link Group}.
      */
     public List getGroups(List userAttributes);
+
+    /**
+     * Returns the list of all group names.
+     * 
+     * @return The list of group names.
+     */
+    public List getGroupNames();
 
     /**
      * Returns the list of group names where the user, identified by his
