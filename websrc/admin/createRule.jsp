@@ -1,43 +1,92 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <h2>New Access Control Rule</h2>
 
-<html:errors/>
+<p>
+You can create a new attributes-based access control rule for the group(s) you belong to. 
+</p>
+
+<p>
+If the chosen group defines a rule constraint, all the constrained attributes (marked with <font color="red">*</font>)
+ will be automatically added and can not be deleted.
+</p>
+
+<html:errors />
 
 <html:form action="/admin/createRule">
 	<table class="rule-box">
 		<tr>
-			<td><span class="group-name">ACL Group:</span> <html:select name="ruleBean" property="group" styleClass="group-value">
-			<html:options name="ruleBean" property="userGroups" />
-			</html:select></td>
+			<td>
+				<span class="group-name">Group:</span> 
+				<html:select name="ruleBean" property="groupName" styleClass="group-value">
+					<html:options name="ruleBean" property="userGroupNames" />
+				</html:select>
+			</td>
+			<td align="right">
+				<html:submit property="org.glite.slcs.struts.action.CHANGE_GROUP"><bean:message key="button.rule.setgroup"/></html:submit>
+			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan="2">
 			<table class="attributes-box">
-				<logic:iterate name="ruleBean" property="attributes" id="attribute" indexId="i">
-					<tr>
-						<td>
-							<html:select name="attribute" property="name" indexed="true" styleClass="attribute-name-select">
-							<html:optionsCollection name="ruleBean"	property="attributeDefinitions" value="name" label="displayName" />
-							</html:select>
-						</td>
-						<td>
-							<html:text name="attribute" property="value" indexed="true" styleClass="attribute-value-input"/> 
-							<html:submit property="org.glite.slcs.struts.action.DELETE_ATTRIBUTE" indexed="true">-</html:submit>
-							<html:submit property="org.glite.slcs.struts.action.ADD_ATTRIBUTE">+</html:submit>
-						</td>
-					</tr>
-				</logic:iterate>
+			<logic:iterate name="ruleBean" property="attributes" id="attribute" indexId="i">
+				<tr>
+				<c:choose>
+				<c:when test="${attribute.required}">
+					<td class="attribute-name">
+						<bean:write name="attribute" property="displayName" />
+						<html:hidden name="attribute"  property="name" indexed="true"/>
+					</td>
+					<td class="attribute-value">
+						<bean:write name="attribute" property="value" />
+						<html:hidden name="attribute" property="value" indexed="true"/>
+					</td>
+					<td><font color="red">*</font></td>
+				</c:when>
+				<c:otherwise>					
+					<td>
+						<html:select name="attribute" property="name" indexed="true" styleClass="attribute-name-select">
+							<html:optionsCollection name="ruleBean"
+								property="attributeDefinitions" value="name" label="displayName" />
+						</html:select>
+					</td>
+					<td>
+						<html:text name="attribute" property="value" indexed="true" styleClass="attribute-value-input" /> 
+					</td>
+					<td align="right">
+						<html:submit property="org.glite.slcs.struts.action.DELETE_ATTRIBUTE" indexed="true"><bean:message key="button.rule.attribute.delete"/></html:submit> 
+					</td>
+				</c:otherwise>
+				</c:choose>
+				</tr>
+			</logic:iterate>
+				<tr>
+					<td align="right" colspan="3">
+						<html:submit property="org.glite.slcs.struts.action.ADD_ATTRIBUTE"><bean:message key="button.rule.attribute.add"/></html:submit>
+					</td>
+				</tr>
 			</table>
 			</td>
 		</tr>
 		<tr>
-			<td align="right">
-				<html:cancel>Cancel</html:cancel>
-				<html:submit property="org.glite.slcs.struts.action.SAVE_RULE">Create Rule</html:submit>
+			<td align="right" colspan="2">
+				<html:cancel><bean:message key="button.rule.cancel"/></html:cancel> 
+				<html:submit property="org.glite.slcs.struts.action.SAVE_RULE"><bean:message key="button.rule.create"/></html:submit>
 			</td>
 		</tr>
 	</table>
 </html:form>
+
+<p>
+<small>
+<ul>
+<li>First select the group for the rule and press <span class="button"><bean:message key="button.rule.setgroup"/></span></li>
+<li>Then add/edit/remove the attributes required to identify the user. The attributes <span class="attribute-name">AAI UniqueID</span> or <span class="attribute-name">Email</span> are recommended for this purpose.</li>
+<li>The attribute value must match exactly (case sensitive) the value of the user's attribute. Ask the user to dump his attributes using the <a href="https://aai-viewer.switch.ch/aai" target="aai-viewer">AAI Attributes Viewer</a> to determine the exact attribute value.</li>
+<li>When you are finished press on <span class="button"><bean:message key="button.rule.create"/></span> to store the rule.</li>
+</ul>
+</small>
+</p>
