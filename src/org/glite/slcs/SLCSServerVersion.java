@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerVersion.java,v 1.2 2007/03/14 13:26:34 vtschopp Exp $
+ * $Id: SLCSServerVersion.java,v 1.3 2007/05/08 09:02:37 vtschopp Exp $
  * 
  * Created on May 5, 2006 by tschopp
  *
@@ -13,7 +13,7 @@ package org.glite.slcs;
  * SLCSServerVersion and Copyright constants.
  *
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SLCSServerVersion {
     /** SLCSServerVersion as String */
@@ -25,8 +25,35 @@ public class SLCSServerVersion {
     /** Revision version number */
     static public final int REVISION= 0;
     
+    /** Build number */
+    static public final String BUILD= "@BUILD.NUMBER@";
+    
     /** Copyright */
     static public final String COPYRIGHT= "Copyright (c) Members of the EGEE Collaboration";
     
     private SLCSServerVersion() {}
+    
+    /**
+     * @return The version of the server in format MAJOR.MINOR.REVISION
+     */
+    static String getVersion() {
+        StringBuffer sb= new StringBuffer();
+        sb.append(MAJOR).append('.');
+        sb.append(MINOR).append('.');
+        sb.append(REVISION);
+        return sb.toString();
+    }
+
+    /**
+     * @return The full version of the server in format MAJOR.MINOR.REVISION.BUILD
+     */
+    static String getFullVersion() {
+        StringBuffer sb= new StringBuffer();
+        sb.append(MAJOR).append('.');
+        sb.append(MINOR).append('.');
+        sb.append(REVISION).append('.');
+        sb.append(BUILD);
+        return sb.toString();
+    }
+
 }
