@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractServlet.java,v 1.1 2007/03/14 14:04:01 vtschopp Exp $
+ * $Id: AbstractServlet.java,v 1.2 2007/06/11 13:08:05 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -24,21 +24,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.SLCSServerComponent;
+import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.attribute.AttributeDefinitions;
 import org.glite.slcs.audit.Auditor;
 import org.glite.slcs.audit.AuditorFactory;
 import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.session.SLCSSessions;
 import org.glite.slcs.session.SLCSSessionsFactory;
-import org.glite.slcs.util.Utils;
 
 /**
  * AbstractServlet is the base class for the SLCS servlets.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class AbstractServlet extends HttpServlet {
 
@@ -166,44 +166,19 @@ public abstract class AbstractServlet extends HttpServlet {
     }
 
     /**
-     * Return the list of required user's {@link Attribute}s. The required
-     * attributes are defined in a list of required attribute names.
+     * Return the list of user's {@link Attribute}s from the request. 
      * 
-     * @param req
+     * @param request
      *            The HttpServletRequest object
-     * @param requiredShibbolethAttributeNames
-     *            List of required Shibboleth attribute names.
      * @return The list of user's attributes
      */
-    protected List getShibbolethAttributes(HttpServletRequest req,
-            List requiredShibbolethAttributeNames) {
-        List userAttributes = new ArrayList();
-        Enumeration headers = req.getHeaderNames();
-        while (headers.hasMoreElements()) {
-            String header = (String) headers.nextElement();
-            if (requiredShibbolethAttributeNames.contains(header)) {
-                String shibUTF8 = req.getHeader(header);
-                if (shibUTF8 != null && !shibUTF8.equals("")) {
-                    // convert Shibboleth UTF8 to unicode
-                    String value = Utils.convertShibbolethUTF8ToUnicode(shibUTF8);
-                    // multi-value attributes
-                    String[] attrValues = value.split(";");
-                    for (int i = 0; i < attrValues.length; i++) {
-                        String attrName = header;
-                        String attrValue = attrValues[i];
-                        attrValue = attrValue.trim();
-                        Attribute attribute = new Attribute(attrName, attrValue);
-                        // String displayName =
-                        // helper.getDisplayName(attribute);
-                        // attribute.setDisplayName(displayName);
-                        userAttributes.add(attribute);
-                    }
-                }
-
-            }
-        }
+    protected List getUserAttributes(HttpServletRequest request) {
+        // get the AttributeDefinitions engine to process the request
+        AttributeDefinitions attributeDefinitions= configuration_.getAttributeDefinitions();
+        // get the user attributes from the request
+        List userAttributes = attributeDefinitions.getUserAttributes(request);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("attributes: " + userAttributes);
+            LOG.debug("userAttributes=" + userAttributes);
         }
         return userAttributes;
     }
@@ -289,42 +264,35 @@ public abstract class AbstractServlet extends HttpServlet {
     }
 
     /**
-     * @return List of required Shibboleth attribute names.
-     */
-    protected List getRequiredShibbolethAttributeNames() {
-        return configuration_.getRequiredAttributeNames();
-    }
-
-    /**
-     * Checks if all required Shibboleth attributes are present.
+     * Checks if all required attributes are present.
      * 
-     * @param requiredShibbolethAttributeNames
+     * @param requiredAttributeNames
      *            List of required Shibboleth attribute name.
      * @param userAttributes
      *            List of user's attributes.
      * @throws SLCSException
      *             If a required Shibboleth attribute is missing
      */
-    protected void checkRequiredShibbolethAttributes(
-            List requiredShibbolethAttributeNames, List userAttributes)
+    protected void checkRequiredAttributes(List userAttributes)
             throws SLCSException {
         // the list of user attribute names
-        List attributeNames= new ArrayList();
+        List userAttributeNames= new ArrayList();
         Iterator attributes= userAttributes.iterator();
         while (attributes.hasNext()) {
             Attribute attribute = (Attribute) attributes.next();
             String attributeName= attribute.getName();
-            attributeNames.add(attributeName);
+            userAttributeNames.add(attributeName);
         }
         // compare with the required attribute names
-        Iterator requiredAttributeNames = requiredShibbolethAttributeNames.iterator();
-        while (requiredAttributeNames.hasNext()) {
-            String requiredAttributeName = (String) requiredAttributeNames.next();
-            if (!attributeNames.contains(requiredAttributeName)) {
+        List requiredAttributeNames= configuration_.getRequiredAttributeNames();
+        Iterator requiredNames = requiredAttributeNames.iterator();
+        while (requiredNames.hasNext()) {
+            String requiredName = (String) requiredNames.next();
+            if (!userAttributeNames.contains(requiredName)) {
                 LOG.error("Required Shibboleth attribute "
-                        + requiredAttributeName + " missing");
+                        + requiredName + " missing");
                 throw new SLCSException("Required Shibboleth attribute "
-                        + requiredAttributeName + " missing");
+                        + requiredName + " missing");
             }
         }
     }

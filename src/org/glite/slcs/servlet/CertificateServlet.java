@@ -1,5 +1,5 @@
 /*
- * $Id: CertificateServlet.java,v 1.2 2007/03/14 14:04:01 vtschopp Exp $
+ * $Id: CertificateServlet.java,v 1.3 2007/06/11 13:08:05 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -34,13 +34,14 @@ import org.glite.slcs.pki.Certificate;
 import org.glite.slcs.pki.CertificateRequest;
 import org.glite.slcs.policy.CertificatePolicy;
 import org.glite.slcs.policy.CertificatePolicyFactory;
+import org.glite.slcs.session.SLCSSession;
 import org.glite.slcs.session.SLCSSessions;
 
 /**
  * Servlet implementation class for Servlet: CertificateServlet
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class CertificateServlet extends AbstractServlet {
 
@@ -127,13 +128,13 @@ public class CertificateServlet extends AbstractServlet {
 
             LOG.debug("check session...");
             SLCSSessions sessions = getSLCSSessions();
-            if (sessions.isSessionValid(authorizationToken, certificateSubject)) {
-                LOG.debug("SLCSSession(" + authorizationToken + ","
-                        + certificateSubject + ") is valid");
+            SLCSSession session = sessions.getSession(authorizationToken, certificateSubject);
+            if (session != null && session.isValid()) {
+                LOG.debug( session + " is valid");
 
                 // check certificate against policy
                 LOG.debug("check certificate request against policy...");
-                List userAttributes = sessions.getAttributes(authorizationToken);
+                List userAttributes = session.getAttributes();
                 if (policy_.isCertificateRequestValid(certificateRequest, userAttributes)) {
 
                     // request certificate
@@ -156,12 +157,15 @@ public class CertificateServlet extends AbstractServlet {
                 }
             }
             else {
-                throw new SLCSException("SLCSSession:" + authorizationToken
-                        + "," + certificateSubject + " is not valid");
+                throw new SLCSException("SLCSSession: " + authorizationToken
+                        + "," + certificateSubject + " does not exists or is expired");
             }
 
         } catch (SLCSException e) {
             LOG.error(e);
+            
+            //TODO: audit error
+            
             sendXMLErrorResponse(request, response, "SLCSCertificateResponse", e.getMessage(), e);
         }
 

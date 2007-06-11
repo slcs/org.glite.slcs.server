@@ -1,5 +1,5 @@
 /*
- * $Id: LoginServlet.java,v 1.2 2007/03/14 14:04:01 vtschopp Exp $
+ * $Id: LoginServlet.java,v 1.3 2007/06/11 13:08:05 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
+import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.audit.event.AuditEvent;
 import org.glite.slcs.audit.event.AuthorizationEvent;
 import org.glite.slcs.audit.event.SystemEvent;
@@ -30,13 +30,14 @@ import org.glite.slcs.dn.DNBuilderFactory;
 import org.glite.slcs.pki.CertificateExtension;
 import org.glite.slcs.policy.CertificatePolicy;
 import org.glite.slcs.policy.CertificatePolicyFactory;
+import org.glite.slcs.session.SLCSSession;
 import org.glite.slcs.session.SLCSSessions;
 
 /**
  * Servlet implementation class for Servlet: LoginServlet
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LoginServlet extends AbstractServlet implements
         javax.servlet.Servlet {
@@ -45,9 +46,6 @@ public class LoginServlet extends AbstractServlet implements
 
     /** Logging */
     static final Log LOG = LogFactory.getLog(LoginServlet.class);
-
-    /** Required Shibboleth attributes */
-    List requiredShibbolethAttributeNames_ = null;
 
     /** DNBuilder */
     private DNBuilder dnBuilder_ = null;
@@ -79,10 +77,6 @@ public class LoginServlet extends AbstractServlet implements
             policy_ = CertificatePolicyFactory.getInstance();
             registerSLCSServerComponent(policy_);
 
-            requiredShibbolethAttributeNames_ = getRequiredShibbolethAttributeNames();
-            LOG.info("RequiredShibbolethAttributeNames="
-                    + requiredShibbolethAttributeNames_);
-
         } catch (SLCSException e) {
             LOG.error("Servlet init failed", e);
             throw new ServletException(e);
@@ -95,45 +89,43 @@ public class LoginServlet extends AbstractServlet implements
         LOG.debug("doProcess...");
 
         // read AAI Shibboleth attributes
-        List userAttributes = getShibbolethAttributes(req,
-                requiredShibbolethAttributeNames_);
+        List userAttributes = getUserAttributes(req);
         // read the remote IP and UserAgent
-        Attribute remoteAddress= getRemoteAddressAttribute(req);
+        Attribute remoteAddress = getRemoteAddressAttribute(req);
         userAttributes.add(remoteAddress);
         Attribute userAgent = getUserAgentAttribute(req);
         userAttributes.add(userAgent);
 
         try {
             // check required attributes
-            checkRequiredShibbolethAttributes(
-                    requiredShibbolethAttributeNames_, userAttributes);
+            checkRequiredAttributes(userAttributes);
 
-            AuditEvent login = new AuthorizationEvent("User login",
-                    userAttributes);
+            AuditEvent login = new AuthorizationEvent("User login", userAttributes);
             getAuditor().logEvent(login);
 
             // create a new DN
             String dn = dnBuilder_.createDN(userAttributes);
             // store the new DN in sessions and get authorization token
             SLCSSessions sessions = getSLCSSessions();
-            String token = sessions.createSession(dn);
+            SLCSSession session = sessions.createSession(dn);
             // store attributes in session
-            sessions.setAttributes(token, userAttributes);
+            session.setAttributes(userAttributes);
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Session created: " + session );
+            }
 
-            List extensions = policy_
-                    .getRequiredCertificateExtensions(userAttributes);
+            String authToken= session.getToken();
+            List extensions = policy_.getRequiredCertificateExtensions(userAttributes);
             String reqUrl = getContextUrl(req, "/certificate");
-
-            sendLoginResponse(req, res, token, reqUrl, dn, extensions);
+            sendLoginResponse(req, res, authToken, reqUrl, dn, extensions);
 
         } catch (SLCSException e) {
             LOG.error("Processing error: " + e);
-            sendXMLErrorResponse(req, res, "SLCSLoginResponse", e.getMessage(),
-                    e);
+            sendXMLErrorResponse(req, res, "SLCSLoginResponse", e.getMessage(), e);
 
             try {
-                SystemEvent error = new SystemEvent(AuditEvent.LEVEL_ERROR, e
-                        .getMessage(), userAttributes);
+                SystemEvent error = new SystemEvent(AuditEvent.LEVEL_ERROR, e.getMessage(), userAttributes);
                 getAuditor().logEvent(error);
             } catch (SLCSException e1) {
                 LOG.error("Audit error: " + e1);
@@ -147,17 +139,17 @@ public class LoginServlet extends AbstractServlet implements
      * Sends a XML SLCSLoginResponse back to the client.
      * 
      * <pre>
-     *    &lt;SLCSLoginResponse&gt;
-     *       &lt;Status&gt;Success&lt;/Status&gt;
-     *       &lt;AuthorizationToken&gt;401B4A42F472565E84194BA03C0854B5DF44D22E8F34046810D605A03FAB8D85&lt;/AuthorizationToken&gt;
-     *       &lt;CertificateRequest url=&quot;https://hestia.switch.ch:443/SLCS/certificate&quot;&gt;
-     *          &lt;Subject&gt;CN=Tschopp Valery 9FEE5EE3,O=Switch - Teleinformatikdienste fuer Lehre und Forschung,C=CH&lt;/Subject&gt;
-     *          &lt;CertificateExtension name=&quot;CertificatePolicies&quot; oid=&quot;2.5.29.32&quot; critical=&quot;false&quot;&gt;2.16.756.1.2.6.3&lt;/CertificateExtension&gt;
-     *          &lt;CertificateExtension name=&quot;ExtendedKeyUsage&quot; oid=&quot;2.5.29.37&quot; critical=&quot;false&quot;&gt;ClientAuth&lt;/CertificateExtension&gt;
-     *          &lt;CertificateExtension name=&quot;KeyUsage&quot; oid=&quot;2.5.29.15&quot; critical=&quot;true&quot;&gt;DigitalSignature,KeyEncipherment&lt;/CertificateExtension&gt;
-     *          &lt;CertificateExtension name=&quot;SubjectAltName&quot; oid=&quot;2.5.29.17&quot; critical=&quot;false&quot;&gt;email:tschopp@switch.ch&lt;/CertificateExtension&gt;
-     *       &lt;/CertificateRequest&gt;
-     *    &lt;/SLCSLoginResponse&gt;
+     *     &lt;SLCSLoginResponse&gt;
+     *        &lt;Status&gt;Success&lt;/Status&gt;
+     *        &lt;AuthorizationToken&gt;401B4A42F472565E84194BA03C0854B5DF44D22E8F34046810D605A03FAB8D85&lt;/AuthorizationToken&gt;
+     *        &lt;CertificateRequest url=&quot;https://hestia.switch.ch:443/SLCS/certificate&quot;&gt;
+     *           &lt;Subject&gt;CN=Tschopp Valery 9FEE5EE3,O=Switch - Teleinformatikdienste fuer Lehre und Forschung,C=CH&lt;/Subject&gt;
+     *           &lt;CertificateExtension name=&quot;CertificatePolicies&quot; oid=&quot;2.5.29.32&quot; critical=&quot;false&quot;&gt;2.16.756.1.2.6.3&lt;/CertificateExtension&gt;
+     *           &lt;CertificateExtension name=&quot;ExtendedKeyUsage&quot; oid=&quot;2.5.29.37&quot; critical=&quot;false&quot;&gt;ClientAuth&lt;/CertificateExtension&gt;
+     *           &lt;CertificateExtension name=&quot;KeyUsage&quot; oid=&quot;2.5.29.15&quot; critical=&quot;true&quot;&gt;DigitalSignature,KeyEncipherment&lt;/CertificateExtension&gt;
+     *           &lt;CertificateExtension name=&quot;SubjectAltName&quot; oid=&quot;2.5.29.17&quot; critical=&quot;false&quot;&gt;email:tschopp@switch.ch&lt;/CertificateExtension&gt;
+     *        &lt;/CertificateRequest&gt;
+     *     &lt;/SLCSLoginResponse&gt;
      * </pre>
      * 
      * @param req
@@ -200,8 +192,7 @@ public class LoginServlet extends AbstractServlet implements
             // add certificate extensions
             Iterator extensions = certExtensions.iterator();
             while (extensions.hasNext()) {
-                CertificateExtension extension = (CertificateExtension) extensions
-                        .next();
+                CertificateExtension extension = (CertificateExtension) extensions.next();
                 pw.println(extension.toXML());
             }
         }
