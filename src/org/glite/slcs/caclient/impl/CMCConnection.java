@@ -1,5 +1,5 @@
 /*
- * $Id: CMCConnection.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
+ * $Id: CMCConnection.java,v 1.2 2007/06/11 12:51:57 vtschopp Exp $
  * 
  * Created on Jun 21, 2006 by tschopp
  *
@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * online CA server.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class CMCConnection implements PKIConnection {
 
@@ -234,6 +234,14 @@ public class CMCConnection implements PKIConnection {
      *             Enrollment Response.
      */
     private void checkResponseHeaders() throws CMCException {
+        int status= getPostMethod().getStatusCode();
+        LOG.debug("Status: " + status);
+        if (status != 200) {
+            String statusMessage= getPostMethod().getStatusLine().toString();
+            LOG.error("Connection to Online CA failed: " + statusMessage);
+            throw new CMCException("Connection to Online CA failed: " + statusMessage);
+        }
+        
         // check Content-Type: application/pkcs7-mime
         Header contentType= getPostMethod().getResponseHeader("Content-Type");
         if (contentType == null) {
