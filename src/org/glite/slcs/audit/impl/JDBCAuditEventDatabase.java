@@ -1,5 +1,5 @@
 /*
- * $Id: JDBCAuditEventDatabase.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
+ * $Id: JDBCAuditEventDatabase.java,v 1.2 2007/06/11 12:49:56 vtschopp Exp $
  * 
  * Created on Sep 5, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -13,16 +13,15 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.glite.slcs.audit.event.AuditEvent;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.audit.event.AuditEvent;
 
 /**
  * JDBCAuditEventDatabase is a simple
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class JDBCAuditEventDatabase {
 
@@ -109,10 +108,10 @@ public class JDBCAuditEventDatabase {
         preparedStatement_.setInt(i++, event.getType());
         preparedStatement_.setInt(i++, event.getLevel());
         preparedStatement_.setString(i++, event.getMessage());
-        Map userInfo= event.getUserInformation();
+        Map attributesMap= event.getAttributesMap();
         preparedStatement_.setString(i++,
-                                     (String) userInfo.get("RemoteAddress"));
-        preparedStatement_.setString(i++, (String) userInfo.get("UserAgent"));
+                                     (String) attributesMap.get("RemoteAddress"));
+        preparedStatement_.setString(i++, (String) attributesMap.get("UserAgent"));
         preparedStatement_.executeUpdate();
 
     }

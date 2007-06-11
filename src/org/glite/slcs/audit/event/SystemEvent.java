@@ -1,5 +1,5 @@
 /*
- * $Id: SystemEvent.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
+ * $Id: SystemEvent.java,v 1.2 2007/06/11 12:49:27 vtschopp Exp $
  * 
  * Created on Sep 6, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -7,13 +7,13 @@
  */
 package org.glite.slcs.audit.event;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * SystemEvent is an AuditEvent of type SYSTEM.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SystemEvent extends AuditEvent {
 
@@ -24,7 +24,7 @@ public class SystemEvent extends AuditEvent {
      *            The event message.
      */
     public SystemEvent(String message) {
-        super(AuditEvent.TYPE_SYSTEM, AuditEvent.LEVEL_INFO, message, null);
+        super(AuditEvent.TYPE_SYSTEM, AuditEvent.LEVEL_INFO, message);
     }
 
     /**
@@ -32,14 +32,11 @@ public class SystemEvent extends AuditEvent {
      * 
      * @param message
      *            The event message.
-     * @param userInformation
-     *            The user information map.
+     * @param userAttributes
+     *            The user attributes list.
      */
-    public SystemEvent(String message, Map userInformation) {
-        super(AuditEvent.TYPE_SYSTEM,
-              AuditEvent.LEVEL_INFO,
-              message,
-              userInformation);
+    public SystemEvent(String message, List userAttributes) {
+        super(AuditEvent.TYPE_SYSTEM, AuditEvent.LEVEL_INFO, message, userAttributes);
     }
 
     /**
@@ -51,7 +48,7 @@ public class SystemEvent extends AuditEvent {
      *            The event message.
      */
     public SystemEvent(int level, String message) {
-        super(AuditEvent.TYPE_SYSTEM, level, message, null);
+        super(AuditEvent.TYPE_SYSTEM, level, message);
     }
 
     /**
@@ -61,11 +58,11 @@ public class SystemEvent extends AuditEvent {
      *            The event level.
      * @param message
      *            The event message.
-     * @param userInformation
+     * @param userAttributes
      *            The user information map.
      */
-    public SystemEvent(int level, String message, Map userInformation) {
-        super(AuditEvent.TYPE_SYSTEM, level, message, userInformation);
+    public SystemEvent(int level, String message, List userAttributes) {
+        super(AuditEvent.TYPE_SYSTEM, level, message, userAttributes);
     }
 
 }

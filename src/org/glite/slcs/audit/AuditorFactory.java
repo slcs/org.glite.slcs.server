@@ -1,5 +1,5 @@
 /*
- * $Id: AuditorFactory.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
+ * $Id: AuditorFactory.java,v 1.2 2007/06/11 12:49:14 vtschopp Exp $
  * 
  * Created on Aug 30, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -7,26 +7,25 @@
  */
 package org.glite.slcs.audit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.config.SLCSServerConfiguration;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
- * AuditorFactory is a factory to get the singleton instance implementing the
+ * GroupManagerFactory is a factory to get the singleton instance implementing the
  * Auditor.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AuditorFactory {
 
     /** Logging */
-    private static Log LOG= LogFactory.getLog(AuditorFactory.class);
+    private static Log LOG = LogFactory.getLog(AuditorFactory.class);
 
     /** Singleton pattern */
-    private static Auditor SINGLETON= null;
+    private static Auditor SINGLETON = null;
 
     /**
      * Factory method to get the singleton instance of the Auditor
@@ -41,8 +40,8 @@ public class AuditorFactory {
         if (SINGLETON != null) {
             return SINGLETON;
         }
-        SLCSServerConfiguration config= SLCSServerConfiguration.getInstance();
-        SINGLETON= newInstance(config);
+        SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
+        SINGLETON = newInstance(config);
         return SINGLETON;
     }
 
@@ -57,16 +56,18 @@ public class AuditorFactory {
      */
     protected static Auditor newInstance(SLCSServerConfiguration config)
             throws SLCSException {
-        Auditor impl= null;
-        String className= config.getString("SLCSComponentConfiguration.Auditor[@implementation]");
+        Auditor impl = null;
+        String className = config
+                .getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                        + ".Auditor[@implementation]");
         LOG.info("Auditor implementation=" + className);
         try {
-            impl= (Auditor) Class.forName(className).newInstance();
+            impl = (Auditor) Class.forName(className).newInstance();
             impl.init(config);
         } catch (InstantiationException e) {
             LOG.error("Can not instantiate class: " + className, e);
             throw new SLCSException("Can not instantiate class: " + className,
-                                    e);
+                    e);
         } catch (IllegalAccessException e) {
             LOG.error("Illegal access for class: " + className, e);
             throw new SLCSException("Illegal access for class: " + className, e);

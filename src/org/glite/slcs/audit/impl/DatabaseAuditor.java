@@ -1,5 +1,5 @@
 /*
- * $Id: DatabaseAuditor.java,v 1.2 2006/12/07 16:14:57 vtschopp Exp $
+ * $Id: DatabaseAuditor.java,v 1.3 2007/06/11 12:49:56 vtschopp Exp $
  * 
  * Created on Aug 30, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -9,20 +9,19 @@ package org.glite.slcs.audit.impl;
 
 import java.sql.SQLException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.audit.Auditor;
 import org.glite.slcs.audit.event.AuditEvent;
 import org.glite.slcs.config.SLCSServerConfiguration;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * DatabaseAuditor implements a JDBC data store for audit events. Uses a 
  * simple JDBC delegate to store in the DB.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class DatabaseAuditor implements Auditor {
 
@@ -45,13 +44,13 @@ public class DatabaseAuditor implements Auditor {
      */
     public void init(SLCSServerConfiguration config) throws SLCSException {
         // checks the configuration parameters
-        String jdbcDriver= config.getString("SLCSComponentConfiguration.Auditor.JDBCDriver");
+        String jdbcDriver= config.getString( SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".Auditor.JDBCDriver");
         LOG.info("Auditor.JDBCDriver=" + jdbcDriver);
-        String connectionUrl= config.getString("SLCSComponentConfiguration.Auditor.ConnectionUrl");
+        String connectionUrl= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".Auditor.ConnectionUrl");
         LOG.info("Auditor.ConnectionUrl=" + connectionUrl);
-        String user= config.getString("SLCSComponentConfiguration.Auditor.User");
+        String user= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".Auditor.User");
         LOG.info("Auditor.User=" + user);
-        String password= config.getString("SLCSComponentConfiguration.Auditor.Password");
+        String password= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".Auditor.Password");
         LOG.info("Auditor.Password=" + password);
 
         try {
@@ -102,9 +101,10 @@ public class DatabaseAuditor implements Auditor {
      * @see org.glite.slcs.SLCSServerComponent#shutdown()
      */
     public void shutdown() {
-        LOG.info("close DB connection");
         if (database_ != null) {
+            LOG.info("close DB connection");
             database_.close();
+            database_= null;
         }
     }
 

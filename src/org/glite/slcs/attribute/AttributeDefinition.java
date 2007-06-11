@@ -1,5 +1,5 @@
 /*
- * $Id: AttributeDefinition.java,v 1.2 2007/03/19 09:05:53 vtschopp Exp $
+ * $Id: AttributeDefinition.java,v 1.3 2007/06/11 12:45:40 vtschopp Exp $
  * 
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -12,7 +12,7 @@ package org.glite.slcs.attribute;
  * and a required flag.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class AttributeDefinition {
 
@@ -127,12 +127,16 @@ public class AttributeDefinition {
     public boolean isRequired() {
         return required_;
     }
+    
+    public boolean getRequired() {
+        return required_;
+    }
 
     /**
      * @param required
      *            the required to set
      */
-    protected void setRequired(boolean required) {
+    public void setRequired(boolean required) {
         required_ = required;
     }
 
