@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerComponentsPlugin.java,v 1.1 2007/03/16 08:58:09 vtschopp Exp $
+ * $Id: SLCSServerComponentsPlugin.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -36,6 +36,13 @@ import org.glite.slcs.policy.CertificatePolicyFactory;
 import org.glite.slcs.session.SLCSSessions;
 import org.glite.slcs.session.SLCSSessionsFactory;
 
+/**
+ * The PlugIn initializes and instantiates the necessary {@link SLCSServerComponent}s
+ * and shutdowns them when destroyed.
+ * 
+ * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
+ * @version $Revision: 1.2 $
+ */
 public class SLCSServerComponentsPlugin implements PlugIn {
 
     /** Logging */

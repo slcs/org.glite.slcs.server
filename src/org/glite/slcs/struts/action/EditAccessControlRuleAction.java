@@ -1,5 +1,5 @@
 /*
- * $Id: EditAccessControlRuleAction.java,v 1.1 2007/03/16 08:58:33 vtschopp Exp $
+ * $Id: EditAccessControlRuleAction.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -7,6 +7,7 @@
  */
 package org.glite.slcs.struts.action;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,9 +18,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.glite.slcs.acl.AccessControlListEditor;
 import org.glite.slcs.acl.AccessControlListEditorFactory;
 import org.glite.slcs.acl.AccessControlRule;
+import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.group.Group;
 import org.glite.slcs.group.GroupManager;
 import org.glite.slcs.group.GroupManagerFactory;
 import org.glite.slcs.struts.form.AccessControlRuleForm;
@@ -50,22 +55,25 @@ public class EditAccessControlRuleAction extends
 
         if (isEditRuleAction(request)) {
             LOG.info("edit rule");
-            List userAttributes = getUserAttributes(request);
-            GroupManager groupManager = GroupManagerFactory.getInstance();
-            List userGroupNames = groupManager.getGroupNames(userAttributes);
             AccessControlListEditor editor = AccessControlListEditorFactory.getInstance();
             int ruleId = getEditRuleId(request);
             AccessControlRule rule = editor.getAccessControlRule(ruleId);
             if (rule != null) {
+                GroupManager groupManager = GroupManagerFactory.getInstance();
+                String groupName= rule.getGroupName();
+                Group group= groupManager.getGroup(groupName);
+                List attributesConstraint= group.getRuleAttributesConstraint();
                 AccessControlRuleBean ruleBean = new AccessControlRuleBean();
-                ruleBean.setUserGroups(userGroupNames);
-                ruleBean.setGroup(rule.getGroup());
+                ruleBean.setGroupName(rule.getGroupName());
                 ruleBean.setId(rule.getId());
                 ruleBean.setAttributes(rule.getAttributes());
+                ruleBean.addConstrainedAttributes(attributesConstraint);
+                ruleBean.updateAttributesDiplayName();
                 request.setAttribute("ruleBean", ruleBean);
                 // forward/send response
                 return mapping.findForward("admin.page.editRule");
             }
+            // TODO: error rule doesn't exist!!!!
         }
         else if (isAddRuleAttributeAction(request)) {
             LOG.info("add rule attribute");
@@ -89,15 +97,20 @@ public class EditAccessControlRuleAction extends
             GroupManager groupManager = GroupManagerFactory.getInstance();
             // read rule group and attributes from form
             AccessControlRuleForm ruleForm = (AccessControlRuleForm) form;
-            String ruleGroup = ruleForm.getGroup();
+            String ruleGroup = ruleForm.getGroupName();
             List ruleAttributes = getValidRuleAttributes(ruleForm);
-            if (groupManager.inGroup(ruleGroup, userAttributes)) {
-                if (!ruleAttributes.isEmpty()) {
+            if (groupManager.inGroup(ruleGroup, userAttributes)
+                    || groupManager.isAdministrator(userAttributes)) {
+
+                int ruleId = getSaveRuleId(request);
+                // check the rule constraint
+                Group group = groupManager.getGroup(ruleGroup);
+                List attributesContraint = group.getRuleAttributesConstraint();
+                if (ruleAttributes.containsAll(attributesContraint)) {
                     AccessControlListEditor editor = AccessControlListEditorFactory.getInstance();
-                    int ruleId = getSaveRuleId(request);
                     AccessControlRule rule = editor.getAccessControlRule(ruleId);
                     if (rule != null) {
-                        rule.setGroup(ruleGroup);
+                        rule.setGroupName(ruleGroup);
                         rule.setAttributes(ruleAttributes);
                         LOG.info("replace rule: " + rule);
                         editor.replaceAccessControlRule(rule);
@@ -112,15 +125,33 @@ public class EditAccessControlRuleAction extends
                     return mapping.findForward("admin.go.listRules");
                 }
                 else {
-                    LOG.warn("rule does not contain valid attributes...");
-                    // TODO: use ActionMessage for error...
+                    // use ActionMessage for error...
+                    LOG.warn("rule did not contain the mandatory attributes constraint: "
+                            + attributesContraint);
+                    ActionMessages messages = new ActionMessages();
+                    StringBuffer messageText = new StringBuffer();
+                    messageText.append("<ul>");
+                    Iterator attributes = attributesContraint.iterator();
+                    while (attributes.hasNext()) {
+                        Attribute attribute = (Attribute) attributes.next();
+                        messageText.append("<li>Attribute ").append(attribute.getDisplayName());
+                        messageText.append(" = ").append(attribute.getValue());
+                        messageText.append(" was added</li>");
+                    }
+                    messageText.append("</ul>");
+                    ActionMessage warn = new ActionMessage("rule.error.save.constraint.missing", ruleGroup, messageText);
+                    messages.add(ActionMessages.GLOBAL_MESSAGE, warn);
+                    saveErrors(request, messages);
+                    
+                    // set the rule bean again
                     List userGroupNames = groupManager.getGroupNames(userAttributes);
                     AccessControlRuleBean ruleBean = new AccessControlRuleBean();
-                    ruleBean.setUserGroups(userGroupNames);
-                    ruleBean.setGroup(ruleGroup);
+                    ruleBean.setId(ruleId);
+                    ruleBean.setUserGroupNames(userGroupNames);
+                    ruleBean.setGroupName(ruleGroup);
                     ruleBean.setAttributes(ruleAttributes);
-                    // add a new empty attributes
-                    ruleBean.addEmptyAttribute();
+                    // add the missing constrained attribute
+                    ruleBean.addConstrainedAttributes(attributesContraint);
                     request.setAttribute("ruleBean", ruleBean);
                     // forward/send response
                     return mapping.findForward("admin.page.editRule");
@@ -130,6 +161,11 @@ public class EditAccessControlRuleAction extends
                 // TODO: use ActionMessage for error...
                 LOG.error("User: " + userAttributes
                         + " is not a member of group: " + ruleGroup);
+                ActionMessages messages = new ActionMessages();
+                ActionMessage error = new ActionMessage("user.error.notmember", userAttributes, ruleGroup);
+                messages.add(ActionMessages.GLOBAL_MESSAGE, error);
+                saveErrors(request, messages);
+
             }
 
         }

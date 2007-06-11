@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlRuleBean.java,v 1.1 2007/03/16 08:59:12 vtschopp Exp $
+ * $Id: AccessControlRuleBean.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -8,11 +8,13 @@
 package org.glite.slcs.struts.view;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
+import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.attribute.AttributeDefinitions;
 import org.glite.slcs.config.SLCSServerConfiguration;
 
 public class AccessControlRuleBean {
@@ -20,12 +22,16 @@ public class AccessControlRuleBean {
     static private Log LOG = LogFactory.getLog(AccessControlRuleBean.class);
     
     int ruleId_= -1;
-    String ruleGroup_= null;
+    String ruleGroupName_= null;
     List ruleAttributes_ = null;
-    List userGroups_= null;
+    List userGroupNames_= null;
+    AttributeDefinitions attributeDefinitions_ = null;
     
     public AccessControlRuleBean() {
         ruleAttributes_= new ArrayList();
+        // get the attribute definitions from the SLCS server configuration
+        SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
+        attributeDefinitions_ = config.getAttributeDefinitions();
     }
 
     /**
@@ -52,26 +58,24 @@ public class AccessControlRuleBean {
         return ruleId_;
     }
     
-    public String getGroup() {
-        return ruleGroup_;
+    public String getGroupName() {
+        return ruleGroupName_;
     }
 
-    public void setGroup(String group) {
-        ruleGroup_= group;
+    public void setGroupName(String groupName) {
+        ruleGroupName_= groupName;
     }
     
-    public List getUserGroups() {
-        return userGroups_;
+    public List getUserGroupNames() {
+        return userGroupNames_;
     }
 
-    public void setUserGroups(List groups) {
-        userGroups_= groups;
+    public void setUserGroupNames(List groupNames) {
+        userGroupNames_= groupNames;
     }
     
     public List getAttributeDefinitions() {
-        SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
-        List attributeDefinitions = config.getAttributeDefinitions();
-        return attributeDefinitions;
+        return attributeDefinitions_.getAttributeDefinitionsList();
 // add a 'Select Attribute...' in top of the drop down list
 //        AttributeDefinition select= new AttributeDefinition("","Select Attribute...");
 //        LinkedList list= new LinkedList(attributeDefinitions);
@@ -90,8 +94,30 @@ public class AccessControlRuleBean {
         ruleAttributes_.addAll(attributes);
     }
 
+    public void addConstrainedAttributes(List attributes) {
+        Iterator iter= attributes.iterator();
+        while (iter.hasNext()) {
+            Attribute attribute = (Attribute) iter.next();
+            if (!ruleAttributes_.contains(attribute)) {
+                // add the constrained attribute to the list
+                ruleAttributes_.add(attribute);                
+            }
+            else {
+                // set the required flag
+                int i = ruleAttributes_.indexOf(attribute);
+                Attribute a = (Attribute) ruleAttributes_.get(i);
+                a.setRequired(true);
+            }
+        }
+    }
+
     public void addEmptyAttribute() {
         ruleAttributes_.add( new Attribute(null) );
     }
+    
+    public void updateAttributesDiplayName() {
+        attributeDefinitions_.setDisplayNames(ruleAttributes_);
+    }
 
+    
 }

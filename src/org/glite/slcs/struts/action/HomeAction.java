@@ -1,5 +1,5 @@
 /*
- * $Id: HomeAction.java,v 1.1 2007/03/16 08:58:33 vtschopp Exp $
+ * $Id: HomeAction.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -16,8 +16,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionRedirect;
-import org.glite.slcs.group.GroupManager;
-import org.glite.slcs.group.GroupManagerFactory;
 import org.glite.slcs.struts.view.UserBean;
 
 public class HomeAction extends AbstractAction {
@@ -27,12 +25,7 @@ public class HomeAction extends AbstractAction {
             HttpServletResponse response) throws Exception {
 
         List userAttributes = getUserAttributes(request);
-        GroupManager groupManager = GroupManagerFactory.getInstance();
-        List userGroups = groupManager.getGroups(userAttributes);
-
-        UserBean userBean = new UserBean();
-        userBean.setAttributes(userAttributes);
-        userBean.setGroups(userGroups);
+        UserBean userBean = new UserBean(userAttributes);
         request.setAttribute("userBean", userBean);
 
         ActionForward forward = mapping.findForward("admin.page.home");

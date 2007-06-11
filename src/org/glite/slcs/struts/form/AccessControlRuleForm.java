@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlRuleForm.java,v 1.1 2007/03/16 08:59:33 vtschopp Exp $
+ * $Id: AccessControlRuleForm.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -8,15 +8,13 @@
 package org.glite.slcs.struts.form;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.Factory;
 import org.apache.commons.collections.list.LazyList;
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
-import org.glite.slcs.Attribute;
+import org.glite.slcs.attribute.Attribute;
 
 public class AccessControlRuleForm extends ActionForm implements Factory {
 
@@ -28,12 +26,12 @@ public class AccessControlRuleForm extends ActionForm implements Factory {
     /**
      * Rule group
      */
-    private String group_ = null;
+    private String groupName_ = null;
 
     /**
      * Rule id
      */
-    private String id_ = null;
+    private int id_ = -1;
 
     /**
      * Rule attributes (Auto growing lazy list)
@@ -64,26 +62,41 @@ public class AccessControlRuleForm extends ActionForm implements Factory {
         return attributes_;
     }
 
-
+    /** 
+     * Checks if the attributes are valid
+     * @return a list of valid Attribute
+     */
+    public List getValidAttributes() {
+        List validAttributes= new ArrayList();
+        Iterator iter= attributes_.iterator();
+        while (iter.hasNext()) {
+            Attribute attribute = (Attribute) iter.next();
+            if (attribute.isValid()) {
+                validAttributes.add(attribute);
+            }
+        }
+        return validAttributes;
+    }
+    
     /**
      * @return the group
      */
-    public String getGroup() {
-        return group_;
+    public String getGroupName() {
+        return groupName_;
     }
 
     /**
      * @param group
      *            the group to set
      */
-    public void setGroup(String group) {
-        group_ = group;
+    public void setGroupName(String groupName) {
+        groupName_ = groupName;
     }
 
     /**
      * @return the id
      */
-    public String getId() {
+    public int getId() {
         return id_;
     }
 
@@ -91,7 +104,7 @@ public class AccessControlRuleForm extends ActionForm implements Factory {
      * @param id
      *            the id to set
      */
-    public void setId(String id) {
+    public void setId(int id) {
         id_ = id;
     }
 
@@ -101,16 +114,6 @@ public class AccessControlRuleForm extends ActionForm implements Factory {
     public Object create() {
         return new Attribute(null);
     }
-
-    /* (non-Javadoc)
-     * @see org.apache.struts.action.ActionForm#reset(org.apache.struts.action.ActionMapping, javax.servlet.http.HttpServletRequest)
-     */
-    public void reset(ActionMapping arg0, HttpServletRequest arg1) {
-        super.reset(arg0, arg1);
-        attributes_= null;
-        attributes_ = LazyList.decorate(new ArrayList(), this);
-    }
-
     
     
     

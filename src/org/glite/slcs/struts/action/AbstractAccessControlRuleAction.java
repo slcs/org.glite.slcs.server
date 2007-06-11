@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractAccessControlRuleAction.java,v 1.1 2007/03/16 08:58:33 vtschopp Exp $
+ * $Id: AbstractAccessControlRuleAction.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -21,8 +21,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
+import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.attribute.AttributeDefinitions;
+import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.group.Group;
 import org.glite.slcs.group.GroupManager;
 import org.glite.slcs.group.GroupManagerFactory;
@@ -81,36 +83,58 @@ public abstract class AbstractAccessControlRuleAction extends AbstractAction {
         int index = getDeleteRuleAttributeIndex(request);
         LOG.debug("delete rule attribute: " + index);
         // read rule group and attributes from form
-        String ruleGroup = ruleForm.getGroup();
+        int ruleId= ruleForm.getId();
+        String ruleGroup = ruleForm.getGroupName();
         List ruleAttributes = ruleForm.getAttributes();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("ruleId=" + ruleId);
+            LOG.debug("ruleGroup=" + ruleGroup);
+            LOG.debug("ruleAttributes=" + ruleAttributes);
+        }
         // can not delete constrainted attributes
         Attribute attribute = (Attribute) ruleAttributes.get(index);
         GroupManager groupManager = GroupManagerFactory.getInstance();
         Group group = groupManager.getGroup(ruleGroup);
-        List attributesConstraint = group.getRuleConstraints();
+        List attributesConstraint = group.getRuleAttributesConstraint();
         if (!attributesConstraint.contains(attribute)) {
             // delete the attribute iff the attribute is not constrained
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("remove ruleAttributes[" + index + "]");
+            }
             ruleAttributes.remove(index);
         }
         else {
             LOG.warn("can not delete constrained attribute: " + attribute);
             ActionMessages messages = new ActionMessages();
-            ActionMessage warn = new ActionMessage("rule.warning.delete.constrained.attribute", attribute.getDisplayName(), attribute.getValue());
+            SLCSServerConfiguration config= SLCSServerConfiguration.getInstance();
+            AttributeDefinitions attributeDefinitions= config.getAttributeDefinitions();
+            String displayName= attributeDefinitions.getAttributeDisplayName(attribute);
+            ActionMessage warn = new ActionMessage("rule.error.delete.constrained.attribute", displayName, attribute.getValue());
             messages.add(ActionMessages.GLOBAL_MESSAGE, warn);
             saveErrors(request, messages);
         }
         List userAttributes = getUserAttributes(request);
-        List userGroupNames = groupManager.getGroupNames(userAttributes);
+        List userGroupNames = null;
+        if (groupManager.isAdministrator(userAttributes)) {
+            userGroupNames = groupManager.getGroupNames();
+        }
+        else {
+            userGroupNames = groupManager.getGroupNames(userAttributes);
+        }
         // create and initialize the rule bean
         AccessControlRuleBean ruleBean = new AccessControlRuleBean();
-        ruleBean.setUserGroups(userGroupNames);
-        ruleBean.setGroup(ruleGroup);
+        ruleBean.setId(ruleId);
+        ruleBean.setUserGroupNames(userGroupNames);
+        ruleBean.setGroupName(ruleGroup);
         if (ruleAttributes.isEmpty()) {
             ruleBean.addEmptyAttribute();
         }
         else {
             ruleBean.setAttributes(ruleAttributes);
         }
+        ruleBean.addConstrainedAttributes(attributesConstraint);
+        ruleBean.updateAttributesDiplayName();
         return ruleBean;
     }
 
@@ -133,17 +157,36 @@ public abstract class AbstractAccessControlRuleAction extends AbstractAction {
         // get user dependent information
         List userAttributes = getUserAttributes(request);
         GroupManager groupManager = GroupManagerFactory.getInstance();
-        List userGroupNames = groupManager.getGroupNames(userAttributes);
+        List userGroupNames = null;
+        if (groupManager.isAdministrator(userAttributes)) {
+            userGroupNames = groupManager.getGroupNames();
+        }
+        else {
+            userGroupNames = groupManager.getGroupNames(userAttributes);
+        }
         // get form information
-        String ruleGroup = ruleForm.getGroup();
+        int ruleId= ruleForm.getId();
+        String ruleGroup = ruleForm.getGroupName();
         List ruleAttributes = ruleForm.getAttributes();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("ruleId=" + ruleId);
+            LOG.debug("ruleGroup=" + ruleGroup);
+            LOG.debug("ruleAttributes=" + ruleAttributes);
+        }
+        // get the group ACL rule constraint
+        Group group = groupManager.getGroup(ruleGroup);
+        List attributesContraint = group.getRuleAttributesConstraint();
+
         // create and initialize the rule bean
         AccessControlRuleBean ruleBean = new AccessControlRuleBean();
-        ruleBean.setUserGroups(userGroupNames);
-        ruleBean.setGroup(ruleGroup);
+        ruleBean.setId(ruleId);
+        ruleBean.setUserGroupNames(userGroupNames);
+        ruleBean.setGroupName(ruleGroup);
         ruleBean.setAttributes(ruleAttributes);
+        ruleBean.addConstrainedAttributes(attributesContraint);
         // add a new empty attributes
         ruleBean.addEmptyAttribute();
+        ruleBean.updateAttributesDiplayName();
         return ruleBean;
     }
 

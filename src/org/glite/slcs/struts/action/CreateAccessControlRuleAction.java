@@ -1,5 +1,5 @@
 /*
- * $Id: CreateAccessControlRuleAction.java,v 1.1 2007/03/16 10:03:19 vtschopp Exp $
+ * $Id: CreateAccessControlRuleAction.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -20,18 +20,19 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.acl.AccessControlListEditor;
 import org.glite.slcs.acl.AccessControlListEditorFactory;
 import org.glite.slcs.acl.AccessControlRule;
+import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.group.Group;
 import org.glite.slcs.group.GroupManager;
 import org.glite.slcs.group.GroupManagerFactory;
 import org.glite.slcs.struts.form.AccessControlRuleForm;
 import org.glite.slcs.struts.view.AccessControlRuleBean;
 
-public class CreateAccessControlRuleAction extends AbstractAccessControlRuleAction {
+public class CreateAccessControlRuleAction extends
+        AbstractAccessControlRuleAction {
 
     /**
      * Logging
@@ -53,45 +54,65 @@ public class CreateAccessControlRuleAction extends AbstractAccessControlRuleActi
         // cancel clicked on addRule.jsp?
         if (isCancelled(request)) {
             LOG.debug("cancelled");
-            return mapping.findForward("admin.go.listRules");
+            return mapping.findForward("admin.go.home");
         }
 
         if (isCreateRuleAction(request)) {
             LOG.info("new rule");
             AccessControlRuleForm ruleForm = (AccessControlRuleForm) form;
-            AccessControlRuleBean ruleBean = newRule(ruleForm, request);
+            AccessControlRuleBean ruleBean = createRuleBean(ruleForm, request);
             request.setAttribute("ruleBean", ruleBean);
             // forward/send response
-            return mapping.findForward("admin.page.addRule");
+            return mapping.findForward("admin.page.createRule");
         }
-        else if (isAddRuleAttributeAction(request)) {
+        
+        if (isChangeRuleGroupAction(request)) {
+            LOG.info("change rule group");
+            AccessControlRuleForm ruleForm = (AccessControlRuleForm) form;
+            AccessControlRuleBean ruleBean = createRuleBean(ruleForm, request);
+
+            // TODO add already existing attributes defined in form
+            
+            request.setAttribute("ruleBean", ruleBean);
+            // forward/send response
+            return mapping.findForward("admin.page.createRule");
+        }
+        
+        if (isAddRuleAttributeAction(request)) {
             LOG.info("adding rule attribute");
             AccessControlRuleForm ruleForm = (AccessControlRuleForm) form;
             AccessControlRuleBean ruleBean = addRuleAttribute(ruleForm, request);
             request.setAttribute("ruleBean", ruleBean);
             // forward/send response
-            return mapping.findForward("admin.page.addRule");
+            return mapping.findForward("admin.page.createRule");
         }
-        else if (isDeleteRuleAttributeAction(request)) {
+        
+        if (isDeleteRuleAttributeAction(request)) {
             LOG.debug("delete rule attribute");
             AccessControlRuleForm ruleForm = (AccessControlRuleForm) form;
             AccessControlRuleBean ruleBean = deleteRuleAttribute(ruleForm, request);
             request.setAttribute("ruleBean", ruleBean);
             // forward/send response
-            return mapping.findForward("admin.page.addRule");
+            return mapping.findForward("admin.page.createRule");
         }
-        else if (isSaveRuleAction(request)) {
+        
+        if (isSaveRuleAction(request)) {
             LOG.info("save rule");
             // read rule group and attributes from form
             AccessControlRuleForm ruleForm = (AccessControlRuleForm) form;
             GroupManager groupManager = GroupManagerFactory.getInstance();
             List userAttributes = getUserAttributes(request);
-            List ruleAttributes = getValidRuleAttributes(ruleForm);
-            String ruleGroup = ruleForm.getGroup();
-            if (groupManager.inGroup(ruleGroup, userAttributes)) {
-                // TODO: check group ACL rule constraint
+            String ruleGroup = ruleForm.getGroupName();
+
+            if (groupManager.inGroup(ruleGroup, userAttributes)
+                    || groupManager.isAdministrator(userAttributes)) {
+                // check group ACL rule constraint
+                List ruleAttributes = getValidRuleAttributes(ruleForm);
                 Group group = groupManager.getGroup(ruleGroup);
-                List attributesContraint = group.getRuleConstraints();
+                List attributesContraint = group.getRuleAttributesConstraint();
+
+                // TODO: check if rule contains constraint but not only the constrained attribute
+                
                 if (ruleAttributes.containsAll(attributesContraint)) {
                     AccessControlRule rule = new AccessControlRule(ruleGroup);
                     rule.setAttributes(ruleAttributes);
@@ -102,32 +123,36 @@ public class CreateAccessControlRuleAction extends AbstractAccessControlRuleActi
                 }
                 else {
                     // use ActionMessage for error...
-                    LOG.warn("rule does not contain the mandatory attributes constraint: "
+                    LOG.warn("rule does not contain all the mandatory attributes: "
                             + attributesContraint);
                     ActionMessages messages = new ActionMessages();
                     StringBuffer messageText = new StringBuffer();
-                    messageText.append("<ul>");
                     Iterator attributes = attributesContraint.iterator();
                     while (attributes.hasNext()) {
                         Attribute attribute = (Attribute) attributes.next();
-                        messageText.append("<li>").append(attribute.getDisplayName());
+                        messageText.append(attribute.getDisplayName());
                         messageText.append(" = ").append(attribute.getValue());
-                        messageText.append("</li>");
                     }
-                    messageText.append("</ul>");
                     ActionMessage warn = new ActionMessage("rule.error.save.constraint.missing", ruleGroup, messageText);
                     messages.add(ActionMessages.GLOBAL_MESSAGE, warn);
                     saveErrors(request, messages);
+                    // set the rule bean again
+                    List userGroupNames = null;
+                    if (groupManager.isAdministrator(userAttributes)) {
+                        userGroupNames= groupManager.getGroupNames();
+                    }
+                    else {
+                        userGroupNames= groupManager.getGroupNames(userAttributes);
+                    }
                     AccessControlRuleBean ruleBean = new AccessControlRuleBean();
-                    List userGroupNames = groupManager.getGroupNames(userAttributes);
-                    ruleBean.setUserGroups(userGroupNames);
-                    ruleBean.setGroup(ruleGroup);
-                    ruleBean.setAttributes(ruleAttributes);
-                    // add a new empty attributes
-                    ruleBean.addEmptyAttribute();
+                    ruleBean.setUserGroupNames(userGroupNames);
+                    ruleBean.setGroupName(ruleGroup);
+                    ruleBean.addAttributes(ruleAttributes);
+                    ruleBean.addConstrainedAttributes(attributesContraint);
+                    ruleBean.updateAttributesDiplayName();
                     request.setAttribute("ruleBean", ruleBean);
                     // forward/send response
-                    return mapping.findForward("admin.page.addRule");
+                    return mapping.findForward("admin.page.createRule");
                 }
             }
             else {
@@ -140,9 +165,15 @@ public class CreateAccessControlRuleAction extends AbstractAccessControlRuleActi
                 saveErrors(request, messages);
             }
 
-        }
-        LOG.warn("Unknown action");
-        return mapping.findForward("admin.go.home");
+        } // save rule
+
+        LOG.info("default action: new rule");
+        AccessControlRuleForm ruleForm = (AccessControlRuleForm) form;
+        AccessControlRuleBean ruleBean = createRuleBean(ruleForm, request);
+        request.setAttribute("ruleBean", ruleBean);
+        // forward/send response
+        return mapping.findForward("admin.page.createRule");
+
     }
 
     /**
@@ -151,25 +182,33 @@ public class CreateAccessControlRuleAction extends AbstractAccessControlRuleActi
      * @return
      * @throws SLCSException
      */
-    protected AccessControlRuleBean newRule(AccessControlRuleForm ruleForm,
-            HttpServletRequest request) throws SLCSException {
+    protected AccessControlRuleBean createRuleBean(
+            AccessControlRuleForm ruleForm, HttpServletRequest request)
+            throws SLCSException {
         // get user dependent info
         List userAttributes = getUserAttributes(request);
         GroupManager groupManager = GroupManagerFactory.getInstance();
-        List userGroupNames = groupManager.getGroupNames(userAttributes);
-        String ruleGroup = ruleForm.getGroup();
+        List userGroupNames = null;
+        if (groupManager.isAdministrator(userAttributes)) {
+            userGroupNames = groupManager.getGroupNames();
+        }
+        else {
+            userGroupNames = groupManager.getGroupNames(userAttributes);
+        }
+
+        String ruleGroup = ruleForm.getGroupName();
         if (ruleGroup == null && !userGroupNames.isEmpty()) {
             ruleGroup = (String) userGroupNames.get(0);
         }
         // get the group ACL rule constraint
         Group group = groupManager.getGroup(ruleGroup);
-        List attributesContraint = group.getRuleConstraints();
+        List attributesContraint = group.getRuleAttributesConstraint();
         // create new bean
         AccessControlRuleBean ruleBean = new AccessControlRuleBean();
-        ruleBean.setGroup(ruleGroup);
-        ruleBean.setUserGroups(userGroupNames);
+        ruleBean.setGroupName(ruleGroup);
+        ruleBean.setUserGroupNames(userGroupNames);
         // add the default ACL rule constaint
-        ruleBean.addAttributes(attributesContraint);
+        ruleBean.addConstrainedAttributes(attributesContraint);
         // add a new empty attributes
         ruleBean.addEmptyAttribute();
         return ruleBean;

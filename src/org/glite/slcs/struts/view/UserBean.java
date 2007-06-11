@@ -1,5 +1,5 @@
 /*
- * $Id: UserBean.java,v 1.1 2007/03/16 08:59:12 vtschopp Exp $
+ * $Id: UserBean.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -7,59 +7,47 @@
  */
 package org.glite.slcs.struts.view;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import org.glite.slcs.SLCSException;
+import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.group.Group;
+import org.glite.slcs.group.GroupManager;
+import org.glite.slcs.group.GroupManagerFactory;
 
 public class UserBean {
 
     List attributes_ = null;
-
     List groups_ = null;
-
+    GroupManager groupManager_ = null;
+    
     boolean isAdministrator_ = false;
 
-    public UserBean() {
-        attributes_ = new ArrayList();
-        groups_ = new ArrayList();
+    public UserBean(List userAttributes) throws SLCSException {
+        attributes_ = userAttributes;
+        groupManager_= GroupManagerFactory.getInstance();
+        isAdministrator_= groupManager_.isAdministrator(attributes_);
+        if (isAdministrator_) {
+            groups_= groupManager_.getGroups();
+        }
+        else {
+            groups_= groupManager_.getGroups(attributes_);
+        }
+       
     }
 
     /**
-     * @return the attributes
+     * @return the user {@link Attribute}s
      */
     public List getAttributes() {
         return attributes_;
     }
 
     /**
-     * @param attributes
-     *            the attributes to set
-     */
-    public void setAttributes(List attributes) {
-        attributes_ = attributes;
-    }
-
-    /**
-     * @return the groups
+     * @return the user {@link Group}s
      */
     public List getGroups() {
         return groups_;
-    }
-
-    /**
-     * @param groups
-     *            the groups to set
-     */
-    public void setGroups(List groups) {
-        groups_ = groups;
-    }
-
-    /**
-     * Sets the admin flag
-     * 
-     * @param isAdmin
-     */
-    public void setAdministrator(boolean isAdmin) {
-        isAdministrator_ = isAdmin;
     }
 
     /**

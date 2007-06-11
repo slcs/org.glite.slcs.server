@@ -1,5 +1,5 @@
 /*
- * $Id: DeleteAccessControlRuleAction.java,v 1.1 2007/03/16 08:58:33 vtschopp Exp $
+ * $Id: DeleteAccessControlRuleAction.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -25,7 +25,7 @@ import org.glite.slcs.group.GroupManagerFactory;
 
 /**
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DeleteAccessControlRuleAction extends AbstractAction {
 
@@ -44,8 +44,6 @@ public class DeleteAccessControlRuleAction extends AbstractAction {
             ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        // TODO: check if user can delete this rule
-
         if (isDeleteRuleAction(request)) {
             int ruleId = getDeleteRuleId(request);
             LOG.info("deleting rule id=" + ruleId);
@@ -54,11 +52,12 @@ public class DeleteAccessControlRuleAction extends AbstractAction {
                 AccessControlListEditor editor = AccessControlListEditorFactory.getInstance();
                 AccessControlRule rule = editor.getAccessControlRule(ruleId);
                 if (rule != null) {
-                    String ruleGroup = rule.getGroup();
+                    String ruleGroup = rule.getGroupName();
                     // checks if user can delete it
                     List userAttributes = getUserAttributes(request);
                     GroupManager groupManager = GroupManagerFactory.getInstance();
-                    if (groupManager.inGroup(ruleGroup, userAttributes)) {
+                    if (groupManager.inGroup(ruleGroup, userAttributes)
+                            || groupManager.isAdministrator(userAttributes)) {
                         LOG.info("delete: " + rule);
                         editor.removeAccessControlRule(ruleId);
                     }

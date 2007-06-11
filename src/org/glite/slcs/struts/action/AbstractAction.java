@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractAction.java,v 1.2 2007/03/16 10:03:19 vtschopp Exp $
+ * $Id: AbstractAction.java,v 1.3 2007/06/11 13:10:59 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -7,7 +7,6 @@
  */
 package org.glite.slcs.struts.action;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -21,16 +20,17 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.glite.slcs.Attribute;
-import org.glite.slcs.config.AttributeDefintionsHelper;
+import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.attribute.AttributeDefinitions;
 import org.glite.slcs.config.SLCSServerConfiguration;
-import org.glite.slcs.util.Utils;
 
 public abstract class AbstractAction extends Action {
 
     /** Logging */
     static private Log LOG = LogFactory.getLog(AbstractAction.class);
 
+    static private String LIST_RULES_ACTION_KEY = "org.glite.slcs.struts.action.LIST_RULES";
+    
     static private String SAVE_RULE_ACTION_KEY = "org.glite.slcs.struts.action.SAVE_RULE";
 
     static private String CREATE_RULE_ACTION_KEY = "org.glite.slcs.struts.action.CREATE_RULE";
@@ -42,6 +42,8 @@ public abstract class AbstractAction extends Action {
     static private String ADD_RULE_ATTRIBUTE_ACTION_KEY = "org.glite.slcs.struts.action.ADD_ATTRIBUTE";
 
     static private String DELETE_RULE_ATTRIBUTE_ACTION_KEY = "org.glite.slcs.struts.action.DELETE_ATTRIBUTE";
+
+    static private String CHANGE_RULE_GROUP_ACTION_KEY = "org.glite.slcs.struts.action.CHANGE_GROUP";
 
     /*
      * (non-Javadoc)
@@ -64,12 +66,12 @@ public abstract class AbstractAction extends Action {
         return forward;
     }
 
+    protected void beforeAction() {
+    }
+
     protected abstract ActionForward executeAction(ActionMapping mapping,
             ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception;
-
-    protected void beforeAction() {
-    }
 
     protected void afterAction() {
     }
@@ -91,42 +93,15 @@ public abstract class AbstractAction extends Action {
      * @return The List of {@link Attribute}.
      */
     protected List getUserAttributes(HttpServletRequest request) {
-        // list of valid attribute names read from config
+        // get the AttributeDefinitions engine to process the request
         SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
-        List definedAttributeNames = config.getDefinedAttributeNames();
-        AttributeDefintionsHelper helper = config.getAttributeDefintionsHelper();
-        // list of user attributes
-        List attributes = new ArrayList();
-        Enumeration headers = request.getHeaderNames();
-        while (headers.hasMoreElements()) {
-            String headerName = (String) headers.nextElement();
-            if (definedAttributeNames.contains(headerName)) {
-                String headerValue = request.getHeader(headerName);
-                // add only not null and not empty attributes
-                if (headerValue != null && !headerValue.equals("")) {
-                    // if (LOG.isDebugEnabled()) {
-                    // LOG.debug("Header: " + headerName + "=" + headerValue);
-                    // }
-                    String decodedValue = Utils.convertShibbolethUTF8ToUnicode(headerValue);
-                    // multi-value attributes are stored as multiple attributes
-                    String[] attrValues = decodedValue.split(";");
-                    for (int i = 0; i < attrValues.length; i++) {
-                        String attrName = headerName;
-                        String attrValue = attrValues[i];
-                        attrValue = attrValue.trim();
-                        Attribute attribute = new Attribute(attrName, attrValue);
-                        String displayName = helper.getDisplayName(attribute);
-                        attribute.setDisplayName(displayName);
-                        attributes.add(attribute);
-                    }
-                }
-
-            }
-        }
+        AttributeDefinitions attributeDefinitions = config.getAttributeDefinitions();
+        // get the user attributes from the request
+        List userAttributes = attributeDefinitions.getUserAttributes(request);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Attributes: " + attributes);
+            LOG.debug("userAttributes=" + userAttributes);
         }
-        return attributes;
+        return userAttributes;
     }
 
     /**
@@ -198,9 +173,16 @@ public abstract class AbstractAction extends Action {
         return sb.toString();
     }
 
+    protected boolean isListRulesAction(HttpServletRequest request) {
+        return isIndexedParameter(request, LIST_RULES_ACTION_KEY);        
+    }
+    
+    protected String getListRulesGroup(HttpServletRequest request) {
+        return getIndexedParameterString(request, LIST_RULES_ACTION_KEY);
+    }
+    
     protected boolean isSaveRuleAction(HttpServletRequest request) {
         return isIndexedParameter(request, SAVE_RULE_ACTION_KEY);
-        // return (req.getParameter(SAVE_RULE_ACTION_KEY) != null);
     }
 
     protected int getSaveRuleId(HttpServletRequest request) {
@@ -213,7 +195,6 @@ public abstract class AbstractAction extends Action {
 
     protected boolean isEditRuleAction(HttpServletRequest request) {
         return isIndexedParameter(request, EDIT_RULE_ACTION_KEY);
-        // return (req.getParameter(EDIT_RULE_ACTION_KEY) != null);
     }
 
     protected int getEditRuleId(HttpServletRequest request) {
@@ -222,6 +203,10 @@ public abstract class AbstractAction extends Action {
 
     protected boolean isDeleteRuleAction(HttpServletRequest req) {
         return isIndexedParameter(req, DELETE_RULE_ACTION_KEY);
+    }
+
+    protected boolean isChangeRuleGroupAction(HttpServletRequest req) {
+        return isIndexedParameter(req, CHANGE_RULE_GROUP_ACTION_KEY);
     }
 
     protected int getDeleteRuleId(HttpServletRequest request) {
@@ -249,9 +234,14 @@ public abstract class AbstractAction extends Action {
     }
 
     /**
+     * Checks if the HTTP request parameter name contains an index in the form:
+     * PARAMETER_NAME[index].
+     * 
      * @param request
+     *            The HTTP request object.
      * @param parameterName
-     * @return
+     *            The request parameter name to check
+     * @return <code>true</code> if the parameter name is indexed.
      */
     private boolean isIndexedParameter(HttpServletRequest request,
             String parameterName) {
@@ -266,16 +256,45 @@ public abstract class AbstractAction extends Action {
     }
 
     /**
+     * Returns the index of an indexed HTTP request parameter name.
+     * 
      * @param request
+     *            The HTTP request object
      * @param parameterName
-     * @return
+     *            The request parameter name
+     * @return the index value or <code>-1</code> if no index can be found.
      */
     private int getIndexedParameterIndex(HttpServletRequest request,
             String parameterName) {
         int i = -1;
+        String index = getIndexedParameterString(request, parameterName);
+        if (index != null) {
+            try {
+                i = Integer.parseInt(index);
+            } catch (Exception e) {
+                LOG.warn(e);
+            }
+        }
+        return i;
+    }
+
+    /**
+     * Gets the indexed string value of the request parameter formated like
+     * PARAMETER_NAME[INDEX].
+     * 
+     * @param request
+     *            The {@link HttpServletRequest} object.
+     * @param parameterName
+     *            The request parameter name.
+     * @return The string value of the index or <code>null</code> if not
+     *         defined.
+     */
+    private String getIndexedParameterString(HttpServletRequest request,
+            String parameterName) {
         String index = null;
-        if (LOG.isDebugEnabled())
+        if (LOG.isDebugEnabled()) {
             LOG.debug("parameterName=" + parameterName);
+        }
         Enumeration parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String name = (String) parameterNames.nextElement();
@@ -283,19 +302,16 @@ public abstract class AbstractAction extends Action {
                 // read index from parameterName[i]
                 int begin = parameterName.length() + 1;
                 int end = name.length() - 1;
-                if (LOG.isDebugEnabled())
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("[" + begin + "," + end + "] of " + name);
+                }
                 index = name.substring(begin, end);
             }
         }
-        if (LOG.isDebugEnabled())
+        if (LOG.isDebugEnabled()) {
             LOG.debug("index= " + index);
-        try {
-            i = Integer.parseInt(index);
-        } catch (Exception e) {
-            LOG.warn(e);
         }
-        return i;
+        return index;
     }
 
 }
