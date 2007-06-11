@@ -1,5 +1,5 @@
 /*
- * $Id: CertificatePolicy.java,v 1.3 2007/03/14 13:52:14 vtschopp Exp $
+ * $Id: CertificatePolicy.java,v 1.4 2007/06/11 12:47:23 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -9,9 +9,9 @@ package org.glite.slcs.policy;
 
 import java.util.List;
 
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.SLCSServerComponent;
+import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.pki.CertificateExtension;
 import org.glite.slcs.pki.CertificateRequest;
 
@@ -20,7 +20,7 @@ import org.glite.slcs.pki.CertificateRequest;
  * request.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface CertificatePolicy extends SLCSServerComponent {
 

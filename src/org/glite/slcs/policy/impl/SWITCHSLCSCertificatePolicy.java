@@ -1,5 +1,5 @@
 /*
- * $Id: SWITCHSLCSCertificatePolicy.java,v 1.3 2007/03/14 13:54:08 vtschopp Exp $
+ * $Id: SWITCHSLCSCertificatePolicy.java,v 1.4 2007/06/11 12:48:05 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -15,8 +15,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.glite.slcs.Attribute;
 import org.glite.slcs.SLCSException;
+import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.pki.CertificateExtension;
 import org.glite.slcs.pki.CertificateExtensionFactory;
@@ -36,7 +36,7 @@ import org.glite.slcs.policy.CertificatePolicy;
  * </ul>
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SWITCHSLCSCertificatePolicy implements CertificatePolicy {
 
