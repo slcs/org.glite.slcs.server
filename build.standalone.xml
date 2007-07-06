@@ -62,7 +62,7 @@
 
        <!-- slcs server external jar list (JRA1MW only) -->
         <fileset id="external.lib.jar.set" dir="${external.lib.dir}">
-            <include name="${bouncycastle.bcmail-mail.jar}"/>
+            <include name="${bouncycastle.bcmail.jar}"/>
             <include name="mm-mysql/3.1.8/noarch/mysql-connector-java-3.1.8-bin.jar"/>
         </fileset>
 
