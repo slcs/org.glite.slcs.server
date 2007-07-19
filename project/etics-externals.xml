@@ -7,7 +7,7 @@
     ETICS externals dependencies definition
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: etics-externals.xml,v 1.3 2007/07/19 15:06:13 vtschopp Exp $
+    Version: $Id: etics-externals.xml,v 1.4 2007/07/19 15:07:30 vtschopp Exp $
 -->
 <project name="ETICS externals dependencies definition">
 
@@ -183,7 +183,7 @@
     </path>
 
     <!-- tomcat -->
-    <property name="ext.tomcat.version" value="5.0.28"/>
+    <property name="ext.tomcat.version" value="5.5.20"/>
     <property name="ext.tomcat.dir" location="${externals.dir}/tomcat/${ext.tomcat.version}/noarch"/>
     <fileset id="ext.tomcat.fileset" dir="${ext.tomcat.dir}">
         <include name="common/lib/servlet-api.jar"/>
