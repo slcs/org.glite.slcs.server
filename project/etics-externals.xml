@@ -7,7 +7,7 @@
     ETICS externals dependencies definition
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: etics-externals.xml,v 1.1 2007/07/19 13:51:16 vtschopp Exp $
+    Version: $Id: etics-externals.xml,v 1.2 2007/07/19 14:59:29 vtschopp Exp $
 -->
 <project name="ETICS externals dependencies definition">
 
@@ -17,7 +17,7 @@
     <!-- apache-struts -->
     <property name="ext.apache-struts.version" value="1.3.5"/>
     <property name="ext.apache-struts.dir" location="${externals.dir}/apache-struts/${ext.apache-struts.version}/noarch"/>
-    <fileset id="ext.apache-struts.fileset" dir="${ext.apache-struts.dir}">
+    <fileset id="ext.apache-struts.fileset" dir="${ext.apache-struts.dir}/struts-${ext.apache-struts.version}">
         <!-- SUN taglib -->
         <include name="lib/jstl-*.jar"/>
         <include name="lib/standard-*.jar"/>
@@ -54,6 +54,10 @@
         <include name="jars/bcprov-jdk15-*.jar"/>
     </fileset>
     <fileset id="ext.bouncycastle.bcmail.fileset" dir="${ext.bouncycastle.dir}">
+        <include name="jars/bcmail-jdk15-*.jar"/>
+    </fileset>
+    <fileset id="ext.bouncycastle.fileset" dir="${ext.bouncycastle.dir}">
+        <include name="jars/bcprov-jdk15-*.jar"/>
         <include name="jars/bcmail-jdk15-*.jar"/>
     </fileset>
     <path id="ext.bouncycastle.bcprov.classpath">
@@ -168,14 +172,14 @@
         <fileset refid="ext.log4j.fileset"/>
     </path>
 
-    <!-- mm-mysql: MySQL JDBC -->
-    <property name="ext.mm-mysql.version" value="3.1.8"/>
-    <property name="ext.mm-mysql.dir" location="${externals.dir}/mm-mysql/${ext.mm-mysql.version}/noarch"/>
-    <fileset id="ext.mm-mysql.fileset" dir="${ext.mm-mysql.dir}">
+    <!-- mysql-jdbc -->
+    <property name="ext.mysql-jdbc.version" value="3.1.10"/>
+    <property name="ext.mysql-jdbc.dir" location="${externals.dir}/mysql-jdbc/${ext.mysql-jdbc.version}/noarch"/>
+    <fileset id="ext.mysql-jdbc.fileset" dir="${ext.mysql-jdbc.dir}">
         <include name="mysql-connector-java-*.jar"/>
     </fileset>
-    <path id="ext.mm-mysql.classpath">
-        <fileset refid="ext.mm-mysql.fileset"/>
+    <path id="ext.mysql-jdbc.classpath">
+        <fileset refid="ext.mysql-jdbc.fileset"/>
     </path>
 
     <!-- tomcat -->
