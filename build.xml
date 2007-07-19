@@ -4,12 +4,12 @@
     See http://eu-egee.org/partners/ for details on the copyright holders
     For license conditions see the license file or http://eu-egee.org/license.html
 
-    ETICS build for org.glite.slcs.ui
+    ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.3 2007/07/19 15:06:13 vtschopp Exp $
+    Version: $Id: build.xml,v 1.4 2007/07/19 15:44:07 vtschopp Exp $
 -->
-<project name="org.glite.slcs.common" default="dist" basedir=".">
+<project name="org.glite.slcs.server" default="jar" basedir=".">
 
     <!-- ETICS externals defs -->
     <import file="project/etics-externals.xml"/>
@@ -24,8 +24,7 @@
 
     <!-- module directories -->
     <property name="src.dir" location="${basedir}/src" />
-    <property name="test.src.dir" location="${basedir}/test" />
-    <property name="bin.dir" location="${basedir}/scripts" />
+    <property name="websrc.dir" location="${basedir}/websrc" />
     <property name="etc.dir" location="${basedir}/etc" />
     <property name="doc.dir" location="${basedir}/doc" />
     
@@ -71,7 +70,6 @@
     <!-- compile -->
     <target name="compile" depends="prepare">
         <echo message="compile..."/>
-        <!-- Compile the java code from ${src} into ${build} -->
         <javac srcdir="${src.dir}" debug="true" destdir="${classes.dir}">
             <classpath refid="compile.classpath" />
         </javac>
@@ -80,7 +78,6 @@
     <!-- test.compile -->
     <target name="test.compile" depends="compile">
         <echo message="test.compile..."/>
-        <!-- Compile the java code from ${src} into ${build} -->
         <javac srcdir="${test.src.dir}" debug="true" destdir="${test.classes.dir}">
             <classpath refid="test.classpath" />
         </javac>
@@ -97,6 +94,49 @@
         <!-- jar org.glite.slcs.ui classes -->
         <jar jarfile="${build.dir}/${module.name}.jar" basedir="${classes.dir}" />
     </target>
+
+    <target name="war" depends="jar">
+        <echo message="war ${webapp.name}"/>
+        <delete file="${build.dir}/${webapp.name}.war" failonerror="false"/>
+        
+        <property name="build.lib.dir" location="${build.dir}/war-lib"/>
+        <mkdir dir="${build.lib.dir}"/>
+        <copy todir="${build.lib.dir}" flatten="true">
+            <fileset file="${build.dir}/${module.name}.jar" />
+            <fileset refid="ext.apache-struts.fileset"/>
+            <fileset refid="ext.bouncycastle.fileset"/>
+            <fileset refid="ext.commons-cli.fileset"/>
+            <fileset refid="ext.commons-codec.fileset"/>
+            <fileset refid="ext.commons-collections.fileset"/>
+            <fileset refid="ext.commons-configuration.fileset"/>
+            <fileset refid="ext.commons-httpclient.fileset"/>
+            <fileset refid="ext.commons-lang.fileset"/>
+            <fileset refid="ext.commons-logging.fileset"/>
+            <fileset refid="ext.log4j.fileset"/>
+            <fileset refid="ext.mysql-jdbc.fileset"/>
+        </copy>
+        
+        <war destfile="${build.dir}/${webapp.name}.war"
+             webxml="${websrc.dir}/WEB-INF/web.xml">
+            <classes dir="${etc.dir}">
+                <include name="log4j.xml" />
+            </classes>
+            <lib dir="${build.lib.dir}">
+                <include name="*.jar"/>
+            </lib>
+            <webinf dir="${websrc.dir}">
+                <exclude name="WEB-INF/web.xml" />
+                <include name="**/*.jsp" />
+                <include name="css/*" />
+                <include name="images/*" />
+                <include name="js/*.js" />
+                <include name="WEB-INF/*.xml" />
+            </webinf>
+        </war>
+        <echo message="BouncyCastle libraries MUST go in TOMCAT common/lib directory!!!" />
+
+    </target>
+    
     
     <!-- prepare installation layout in ${install.dir} -->
     <target name="install-layout" depends="jar">
@@ -170,7 +210,7 @@
         <property name="install.externals.dir" location="${install.dir}/externals/share/java" />
         <mkdir dir="${install.externals.dir}" />
         <copy todir="${install.externals.dir}" flatten="true">
-            <fileset refid="ext.bouncycastle.bcprov.fileset"/>
+            <fileset refid="ext.bouncycastle.fileset"/>
             <fileset refid="ext.commons-cli.fileset"/>
             <fileset refid="ext.commons-codec.fileset"/>
             <fileset refid="ext.commons-collections.fileset"/>
