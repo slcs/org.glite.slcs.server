@@ -7,7 +7,7 @@
     ETICS build for org.glite.slcs.ui
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.2 2007/07/19 13:51:16 vtschopp Exp $
+    Version: $Id: build.xml,v 1.3 2007/07/19 15:06:13 vtschopp Exp $
 -->
 <project name="org.glite.slcs.common" default="dist" basedir=".">
 
@@ -44,16 +44,16 @@
         <path id="compile.classpath">
             <pathelement path="${classes.dir}"/>
             <pathelement location="${stage.lib.dir}/glite-slcs-common.jar"/>
-            <path refid="ext.bouncycastle.bcprov.classpath"/>
-            <path refid="ext.commons-cli.classpath"/>
+            <path refid="ext.apache-struts.classpath"/>
+            <path refid="ext.bouncycastle.classpath"/>
             <path refid="ext.commons-codec.classpath"/>
             <path refid="ext.commons-collections.classpath"/>
             <path refid="ext.commons-configuration.classpath"/>
             <path refid="ext.commons-httpclient.classpath"/>
             <path refid="ext.commons-lang.classpath"/>
             <path refid="ext.commons-logging.classpath"/>
-            <path refid="ext.jericho-html.classpath"/>
             <path refid="ext.log4j.classpath"/>
+            <path refid="ext.tomcat.classpath"/>
         </path>
         <path id="test.classpath">
             <path refid="compile.classpath"/>
