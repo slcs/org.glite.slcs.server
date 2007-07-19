@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE struts-config PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+    "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+<struts-config>
+
+	<form-beans>
+		<form-bean name="ruleForm" type="org.glite.slcs.struts.form.AccessControlRuleForm">
+		</form-bean>
+		<form-bean name="listRulesForm" type="org.apache.struts.action.DynaActionForm">
+		</form-bean>
+	</form-beans>
+
+	<global-forwards>
+		<forward name="admin.go.home" path="/admin/home.do" redirect="true"/>
+		<forward name="admin.go.listRules" path="/admin/listRules.do" redirect="true"/>
+		<forward name="admin.page.home" path="tiles.home" />
+		<forward name="admin.page.listRules" path="tiles.listRules" />
+		<forward name="admin.page.createRule" path="tiles.createRule" />
+		<forward name="admin.page.editRule" path="tiles.editRule" />
+		<forward name="admin.page.error" path="tiles.error" />
+	</global-forwards>
+	
+	
+	<!-- SLCS Actions -->
+	<action-mappings>
+
+		<!-- admin list the ACL rules -->
+		<action path="/admin/home"
+				type="org.glite.slcs.struts.action.HomeAction"
+				unknown="true" />
+		
+		<action path="/admin/listRules" 
+			    type="org.glite.slcs.struts.action.ListAccessControlRulesAction"
+			    name="listRulesForm" validate="false"
+		        scope="request">
+		</action>
+		
+		<action path="/admin/createRule" 
+		        type="org.glite.slcs.struts.action.CreateAccessControlRuleAction"
+			    name="ruleForm" validate="true"
+			    cancellable="true"
+		        scope="request">
+		</action>
+		<action path="/admin/editRule" 
+		        type="org.glite.slcs.struts.action.EditAccessControlRuleAction"
+			    name="ruleForm" validate="true"
+			    cancellable="true"
+		        scope="request">
+		</action>
+		<action path="/admin/deleteRule" 
+		        type="org.glite.slcs.struts.action.DeleteAccessControlRuleAction"
+			    name="ruleForm" validate="true"
+			    cancellable="true"
+		        scope="request">
+		</action>
+
+
+	</action-mappings>
+	
+	<!-- SLCSMessageResources.properties file contains the error and warning messages -->
+	<message-resources parameter="SLCSMessageResources"/>
+	
+	<!-- SLCS Server Components plugin -->
+	<plug-in className="org.glite.slcs.struts.SLCSServerComponentsPlugin" />
+	
+	<!-- Struts Tiles plugin -->
+	<plug-in className="org.apache.struts.tiles.TilesPlugin">
+		<set-property property="definitions-config"	value="/WEB-INF/tiles-def.xml" />
+		<set-property property="moduleAware" value="true" />
+	</plug-in>
+
+	
+	
+	
+</struts-config>

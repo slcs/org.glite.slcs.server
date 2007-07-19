@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!-- $Id: web.xml,v 1.2 2007/03/28 08:52:17 vtschopp Exp $ -->
+<!-- $Id: web.xml,v 1.3 2007/07/19 13:29:05 vtschopp Exp $ -->
          
 
 <web-app id="SLCS"
@@ -12,7 +12,6 @@
     <context-param>
         <!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath -->
         <param-name>SLCSServerConfigurationFile</param-name>
-        <!-- <param-value>/opt/glite/etc/slcs/slcs.xml</param-value> -->
         <param-value>/etc/slcs/slcs.xml</param-value>
     </context-param>
 
@@ -28,7 +27,6 @@
         <!-- MANDATORY ACLFile: REQUIRED(filename) for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
         <init-param>
             <param-name>ACLFile</param-name>
-            <!--  <param-value>/opt/glite/etc/slcs/acl.xml</param-value> -->
             <param-value>/etc/slcs/acl.xml</param-value>
         </init-param>
         <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
@@ -55,7 +53,6 @@
         <!-- MANDATORY ACLFile: REQUIRED for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
         <init-param>
             <param-name>ACLFile</param-name>
-            <!-- <param-value>/opt/glite/etc/slcs/acl-admin.xml</param-value> -->
             <param-value>/etc/slcs/admin-acl.xml</param-value>
         </init-param>
         <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
@@ -76,11 +73,6 @@
         <filter-name>LoginAuthorizationFilter</filter-name>
 		<servlet-name>SLCSLoginServlet</servlet-name>
     </filter-mapping>
-	<!-- user ACL on struts /login.do action
-    <filter-mapping>
-        <filter-name>LoginAuthorizationFilter</filter-name>
-		<url-pattern>/login.do</url-pattern>
-    </filter-mapping> -->
     <!-- admin ACL on struts /admin/*.do action -->
     <filter-mapping>
         <filter-name>AdminAuthorizationFilter</filter-name>

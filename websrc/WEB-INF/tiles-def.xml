@@ -14,22 +14,22 @@
 	
 	
 	<definition name="tiles.home" extends="tiles.layout">
-		<put name="title" value="SLCS - Admin Home"/>
+		<put name="title" value="SLCSadmin - Home"/>
 		<put name="body" value="/admin/home.jsp"/>
 	</definition>
 	
 	<definition name="tiles.listRules" extends="tiles.layout">
-		<put name="title" value="SLCS - User Access Control Rules"/>
+		<put name="title" value="SLCSadmin - Access Control Rules"/>
 		<put name="body"  value="/admin/listRules.jsp"/>
 	</definition>
 
 	<definition name="tiles.createRule" extends="tiles.layout">
-		<put name="title" value="SLCS - New Access Control Rule"/>
+		<put name="title" value="SLCSadmin - New Access Control Rule"/>
 		<put name="body"  value="/admin/createRule.jsp"/>
 	</definition>
 
 	<definition name="tiles.editRule" extends="tiles.layout">
-		<put name="title" value="SLCS - Edit Access Control Rule"/>
+		<put name="title" value="SLCSadmin - Edit Access Control Rule"/>
 		<put name="body"  value="/admin/editRule.jsp"/>
 	</definition>
 	

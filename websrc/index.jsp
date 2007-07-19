@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" contentType="text/html"
     pageEncoding="ISO-8859-1"%>
 
 <html>
 <head>
   <title>SWITCH SLCS</title>
-  <link rel="stylesheet" href="css/switchaai.css" type="text/css">
+  <link rel="stylesheet" href="css/switch.css" type="text/css">
 </head>
 
 <body>
