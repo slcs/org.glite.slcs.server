@@ -7,7 +7,7 @@
     ETICS externals dependencies definition
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: etics-externals.xml,v 1.4 2007/07/19 15:07:30 vtschopp Exp $
+    Version: $Id: etics-externals.xml,v 1.5 2007/07/19 15:56:53 vtschopp Exp $
 -->
 <project name="ETICS externals dependencies definition">
 
@@ -17,18 +17,18 @@
     <!-- apache-struts -->
     <property name="ext.apache-struts.version" value="1.3.5"/>
     <property name="ext.apache-struts.dir" location="${externals.dir}/apache-struts/${ext.apache-struts.version}/noarch"/>
-    <fileset id="ext.apache-struts.fileset" dir="${ext.apache-struts.dir}/struts-${ext.apache-struts.version}">
+    <fileset id="ext.apache-struts.fileset" dir="${ext.apache-struts.dir}">
         <!-- SUN taglib -->
-        <include name="lib/jstl-*.jar"/>
-        <include name="lib/standard-*.jar"/>
+        <include name="**/jstl-*.jar"/>
+        <include name="**/standard-*.jar"/>
         <!-- jakarta commons -->
-        <include name="lib/commons-beanutils-*.jar"/>
-        <include name="lib/commons-chain-*.jar"/>
-        <include name="lib/commons-digester-*.jar"/>
+        <include name="**/commons-beanutils-*.jar"/>
+        <include name="**/commons-chain-*.jar"/>
+        <include name="**/commons-digester-*.jar"/>
         <!-- Struts -->
-        <include name="lib/struts-core-*.jar"/>
-        <include name="lib/struts-taglib-*.jar"/>
-        <include name="lib/struts-tiles-*.jar"/>
+        <include name="**/struts-core-*.jar"/>
+        <include name="**/struts-taglib-*.jar"/>
+        <include name="**/struts-tiles-*.jar"/>
     </fileset>
     <path id="ext.apache-struts.classpath">
         <fileset refid="ext.apache-struts.fileset"/>
@@ -38,10 +38,10 @@
     <property name="ext.axis.version" value="1.2.1"/>
     <property name="ext.axis.dir" location="${externals.dir}/axis/${ext.axis.version}/noarch"/>
     <fileset id="ext.axis.fileset" dir="${ext.axis.dir}">
-        <include name="lib/axis.jar"/>
-        <include name="lib/commons-discovery-*.jar"/>
-        <include name="lib/jaxrpc.jar"/>
-        <include name="lib/saaj.jar"/>
+        <include name="**/axis.jar"/>
+        <include name="**/commons-discovery-*.jar"/>
+        <include name="**/jaxrpc.jar"/>
+        <include name="**/saaj.jar"/>
     </fileset>
     <path id="ext.axis.classpath">
         <fileset refid="ext.axis.fileset"/>
@@ -51,14 +51,14 @@
     <property name="ext.bouncycastle.version" value="1.34"/>
     <property name="ext.bouncycastle.dir" location="${externals.dir}/bouncycastle/${ext.bouncycastle.version}/noarch"/>
     <fileset id="ext.bouncycastle.bcprov.fileset" dir="${ext.bouncycastle.dir}">
-        <include name="jars/bcprov-jdk15-*.jar"/>
+        <include name="**/bcprov-jdk15-*.jar"/>
     </fileset>
     <fileset id="ext.bouncycastle.bcmail.fileset" dir="${ext.bouncycastle.dir}">
-        <include name="jars/bcmail-jdk15-*.jar"/>
+        <include name="**/bcmail-jdk15-*.jar"/>
     </fileset>
     <fileset id="ext.bouncycastle.fileset" dir="${ext.bouncycastle.dir}">
-        <include name="jars/bcprov-jdk15-*.jar"/>
-        <include name="jars/bcmail-jdk15-*.jar"/>
+        <include name="**/bcprov-jdk15-*.jar"/>
+        <include name="**/bcmail-jdk15-*.jar"/>
     </fileset>
     <path id="ext.bouncycastle.bcprov.classpath">
         <fileset refid="ext.bouncycastle.bcprov.fileset"/>
@@ -146,7 +146,7 @@
     <property name="ext.jericho-html.version" value="2.3.0"/>
     <property name="ext.jericho-html.dir" location="${externals.dir}/jericho-html/${ext.jericho-html.version}/noarch"/>
     <fileset id="ext.jericho-html.fileset" dir="${ext.jericho-html.dir}">
-        <include name="lib/jericho-html-*.jar"/>
+        <include name="**/jericho-html-*.jar"/>
     </fileset>
     <path id="ext.jericho-html.classpath">
         <fileset refid="ext.jericho-html.fileset"/>
@@ -166,7 +166,7 @@
     <property name="ext.log4j.version" value="1.2.8"/>
     <property name="ext.log4j.dir" location="${externals.dir}/log4j/${ext.log4j.version}/noarch"/>
     <fileset id="ext.log4j.fileset" dir="${ext.log4j.dir}">
-        <include name="dist/lib/log4j-*.jar"/>
+        <include name="**/log4j-*.jar"/>
     </fileset>
     <path id="ext.log4j.classpath">
         <fileset refid="ext.log4j.fileset"/>
@@ -176,7 +176,7 @@
     <property name="ext.mysql-jdbc.version" value="3.1.10"/>
     <property name="ext.mysql-jdbc.dir" location="${externals.dir}/mysql-jdbc/${ext.mysql-jdbc.version}/noarch"/>
     <fileset id="ext.mysql-jdbc.fileset" dir="${ext.mysql-jdbc.dir}">
-        <include name="mysql-connector-java-*.jar"/>
+        <include name="mysql-connector-java-*-bin.jar"/>
     </fileset>
     <path id="ext.mysql-jdbc.classpath">
         <fileset refid="ext.mysql-jdbc.fileset"/>
@@ -186,7 +186,7 @@
     <property name="ext.tomcat.version" value="5.5.20"/>
     <property name="ext.tomcat.dir" location="${externals.dir}/tomcat/${ext.tomcat.version}/noarch"/>
     <fileset id="ext.tomcat.fileset" dir="${ext.tomcat.dir}">
-        <include name="common/lib/servlet-api.jar"/>
+        <include name="**/servlet-api.jar"/>
     </fileset>
     <path id="ext.tomcat.classpath">
         <fileset refid="ext.tomcat.fileset"/>
