@@ -22,7 +22,7 @@ import org.glite.slcs.util.Utils;
  * Helper class for the AttributeDefintions.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class AttributeDefinitionsImpl extends SLCSConfiguration implements
         AttributeDefinitions {
@@ -240,7 +240,6 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
      * @see org.glite.slcs.config.SLCSConfiguration#checkConfiguration()
      */
     protected void checkConfiguration() throws SLCSConfigurationException {
-        // TODO Auto-generated method stub
         // TODO like SLCSServerConfiguration
 
     }

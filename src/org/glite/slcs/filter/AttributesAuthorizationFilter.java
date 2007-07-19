@@ -1,5 +1,5 @@
 /*
- * $Id: AttributesAuthorizationFilter.java,v 1.3 2007/03/19 15:37:53 vtschopp Exp $
+ * $Id: AttributesAuthorizationFilter.java,v 1.4 2007/07/19 13:41:51 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -33,7 +33,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @see org.glite.slcs.acl.AccessControlList
  */
 public class AttributesAuthorizationFilter implements Filter {
@@ -97,8 +97,10 @@ public class AttributesAuthorizationFilter implements Filter {
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Based on your attributes, you are not authorized to access this service");
         }
-        // nothing to do, continue
-        chain.doFilter(request, response);
+        else {
+            // user is authorized or not a HttpServletRequest, continue
+            chain.doFilter(request, response);
+        }
     }
 
     /**
