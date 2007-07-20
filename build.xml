@@ -19,9 +19,9 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.5 2007/07/20 13:48:41 vtschopp Exp $
+    Version: $Id: build.xml,v 1.6 2007/07/20 14:16:36 vtschopp Exp $
 -->
-<project name="org.glite.slcs.server" default="jar" basedir=".">
+<project name="org.glite.slcs.server" default="dist" basedir=".">
 
     <!-- ETICS externals defs -->
     <import file="project/etics-externals.xml"/>
@@ -141,19 +141,21 @@
         <!-- create war file -->
         <war destfile="${build.dir}/${webapp.name}.war"
              webxml="${websrc.dir}/WEB-INF/web.xml">
-            <classes dir="${etc.dir}">
-                <include name="log4j.xml" />
-            </classes>
-            <lib dir="${build.lib.dir}">
-                <include name="*.jar"/>
-            </lib>
-            
-            <!-- TODO: files from etc ?!? -->
-            
+            <!-- WEB-INF content -->
             <webinf dir="${websrc.dir}/WEB-INF">
                 <include name="*.xml" />
                 <exclude name="web.xml" />
             </webinf>
+            <!-- WEB-INF/classes content -->
+            <classes dir="${etc.dir}">
+                <include name="log4j.xml" />
+                <include name="*.properties" />
+            </classes>
+            <!-- WEB-INF/lib content -->
+            <lib dir="${build.lib.dir}">
+                <include name="*.jar"/>
+            </lib>
+            <!-- web content -->
             <fileset dir="${websrc.dir}">
                 <exclude name="WEB-INF/**" />
                 <include name="**/*.jsp" />
@@ -227,21 +229,26 @@
         <echo message="package..."/>
     </target>
     
-    <!-- create standalone tar.gz distribution  -->
+    <!-- create local standalone tar.gz distribution  -->
     <target name="dist" depends="clean,package">
+        <property name="install.webapps.dir" location="${install.dir}/share/webapps"/>
+        <property name="install.etc.dir" location="${install.dir}/etc/${module.name}"/>
         <property name="dist.file"
             value="${module.name}-${module.version}-jdk${ant.java.version}-${DSTAMP}.tar.gz" />
         <tar destfile="${dist.file}" compression="gzip">
-            <tarfileset dir="${install.dir}" mode="755" username="root" group="root">
-                <include name="bin/slcs-*" />
+            <!-- webapps -->
+            <tarfileset dir="${install.webapps.dir}" 
+                username="root" group="root"
+                prefix="webapps">
+                <include name="*.war"/>
             </tarfileset>
-            <tarfileset dir="${install.dir}" mode="666" username="root" group="root">
-                <include name="log/slcs-init.log" />
+            <!-- config -->
+            <tarfileset dir="${install.etc.dir}" 
+                username="root" group="root"
+                prefix="etc">
+                <include name="*"/>
             </tarfileset>
-            <tarfileset dir="${install.dir}" username="root" group="root">
-                <exclude name="bin/slcs-*" />
-                <exclude name="log/slcs-init.log" />
-            </tarfileset>
+            
         </tar>
     </target>
     
