@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-    Copyright (c) Members of the EGEE Collaboration. 2006.
+    Copyright (c) Members of the EGEE Collaboration. 2007.
     See http://www.eu-egee.org/partners/ for details on the copyright
     holders.
 
@@ -19,20 +19,20 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.6 2007/07/20 14:16:36 vtschopp Exp $
+    Version: $Id: build.xml,v 1.7 2007/07/23 10:56:51 vtschopp Exp $
 -->
-<project name="org.glite.slcs.server" default="dist" basedir=".">
+<project name="org.glite.slcs.server" default="local-dist" basedir=".">
+
+    <!-- workspace directories -->
+    <property name="workspace.dir" location=".." />
+    <property name="stage.dir" location="${workspace.dir}/stage" />
+    <property name="stage.lib.dir" location="${stage.dir}/share/java" />
 
     <!-- ETICS externals defs -->
-    <import file="project/etics-externals.xml"/>
+    <import file="project/etics-externals.xml" />
 
     <!-- local properties -->
     <property file="build.properties" />
-
-    <!-- ETICS directories -->
-    <property name="workspace.dir" location=".."/>
-    <property name="stage.dir" location="${workspace.dir}/stage"/>
-    <property name="stage.lib.dir" location="${stage.dir}/share/java"/>
 
     <!-- module directories -->
     <property name="src.dir" location="${basedir}/src" />
@@ -48,7 +48,7 @@
 
     
     <!-- install dirs -->
-    <property name="install.dir" location="${basedir}/glite" />
+    <property name="install.dir" location="${build.dir}/glite" />
     
     <!-- init -->
     <target name="init" depends="">
@@ -58,24 +58,24 @@
         <fail unless="slcs.common.jar.exists" message="${stage.lib.dir}/glite-slcs-common.jar is missing. please build org.glite.slcs.common first..."/>
         
         <!-- classpath with libraries from ETICS repository -->
-        <path id="compile.classpath">
+        <path id="compile.path">
 <!--            <pathelement path="${classes.dir}"/> -->
             <pathelement location="${stage.lib.dir}/glite-slcs-common.jar"/>
-            <path refid="ext.apache-struts.classpath"/>
-            <path refid="ext.bouncycastle.classpath"/>
-            <path refid="ext.commons-codec.classpath"/>
-            <path refid="ext.commons-collections.classpath"/>
-            <path refid="ext.commons-configuration.classpath"/>
-            <path refid="ext.commons-httpclient.classpath"/>
-            <path refid="ext.commons-lang.classpath"/>
-            <path refid="ext.commons-logging.classpath"/>
-            <path refid="ext.log4j.classpath"/>
-            <path refid="ext.tomcat.classpath"/>
+            <path refid="ext.apache-struts.path"/>
+            <path refid="ext.bouncycastle.path"/>
+            <path refid="ext.commons-codec.path"/>
+            <path refid="ext.commons-collections.path"/>
+            <path refid="ext.commons-configuration.path"/>
+            <path refid="ext.commons-httpclient.path"/>
+            <path refid="ext.commons-lang.path"/>
+            <path refid="ext.commons-logging.path"/>
+            <path refid="ext.log4j.path"/>
+            <path refid="ext.tomcat.path"/>
         </path>
-        <path id="test.classpath">
-            <path refid="compile.classpath"/>
+        <path id="test.path">
+            <path refid="compile.path"/>
             <pathelement path="${test.classes.dir}"/>
-            <path refid="ext.junit.fileset"/>
+            <path refid="ext.junit.path"/>
         </path>
     </target>
 
@@ -89,7 +89,7 @@
     <target name="compile" depends="prepare">
         <echo message="compile..."/>
         <javac srcdir="${src.dir}" debug="true" destdir="${classes.dir}">
-            <classpath refid="compile.classpath" />
+            <classpath refid="compile.path" />
         </javac>
     </target>
 
@@ -97,7 +97,7 @@
     <target name="test.compile" depends="compile">
         <echo message="test.compile..."/>
         <javac srcdir="${test.src.dir}" debug="true" destdir="${test.classes.dir}">
-            <classpath refid="test.classpath" />
+            <classpath refid="test.path" />
         </javac>
     </target>
 
@@ -109,12 +109,12 @@
 
     <!-- jar -->
     <target name="jar" depends="compile">
-        <!-- jar org.glite.slcs.ui classes -->
+        <!-- jar org.glite.slcs.server classes -->
         <jar jarfile="${build.dir}/${module.name}.jar" basedir="${classes.dir}" />
     </target>
 
     <target name="war" depends="jar">
-        <echo message="war ${webapp.name}"/>
+        <echo message="war webapp: ${webapp.name}"/>
         <delete file="${build.dir}/${webapp.name}.war" failonerror="false"/>
         
         <!-- create a temporary war-lib dir -->
@@ -124,7 +124,7 @@
         <copy todir="${build.lib.dir}" file="${build.dir}/${module.name}.jar"/>
         <!-- copy glite-slcs-common lib -->
         <copy todir="${build.lib.dir}" file="${stage.lib.dir}/glite-slcs-common.jar"/>
-        <!-- copy all third party libs -->
+        <!-- copy all third party libs (without tomcat libs) -->
         <copy todir="${build.lib.dir}" flatten="true">
             <fileset refid="ext.apache-struts.fileset"/>
             <fileset refid="ext.bouncycastle.fileset"/>
@@ -164,7 +164,9 @@
                 <include name="js/*.js" />
             </fileset>
         </war>
-        <echo message="BouncyCastle libraries MUST go in TOMCAT common/lib directory!!!" />
+        <echo>
+        NOTICE: BouncyCastle libraries MUST go in TOMCAT common/lib directory!!!
+        </echo>
 
     </target>
     
@@ -225,12 +227,12 @@
     </target>
 
     <!-- package standalone lib with full dependencies -->
-    <target name="package" depends="install-layout">
+    <target name="full-package" depends="install-layout">
         <echo message="package..."/>
     </target>
     
     <!-- create local standalone tar.gz distribution  -->
-    <target name="dist" depends="clean,package">
+    <target name="local-dist" depends="clean,full-package">
         <property name="install.webapps.dir" location="${install.dir}/share/webapps"/>
         <property name="install.etc.dir" location="${install.dir}/etc/${module.name}"/>
         <property name="dist.file"
@@ -261,6 +263,22 @@
         <delete dir="RPMS" failonerror="false"/>
         <delete dir="tgz" failonerror="false"/>
         <delete dir="rpmbuild" failonerror="false"/>
+    </target>
+
+    <!-- download eternals dependencies in local repository -->
+    <target name="repository" depends="init">
+       <download-ext external="ext.apache-struts" />
+       <download-ext external="ext.bouncycastle" />
+       <download-ext external="ext.commons-codec" />
+       <download-ext external="ext.commons-collections" />
+       <download-ext external="ext.commons-configuration" />
+       <download-ext external="ext.commons-httpclient" />
+       <download-ext external="ext.commons-lang" />
+       <download-ext external="ext.commons-logging" />
+       <download-ext external="ext.junit" />
+       <download-ext external="ext.log4j" />
+       <download-ext external="ext.mysql-jdbc" />
+       <download-ext external="ext.tomcat" />
     </target>
     
 </project>
