@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.7 2007/07/23 10:56:51 vtschopp Exp $
+    Version: $Id: build.xml,v 1.8 2007/07/23 11:08:42 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -233,24 +233,16 @@
     
     <!-- create local standalone tar.gz distribution  -->
     <target name="local-dist" depends="clean,full-package">
-        <property name="install.webapps.dir" location="${install.dir}/share/webapps"/>
-        <property name="install.etc.dir" location="${install.dir}/etc/${module.name}"/>
         <property name="dist.file"
             value="${module.name}-${module.version}-jdk${ant.java.version}-${DSTAMP}.tar.gz" />
         <tar destfile="${dist.file}" compression="gzip">
-            <!-- webapps -->
-            <tarfileset dir="${install.webapps.dir}" 
+            <!-- webapps and config -->
+            <tarfileset dir="${install.dir}" 
                 username="root" group="root"
-                prefix="webapps">
-                <include name="*.war"/>
+                prefix="${prefix}">
+                <include name="**/*.war"/>
+                <include name="**/etc/${module.name}/*"/>
             </tarfileset>
-            <!-- config -->
-            <tarfileset dir="${install.etc.dir}" 
-                username="root" group="root"
-                prefix="etc">
-                <include name="*"/>
-            </tarfileset>
-            
         </tar>
     </target>
     
