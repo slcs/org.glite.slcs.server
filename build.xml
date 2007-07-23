@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.8 2007/07/23 11:08:42 vtschopp Exp $
+    Version: $Id: build.xml,v 1.9 2007/07/23 14:44:58 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -110,7 +110,7 @@
     <!-- jar -->
     <target name="jar" depends="compile">
         <!-- jar org.glite.slcs.server classes -->
-        <jar jarfile="${build.dir}/${module.name}.jar" basedir="${classes.dir}" />
+        <jar jarfile="${build.dir}/${package.name}.jar" basedir="${classes.dir}" />
     </target>
 
     <target name="war" depends="jar">
@@ -121,7 +121,7 @@
         <property name="build.lib.dir" location="${build.dir}/war-lib"/>
         <mkdir dir="${build.lib.dir}"/>
         <!-- copy glite-slcs-server lib -->
-        <copy todir="${build.lib.dir}" file="${build.dir}/${module.name}.jar"/>
+        <copy todir="${build.lib.dir}" file="${build.dir}/${package.name}.jar"/>
         <!-- copy glite-slcs-common lib -->
         <copy todir="${build.lib.dir}" file="${stage.lib.dir}/glite-slcs-common.jar"/>
         <!-- copy all third party libs (without tomcat libs) -->
@@ -184,8 +184,8 @@
         <echo message="prepare install in ${install.dir}"/>
         <property name="install.bin.dir" location="${install.dir}/bin"/>
         <property name="install.webapps.dir" location="${install.dir}/share/webapps"/>
-        <property name="install.etc.dir" location="${install.dir}/etc/${module.name}"/>
-        <property name="install.doc.dir" location="${install.dir}/share/doc/${module.name}"/>
+        <property name="install.etc.dir" location="${install.dir}/etc/${package.name}"/>
+        <property name="install.doc.dir" location="${install.dir}/share/doc/${package.name}"/>
         <property name="install.javadoc.dir" location="${install.doc.dir}/api"/>
 
         <!-- first clean up -->
@@ -234,14 +234,14 @@
     <!-- create local standalone tar.gz distribution  -->
     <target name="local-dist" depends="clean,full-package">
         <property name="dist.file"
-            value="${module.name}-${module.version}-jdk${ant.java.version}-${DSTAMP}.tar.gz" />
+            value="${package.name}-${package.version}-jdk${ant.java.version}-${DSTAMP}.tar.gz" />
         <tar destfile="${dist.file}" compression="gzip">
             <!-- webapps and config -->
             <tarfileset dir="${install.dir}" 
                 username="root" group="root"
                 prefix="${prefix}">
                 <include name="**/*.war"/>
-                <include name="**/etc/${module.name}/*"/>
+                <include name="**/etc/${package.name}/*"/>
             </tarfileset>
         </tar>
     </target>
