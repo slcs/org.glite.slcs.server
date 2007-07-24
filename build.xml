@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.9 2007/07/23 14:44:58 vtschopp Exp $
+    Version: $Id: build.xml,v 1.10 2007/07/24 14:03:14 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -238,8 +238,7 @@
         <tar destfile="${dist.file}" compression="gzip">
             <!-- webapps and config -->
             <tarfileset dir="${install.dir}" 
-                username="root" group="root"
-                prefix="${prefix}">
+                username="root" group="root">
                 <include name="**/*.war"/>
                 <include name="**/etc/${package.name}/*"/>
             </tarfileset>
