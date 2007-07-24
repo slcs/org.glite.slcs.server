@@ -1,7 +1,6 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <h2>New Access Control Rule</h2>
 
@@ -34,8 +33,7 @@ If the chosen group defines a rule constraint, all the constrained attributes (m
 			<table class="attributes-box">
 			<logic:iterate name="ruleBean" property="attributes" id="attribute" indexId="i">
 				<tr>
-				<c:choose>
-				<c:when test="$attribute.required == true">
+                <logic:equal name="attribute" property="required" value="true">
 					<td class="attribute-name">
 						<bean:write name="attribute" property="displayName" />
 						<html:hidden name="attribute"  property="name" indexed="true"/>
@@ -45,8 +43,8 @@ If the chosen group defines a rule constraint, all the constrained attributes (m
 						<html:hidden name="attribute" property="value" indexed="true"/>
 					</td>
 					<td><font color="red">*</font></td>
-				</c:when>
-				<c:otherwise>					
+				</logic:equal>
+                <logic:equal name="attribute" property="required" value="false">
 					<td>
 						<html:select name="attribute" property="name" indexed="true" styleClass="attribute-name-select">
 							<html:optionsCollection name="ruleBean"
@@ -59,8 +57,7 @@ If the chosen group defines a rule constraint, all the constrained attributes (m
 					<td align="right">
 						<html:submit property="org.glite.slcs.struts.action.DELETE_ATTRIBUTE" indexed="true"><bean:message key="button.rule.attribute.delete"/></html:submit> 
 					</td>
-				</c:otherwise>
-				</c:choose>
+				</logic:equal>
 				</tr>
 			</logic:iterate>
 				<tr>
