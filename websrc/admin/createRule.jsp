@@ -1,7 +1,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <h2>New Access Control Rule</h2>
 
@@ -35,7 +35,7 @@ If the chosen group defines a rule constraint, all the constrained attributes (m
 			<logic:iterate name="ruleBean" property="attributes" id="attribute" indexId="i">
 				<tr>
 				<c:choose>
-				<c:when test="${attribute.required}">
+				<c:when test="$attribute.required == true">
 					<td class="attribute-name">
 						<bean:write name="attribute" property="displayName" />
 						<html:hidden name="attribute"  property="name" indexed="true"/>
