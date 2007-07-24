@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    Copyright (c) Members of the EGEE Collaboration. 2007.
+    See http://www.eu-egee.org/partners/ for details on the copyright
+    holders.
 
-<!-- $Id: web.xml,v 1.3 2007/07/19 13:29:05 vtschopp Exp $ -->
-         
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    glite-slcs-server configuration
+
+    Author: Valery Tschopp <tschopp@switch.ch>
+    Version: $Id: web.xml,v 1.4 2007/07/24 10:57:59 vtschopp Exp $
+-->
 <web-app id="SLCS"
          version="2.4">
          
@@ -12,7 +30,7 @@
     <context-param>
         <!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath -->
         <param-name>SLCSServerConfigurationFile</param-name>
-        <param-value>/etc/slcs/slcs.xml</param-value>
+        <param-value>/opt/glite/etc/glite-slcs-server/slcs.xml</param-value>
     </context-param>
 
     <!-- Shibboleth Authorization Filter -->
@@ -27,7 +45,7 @@
         <!-- MANDATORY ACLFile: REQUIRED(filename) for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
         <init-param>
             <param-name>ACLFile</param-name>
-            <param-value>/etc/slcs/acl.xml</param-value>
+            <param-value>/opt/glite/etc/glite-slcs-server/acl.xml</param-value>
         </init-param>
         <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
         <init-param>
@@ -37,8 +55,8 @@
         </init-param>
         <!-- MANDATORY: AttributeDefintions XML filename -->
         <init-param>
-        	<param-name>AttributeDefinitions</param-name>
-        	<param-value>/etc/slcs/attributes-def.xml</param-value>
+            <param-name>AttributeDefinitions</param-name>
+            <param-value>/opt/glite/etc/glite-slcs-server/attributes-def.xml</param-value>
         </init-param>
     </filter>
 
@@ -53,7 +71,7 @@
         <!-- MANDATORY ACLFile: REQUIRED for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
         <init-param>
             <param-name>ACLFile</param-name>
-            <param-value>/etc/slcs/admin-acl.xml</param-value>
+            <param-value>/opt/glite/etc/glite-slcs-server/admin-acl.xml</param-value>
         </init-param>
         <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
         <init-param>
@@ -62,21 +80,21 @@
         </init-param>
         <!-- MANDATORY: AttributeDefintions XML filename -->
         <init-param>
-        	<param-name>AttributeDefinitions</param-name>
-        	<param-value>/etc/slcs/attributes-def.xml</param-value>
+            <param-name>AttributeDefinitions</param-name>
+            <param-value>/opt/glite/etc/glite-slcs-server/attributes-def.xml</param-value>
         </init-param>
     </filter>
     
     <!-- Filters mapping -->
-	<!-- user ACL on LoginServlet -->
+    <!-- user ACL on LoginServlet -->
     <filter-mapping>
         <filter-name>LoginAuthorizationFilter</filter-name>
-		<servlet-name>SLCSLoginServlet</servlet-name>
+        <servlet-name>SLCSLoginServlet</servlet-name>
     </filter-mapping>
     <!-- admin ACL on struts /admin/*.do action -->
     <filter-mapping>
         <filter-name>AdminAuthorizationFilter</filter-name>
-		<url-pattern>/admin/*</url-pattern>
+        <url-pattern>/admin/*</url-pattern>
     </filter-mapping>
 
 
@@ -94,7 +112,7 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-	<!-- SLCS admin (struts) -->
+    <!-- SLCS admin (struts) -->
     <servlet>
         <display-name>SLCS Admin Interface</display-name>
         <servlet-name>SLCSStrutsAction</servlet-name>
@@ -103,19 +121,19 @@
             <param-name>config</param-name>
             <param-value>/WEB-INF/struts-config.xml</param-value>
         </init-param>
-		<init-param>
-			<param-name>chainConfig</param-name>
-			<param-value>/WEB-INF/chain-config.xml</param-value>
-		</init-param>
+        <init-param>
+            <param-name>chainConfig</param-name>
+            <param-value>/WEB-INF/chain-config.xml</param-value>
+        </init-param>
 <!-- 
-     	<init-param>
-      		<param-name>debug</param-name>
-      		<param-value>2</param-value>
-    	</init-param>
-    	<init-param>
-      		<param-name>detail</param-name>
-      		<param-value>2</param-value>
-    	</init-param>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>2</param-value>
+        </init-param>
+        <init-param>
+            <param-name>detail</param-name>
+            <param-value>2</param-value>
+        </init-param>
  -->
          <load-on-startup>1</load-on-startup>
     </servlet>
@@ -130,7 +148,6 @@
         <servlet-name>SLCSCertificateServlet</servlet-name>
         <url-pattern>/certificate</url-pattern>
     </servlet-mapping>
-
     <!-- Standard Action Servlet Mapping -->
     <servlet-mapping>
         <servlet-name>SLCSStrutsAction</servlet-name>
