@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title>SLCS Administrator Guide</title>
+    <link type="text/css" href="WebAdminGuide.css">
+    <meta name="AUTHOR" content="Valery Tschopp">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+<!-- 
+@author Valery Tschopp - <tschopp@switch.ch>
+@date 29.03.2007
+@version $Revision: 1.1 $
+@id $Id: WebAdminGuide.html,v 1.1 2007/07/25 08:54:45 vtschopp Exp $
+-->
+    <!-- HEADER -->
+    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <td><img width="170" height="50" src="head-SWITCH-logo.gif" alt="SWITCH Logo" class="logo"></td>
+            <td align="right"><strong>Short Lived Credential Service</strong><br>
+            A Service of <a href="http://www.switch.ch/grid/">SWITCH</a></td>
+        </tr>
+        <tr>
+            <td colspan="2"><img border="0" width="100%" height="10" src="head-stripes.gif" alt="stripes"></td>
+        </tr>
+        <tr>
+            <td colspan="2"><img border="0" width="100%" height="10" src="head-gradient.jpg" alt="gradient"></td>
+        </tr>
+    </table>
+    
+    <!-- CONTENT -->
+    <h1>SLCS Administrator Guide</h1>
+    <p>This short guide introduces the access control system of the SLCS certificate service and describes the main functionalities of the SLCS administrator web interface.</p>
+    <p>Please contact the <a href="mailto:grid@switch.ch">SWITCHgrid Team</a> if you need an administrator access to the SLCS administrator web interface or have any question regarding the SLCS service.</p>
+    <h2>Introduction</h2>
+    <p>The access to the SLCS certificate service is protected by an attributes-based access control system. This means that the attributes of the user will be evaluated and compared with a set of access control rules. If a rule matches the attributes of the user, he will have access to the service.</p>
+    <div align="center">
+        <img border="0" src="user-access.png" alt="Attributes-Based Access Control"><br>
+        Figure: Attributes-Based Access Control
+    </div>
+    <h3>Attributes-Based Access Control Rules</h3>
+    <p>The attributes-based access control system uses rules to grant the access. A rule defines a list of attributes name-value, which must be matched by the attributes of the user.</p>
+    <h4>Example of an Access Control Rule</h4>
+    <p>This is an example of an attributes-based access control rule granting access to a particular ETH Zurich user, member of the ETH staff.</p>
+    <div class="code-box">
+        <code>&lt;AccessControlRule&nbsp;group="ETHZ"&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;Attribute&nbsp;name="<span class="blue">urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID</span>"&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="orange">1638746183469@ethz.ch</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Attribute&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;Attribute&nbsp;name="<span class="blue">urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization</span>"&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="orange">ethz.ch</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Attribute&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;Attribute&nbsp;name="<span class="blue">urn:mace:dir:attribute-def:eduPersonAffiliation</span>"&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="orange">staff</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Attribute&gt;<br>
+        &lt;/AccessControlRule&gt;</code>
+    </div>
+    <p>In this example, only the user matching all three attributes defined in the rule will be accepted. As the rule contains the <span class="attribute-name">AAI UniqueID</span> (urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID) of this user, only this particular user will get access to the SLCS service.</p>
+    <p>See the Annexe: <a href="#attribute-definitions">Attribute Definitions</a> for a complete list of attribute display name and SAML name.</p>
+    <h3>Evaluation of the Access Control Rules</h3>
+    <p>The attributes of theuser must match <strong>all</strong> the attributes defined in a rule. Therefore, each rule will be evaluated like an AND operation. The set of all access control rules is evaluated like an OR operation.</p>
+    <div align="center">
+        <img border="0" src="rules-AND-OR.png" alt="AND or OR logic image"><br>
+        Figure: AND and OR logic for the rules
+    </div>
+    <div class="notice-box">
+        <span class="notice">Notice:</span><br>
+        If you want to add an access control rule granting access to all students or staff members of the ETH Zurich, you will have to create 2 separate rules. The first one for the ETH Zurich students and a second one for the ETH Zurich staff members.
+    </div>
+    <h3>Rule Group and Constraint</h3>
+    <p>Each access control rule belongs to a particular group and each group can have an access control rule constraint defined. This rule constraint defines the mandatory attributes for each rule belonging to the group.</p>
+    <p>If an access control rule constraint is defined for a group, then all rules of this group must contain all the attributes name-value defined in the constraint.</p>
+    <h4>Example of a Rule Constraint</h4>
+    <p>In this example, the group ETHZ defines an access control rule constraint.</p>
+    <div class="code-box">
+        <code>&lt;Group&nbsp;name="ETHZ"&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;AccessControlRuleConstraint&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Attribute&nbsp;name="<span class="blue">urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization</span>"&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="orange">ethz.ch</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Attribute&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/AccessControlRuleConstraint&gt;<br>
+        &lt;/Group&gt;</code>
+    </div>
+    <p>This constraint asserts that the attribute <span class="attribute-name">Home Organization</span> (urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization) must exist and must have the value <span class="orange">ethz.ch</span> for every access control rules of the group ETHZ.</p>
+    <h2><a name="manage-access" id="manage-access"></a>Manage Access to the SLCS Service</h2>
+    <p>As SLCS administrator you can use the SLCS administration web interface to manage your user's access control rules.</p>
+    <p>The URL to access the SLCS administration web interface is <a href="https://slcs.switch.ch/SLCS/admin">https://slcs.switch.ch/SLCS/admin</a></p>
+    <div align="center">
+        <img src="slcs-home.png" alt="SLCS Admin - Home" class="screenshot"><br>
+        Screenshot: SLCS Administration - Home
+    </div>
+    <p>The <span class="view-title">SLCS Administration</span> page shows you the list of access control groups you can administer and your own AAI attributes. You can always come back to this page by selecting <span class="nav-item">Home</span> in the navigation menu.</p>
+    <h4>Access Control Groups</h4>
+    <p>Each SLCS administrator is member of one or more groups. As each access control rule belong to a group, your group membership determines which access control rules you can manage.</p>
+    <h3>List the Access Control Rules</h3>
+    <p>You can list all the active access control rules you can manage by selecting <span class="nav-item">List Access Rules</span> in the navigation menu.</p>
+    <div align="center">
+        <img src="slcs-list-rules.png" alt="SLCS Admin - List Rules" class="screenshot"><br>
+        Screenshot: SLCS Administration - List Access Control Rules
+    </div>
+    <p>The <span class="view-title">SLCS Access Control Rules</span> page lists all the active access control rules belonging to all the groups you can administer. Any active access control rule can be either edited with the <span class="nav-item">Edit</span> button or deleted with the <span class="nav-item">Delete</span> button.</p>
+    <h3>Create a new Access Control Rule</h3>
+    <p>You can also create a new access control rule by selecting <span class="nav-item">New Access Rule</span> in the navigation menu.</p>
+    <div align="center">
+        <img src="slcs-create-rule.png" alt="SLCS Admin - Create Rule" class="screenshot"><br>
+        Screenshot: SLCS Administration - New Access Control Rule
+    </div>
+    <p>The <span class="view-title">New Access Control Rule</span> page displays a form to create a new access control rule.</p>
+    <h4>Set the Rule Group</h4>
+    <p>First, you must assign a group to this new access control rule. To do this, select one of your group from the Group drop down list and confirm your choice with the <span class="nav-item">Set Group</span> button.</p>
+    <p>This operation will determine the group attributes constraint for this new rule, and display the rule mask with the constrained attributes already set (marked with <span class="red">*</span>). The constrained attributes defined by a group rule constraint are mandatory and can not be modified or deleted.</p>
+    <h4>Enable a Single User</h4>
+    <p>You can now define the attributes needed to authorize a particular user. The best way to uniquely identify a single user is to use his <span class="attribute-name">AAI UniqueID</span> or his <span class="attribute-name">Email</span> attribute in the rule.</p>
+    <p>Every user can use the AAI Attributes Viewer at <a href="https://aai-viewer.switch.ch/aai" target="_blank">https://aai-viewer.switch.ch/aai</a> to view all his AAI attributes. You can use this information to obtain the user <span class="attribute-name">AAI UniqueID</span> or his <span class="attribute-name">Email</span> attribute.</p>
+    <div align="center">
+        <img width="40%" src="slcs-create-rule-user.png" alt="SLCS Admin - Create Rule single user"><br>
+        Screenshot: SLCS Administration - New Access Control Rule (Single User)
+    </div>
+    <p>In this example, the user you want to allow have the attribute <span class="attribute-name">AAI UniqueID</span> as <span class="orange">10101010@ethz.ch</span>, and, as an ETH Zurich student, have the attribute <span class="attribute-name">Affiliation</span> set to <span class="orange">student</span>.</p>
+    <p>Once you have defined all the attribute you wanted for the rule, click on <span class="nav-item">Create Rule</span> to commit your new access control rule.</p>
+    <h4>Enable a Group of Users</h4>
+    <p>There is also the possibility to enable a whole group of users, based on a set of attributes common to every users.</p>
+    <div align="center">
+        <img width="40%" src="slcs-create-rule-group.png" alt="SLCS Admin - Create Rule group of users"><br>
+        Screenshot: SLCS Administration - New Access Control Rule (Group of Users)
+    </div>
+    <p>For example, you can allow all the ETH Zurich staff member to use the SLCS service, by defining a rule containing the attribute <span class="attribute-name">Affiliation</span> as <span class="orange">staff</span>.</p>
+    <div class="notice-box">
+        <span class="notice">Notice:</span><br>
+        Please contact the <a href="mailto:grid@switch.ch">SWITCHgrid team</a> to discuss this more general access control and the different attributes which can be used to achieve such a group definition.
+    </div>
+    <h3>Edit an existing Access Control Rule</h3>
+    <p>To edit an existing access control rule, first select <span class="nav-item">List Access Rules</span> in the navigation menu to obtain the list of the rules you can manage, then click on the <span class="nav-item">Edit</span> button of the rule you want to edit.</p>
+    <div align="center">
+        <img src="slcs-edit-rule.png" alt="SLCS Admin - Edit Rule" class="screenshot"><br>
+        Screenshot: SLCS Administration - Edit Access Control Rule
+    </div>
+    <p>The <span class="view-title">Edit Access Control Rule</span> page displays the access control rule you want to edit.</p>
+    <p>Once you have modified, added or removed the attribute you wanted to edit, click on <span class="nav-item">Save Rule</span> to commit the modification.</p>
+    <h3>Delete an Access Control Rule</h3>
+    <p>To delete an existing access control rule, first select <span class="nav-item">List Access Rules</span> in the navigation menu to obtain the list of the rules you can manage, then click on the <span class="nav-item">Delete</span> button of the rule you want to delete.</p>
+    <h2>Help and Contacts</h2>
+    <p>If you have any questions about this guide please consult the SWITCHgrid web site at <a href="http://www.switch.ch/grid">http://www.switch.ch/grid</a> or send an email to the SWITCHgrid team at <a href="mailto:grid@switch.ch">&lt;grid@switch.ch&gt;</a></p>
+    <h2><a name="attribute-definitions" id="attribute-definitions"></a>Annexe: Attribute Definitions</h2>
+    <p>This table represents the attribute definitions used by the SLCS server.</p>
+    <div align="center">
+        <table class="border-blue">
+            <tr>
+                <th>Display Name</th>
+                <th>Attribute Name</th>
+            </tr>
+            <tr>
+                <td>AAI UniqueID</td>
+                <td>urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID</td>
+            </tr>
+            <tr>
+                <td>Lastname</td>
+                <td>urn:mace:dir:attribute-def:sn</td>
+            </tr>
+            <tr>
+                <td>Firstname</td>
+                <td>urn:mace:dir:attribute-def:givenName</td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>urn:mace:dir:attribute-def:mail</td>
+            </tr>
+            <tr>
+                <td>Affiliation</td>
+                <td>urn:mace:dir:attribute-def:eduPersonAffiliation</td>
+            </tr>
+            <tr>
+                <td>Home Organization</td>
+                <td>urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization</td>
+            </tr>
+            <tr>
+                <td>Home Organization Type</td>
+                <td>urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganizationType</td>
+            </tr>
+        </table>
+    </div>
+    <p>Each attribute have a <strong>Display Name</strong>, which is the human-readable name of the attribute name. The <strong>Attribute Name</strong> is the SAML name of the attribute as stored in the access control rules.</p>
+    
+    <!-- FOOTER -->
+    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <td><img border="0" width="100%" height="10" src="head-gradient.jpg" alt="gradient"></td>
+        </tr>
+        <tr>
+            <td><img border="0" width="100%" height="10" src="head-stripes.gif" alt="stripes"></td>
+        </tr>
+    </table>
+</body>
+</html>

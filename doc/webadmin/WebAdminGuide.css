@@ -1,0 +1,202 @@
+/*
+ *   $Id: WebAdminGuide.css,v 1.1 2007/07/25 08:54:45 vtschopp Exp $
+ */
+
+body {
+    background-color: white;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+table {
+    font-size: 12px;
+}
+
+h1, h3 {
+    color: rgb(0,43,127);
+}
+
+h2, h4 {
+    color: black;
+}
+
+.notice {
+    color: rgb(226,140,5);
+    font-weight: bold;
+}
+
+.notice-box {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(226,140,5);
+    padding: 5px;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.logo {
+    color: white;
+    text-decoration: none;
+}
+
+img.screenshot {
+    width: 60%;
+    text-decoration: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.logo-width {
+    width: 170;
+}
+
+.body-width {
+    margin-left: 5px;
+}
+
+.blue {
+    color: rgb(0,43,127);
+}
+
+.orange {
+    color: rgb(226,140,5);
+}
+
+.error, .red {
+    color: rgb(255,0,0);
+}
+
+.border-blue {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(0,43,127);
+    padding: 2px;
+}
+
+.border-orange {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(226,140,5);
+    padding: 2px;
+}
+
+.view-title {
+    color: rgb(0,43,127);
+    font-weight: bold;
+    font-style: italic;
+}
+
+.code-box {
+    border-style: dashed;
+    border-width: 1px;
+    border-color: black;
+    background-color: rgb(216,216,216);
+    padding: 4px;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+
+/* table for attributes */
+
+.rule-box {
+    padding: 3px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    border-color: rgb(0,43,127);
+    border-style: solid;
+    border-width: thin;
+    border-spacing: 5px;
+    -moz-border-radius: 5px;
+}
+
+.group-name {
+    text-align: right;
+    color: rgb(0,43,127);
+    padding: 2px;
+}
+
+.group-value {
+    text-align: left;
+    color: rgb(226,140,5);
+    padding: 2px;
+}
+
+.button-edit {
+   float: right;
+}
+
+.button-delete {
+   float: right;
+}
+
+.attributes-box {
+    padding: 3px;
+    margin-top: 10px;
+    border-color: rgb(0,43,127);
+    border-style: dotted;
+    border-width: thin;
+    border-spacing: 5px;
+    clear: both;
+}
+
+.attributes-box-header {
+    color: rgb(0,43,127);
+    font-weight: bold;
+    text-align: left;
+}
+
+.attribute {
+    padding: 2px;
+    width: 100%;
+}
+
+.attribute-name {
+    width: 50%;
+    white-space: nowrap;
+    text-align: right;
+    color: rgb(0,43,127);
+    padding: 2px;
+}
+
+.attribute-value {
+    width: 50%;
+    text-align: left;
+    color: rgb(226,140,5);
+    border-style: solid;
+    border-width: thin;
+    padding: 2px;
+}
+
+.attribute-name-select {
+    text-align: right;
+    color: rgb(0,43,127);
+    padding: 2px;
+}
+
+.attribute-value-input {
+    text-align: left;
+    color: rgb(226,140,5);
+    padding: 2px;
+}
+
+/* input buttons */
+
+.nav-item {
+    color: rgb(0,43,127);
+    text-align: center;
+    text-decoration: none;
+    border-color: #FFC280 #FFB480 #FFB480 #FFC280;
+    border-width: 1px;
+    border-style: solid;
+    padding: 2px 2px 2px 2px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.nav-item:hover {
+    border-color: #FEA94C #FF6900 #FF6900 #FEA94C;
+    background-color: #FFF3E5;	
+}
+
