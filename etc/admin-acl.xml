@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: admin-acl.xml,v 1.1 2007/04/19 11:32:25 vtschopp Exp $ -->
+<!-- $Id: admin-acl.xml,v 1.2 2007/07/25 11:19:59 vtschopp Exp $ -->
 
 <ShibbolethAccessControlList>
 	
 	<AccessControlRule id="1" group="admin">
 		<Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID">112358@switch.ch</Attribute>
 	</AccessControlRule>
-
-	<AccessControlRule id="2" group="admin">
-        <Attribute name="urn:mace:dir:attribute-def:mail">placi.flury@switch.ch</Attribute>
-	</AccessControlRule>
-
-	<AccessControlRule id="3" group="admin">
-        <Attribute name="urn:mace:dir:attribute-def:mail">witzig@switch.ch</Attribute>
-	</AccessControlRule>
-
 
 </ShibbolethAccessControlList>
