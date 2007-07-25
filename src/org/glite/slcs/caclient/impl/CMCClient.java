@@ -1,5 +1,5 @@
 /*
- * $Id: CMCClient.java,v 1.3 2007/02/28 11:45:46 vtschopp Exp $
+ * $Id: CMCClient.java,v 1.4 2007/07/25 07:21:24 vtschopp Exp $
  * 
  * Created on Jun 14, 2006 by tschopp
  *
@@ -26,7 +26,7 @@ import org.glite.slcs.httpclient.ssl.ExtendedProtocolSocketFactory;
  * reponses.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class CMCClient implements CAClient {
 
@@ -55,7 +55,7 @@ public class CMCClient implements CAClient {
             this.httpClient_= createHttpClient(keystorePath,
                                                keystorePassword,
                                                truststorePath);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error(e);
             throw new SLCSException("Failed to create embedded HttpClient", e);
         }
@@ -91,7 +91,7 @@ public class CMCClient implements CAClient {
             this.httpClient_= createHttpClient(keystoreFilename,
                                                keystorePassword,
                                                truststoreFilename);
-        } catch (IOException e) {
+        } catch (Exception e) {
             // e.printStackTrace();
             LOG.error(e);
             throw new SLCSException("Failed to create embedded HttpClient", e);
@@ -118,8 +118,8 @@ public class CMCClient implements CAClient {
      * @throws IOException
      */
     static private HttpClient createHttpClient(String keystorePath,
-            String keystorePassword, String truststorePath) throws IOException {
-        // add client auth and trust support to https, throws IOException
+            String keystorePassword, String truststorePath) throws Exception {
+        // add client auth and trust support to https, throws Exception
         ExtendedProtocolSocketFactory psf= new ExtendedProtocolSocketFactory(keystorePath,
                                                                              keystorePassword,
                                                                              truststorePath);
