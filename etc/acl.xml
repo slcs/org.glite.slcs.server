@@ -1,27 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: acl.xml,v 1.2 2007/01/30 14:38:22 vtschopp Exp $ -->
+<!-- $Id: acl.xml,v 1.3 2007/07/25 11:19:21 vtschopp Exp $ -->
 
 <ShibbolethAccessControlList>
-	
-	<!-- simple rule example -->
-	<AccessControlRule id="1" group="switch.ch">
-		<Attribute name="Shib-SwissEP-UniqueID">112358@switch.ch</Attribute>
-	</AccessControlRule>
 
-	<!-- AND rule example -->
-	<AccessControlRule id="2" group="switch.ch">
-		<Attribute name="Shib-SwissEP-HomeOrganization">switch.ch</Attribute>
-		<Attribute name="Shib-EP-Affiliation">staff</Attribute>
-	</AccessControlRule>
-
-	<AccessControlRule id="3" group="switch.ch">
-		<Attribute name="Shib-SwissEP-HomeOrganization">vho-switchaai.ch</Attribute>
-	</AccessControlRule>
-
-	<AccessControlRule id="4" group="unizh.ch">
-		<Attribute name="Shib-SwissEP-HomeOrganization">unizh.ch</Attribute>
-		<Attribute name="Shib-EP-Affiliation">staff</Attribute>
-	</AccessControlRule>
+    <AccessControlRule group="SWITCH" id="1">
+        <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">switch.ch</Attribute>
+        <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">staff</Attribute>
+    </AccessControlRule>
 
 </ShibbolethAccessControlList>
+
