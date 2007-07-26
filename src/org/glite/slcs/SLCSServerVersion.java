@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerVersion.java,v 1.7 2007/07/23 12:50:32 vtschopp Exp $
+ * $Id: SLCSServerVersion.java,v 1.8 2007/07/26 14:44:45 vtschopp Exp $
  * 
  * Created on May 5, 2006 by tschopp
  *
@@ -13,7 +13,7 @@ package org.glite.slcs;
  * SLCSServerVersion and Copyright constants.
  *
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class SLCSServerVersion {
 
@@ -24,7 +24,7 @@ public class SLCSServerVersion {
     /** Revision version number */
     static public final int REVISION= 0;    
     /** Build number */
-    static public final int BUILD= 1;
+    static public final int BUILD= 2;
     
     /** Copyright */
     static public final String COPYRIGHT= "Copyright (c) Members of the EGEE Collaboration";
