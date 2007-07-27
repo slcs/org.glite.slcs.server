@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.10 2007/07/24 14:03:14 vtschopp Exp $
+    Version: $Id: build.xml,v 1.11 2007/07/27 08:21:42 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -114,8 +114,8 @@
     </target>
 
     <target name="war" depends="jar">
-        <echo message="war webapp: ${webapp.name}"/>
-        <delete file="${build.dir}/${webapp.name}.war" failonerror="false"/>
+        <echo message="war webapp: ${package.name}"/>
+        <delete file="${build.dir}/${package.name}.war" failonerror="false"/>
         
         <!-- create a temporary war-lib dir -->
         <property name="build.lib.dir" location="${build.dir}/war-lib"/>
@@ -139,7 +139,7 @@
         </copy>
         
         <!-- create war file -->
-        <war destfile="${build.dir}/${webapp.name}.war"
+        <war destfile="${build.dir}/${package.name}.war"
              webxml="${websrc.dir}/WEB-INF/web.xml">
             <!-- WEB-INF content -->
             <webinf dir="${websrc.dir}/WEB-INF">
@@ -213,7 +213,7 @@
             <fileset dir="${javadoc.dir}" />
         </copy>
         <!-- application war -->
-        <copy todir="${install.webapps.dir}" file="${build.dir}/${webapp.name}.war"/>
+        <copy todir="${install.webapps.dir}" file="${build.dir}/${package.name}.war"/>
         
    </target>
    
