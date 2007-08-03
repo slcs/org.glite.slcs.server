@@ -1,0 +1,40 @@
+SLCS server
+-----------
+Module: org.glite.slcs.server
+ETICS: glite-slcs-server_R_1_0_0_2
+RPM: glite-slcs-ui-1.0.0-2.noarch.rpm
+
+Depends: org.glite.slcs.common (glite-slcs-common_R_1_1_1_1)
+
+
+Build Dependencies:
+
+- jdk v. 1.5.0_06
+- ant v. 1.6.2
+- junit v. 3.8.1
+- glite-slcs-common_R_1_1_1_1
+- apache-struts v. 1.3.5
+- bouncycastle v. 1.34 jdk 1.5
+- commons-codec v. 1.3
+- commons-collections v. 3.2
+- commons-configuration v. 1.2
+- commons-httpclient v. 3.0.1
+- commons-lang v. 2.1
+- commons-logging v. 1.0.4
+- log4j v. 1.2.8
+- mysql-jdbc v. 3.1.10
+- tomcat v. 5.0.28
+
+
+Runtime Dependencies: NONE
+
+- Java VM 1.5 runtime
+- tomcat v. 5.0.28 | tomcat v. 5.5.20
+
+
+Comments:
+
+The server do not have runtime dependencies, besides Java 1.5 and Tomcat 5.X, because all required libraries (jar) are bundled in the Tomcat webapp .war file.
+
+--
+$Id: DEPENDENCIES,v 1.1 2007/08/03 11:42:47 vtschopp Exp $
