@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.11 2007/07/27 08:21:42 vtschopp Exp $
+    Version: $Id: build.xml,v 1.12 2007/08/07 15:53:13 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -183,6 +183,7 @@
     <target name="install-layout" depends="war">
         <echo message="prepare install in ${install.dir}"/>
         <property name="install.bin.dir" location="${install.dir}/bin"/>
+        <property name="install.log.dir" location="${install.dir}/var/log"/>
         <property name="install.webapps.dir" location="${install.dir}/share/webapps"/>
         <property name="install.etc.dir" location="${install.dir}/etc/${package.name}"/>
         <property name="install.doc.dir" location="${install.dir}/share/doc/${package.name}"/>
@@ -194,6 +195,7 @@
         <!-- create install dir -->
         <!--  <mkdir dir="${install.bin.dir}"/> -->
         <mkdir dir="${install.etc.dir}"/>
+        <mkdir dir="${install.log.dir}"/>
         <mkdir dir="${install.webapps.dir}"/>
         <mkdir dir="${install.doc.dir}"/>
         <mkdir dir="${install.javadoc.dir}"/>
@@ -214,6 +216,8 @@
         </copy>
         <!-- application war -->
         <copy todir="${install.webapps.dir}" file="${build.dir}/${package.name}.war"/>
+        <!-- empty logfile -->
+        <touch file="${install.log.dir}/glite-slcs-server.log" />
         
    </target>
    
@@ -235,15 +239,8 @@
     <target name="local-dist" depends="clean,full-package">
         <property name="dist.file"
             value="${package.name}-${package.version}-jdk${ant.java.version}-${DSTAMP}.tar.gz" />
-        <tar destfile="${dist.file}" compression="gzip">
-            <!-- webapps and config -->
-            <tarfileset dir="${install.dir}" 
-                username="root" group="root">
-                <include name="**/*.war"/>
-                <include name="**/etc/${package.name}/*"/>
-            </tarfileset>
-        </tar>
-    </target>
+        <tar destfile="${dist.file}" compression="gzip" basedir="${install.dir}" />
+   </target>
     
     <!-- clean -->
     <target name="clean">
