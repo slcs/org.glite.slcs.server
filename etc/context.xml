@@ -1,0 +1,16 @@
+<!--
+Copy this context file in $CATALANIA_HOME/conf/[enginename]/[hostname]/[webappname].xml
+i.e. /usr/tomcat/conf/Catalina/localhost/SLCS.xml to deploy as /SLCS
+-->
+<Context 
+    docBase="/opt/glite/share/webapps/glite-slcs-server.war"
+    reloadable="true"
+    debug="0">
+
+    <!-- Context parameter: location of the SLCS server configuration file -->
+    <Parameter 
+        name="SLCSServerConfigurationFile"
+        value="/opt/glite/etc/glite-slcs-server/slcs.xml"
+        type="java.lang.String"/>
+
+</Context>
