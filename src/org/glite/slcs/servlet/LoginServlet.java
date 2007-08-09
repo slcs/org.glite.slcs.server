@@ -1,5 +1,5 @@
 /*
- * $Id: LoginServlet.java,v 1.3 2007/06/11 13:08:05 vtschopp Exp $
+ * $Id: LoginServlet.java,v 1.4 2007/08/09 13:14:41 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,7 +37,7 @@ import org.glite.slcs.session.SLCSSessions;
  * Servlet implementation class for Servlet: LoginServlet
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LoginServlet extends AbstractServlet implements
         javax.servlet.Servlet {
@@ -51,7 +51,7 @@ public class LoginServlet extends AbstractServlet implements
     private DNBuilder dnBuilder_ = null;
 
     /** Certificate Policy */
-    private CertificatePolicy policy_ = null;
+    private CertificatePolicy certificatePolicy_ = null;
 
     /**
      * Default constructor.
@@ -70,12 +70,14 @@ public class LoginServlet extends AbstractServlet implements
         try {
 
             LOG.info("instantiate DNBuilder...");
-            dnBuilder_ = DNBuilderFactory.getInstance();
-            registerSLCSServerComponent(dnBuilder_);
+            DNBuilder dnBuilder = DNBuilderFactory.getInstance();
+            setDNBuilder(dnBuilder);
+            registerSLCSServerComponent(dnBuilder);
 
             LOG.info("instantiate CertificatePolicy...");
-            policy_ = CertificatePolicyFactory.getInstance();
-            registerSLCSServerComponent(policy_);
+            CertificatePolicy policy = CertificatePolicyFactory.getInstance();
+            setCertificatePolicy(policy);
+            registerSLCSServerComponent(policy);
 
         } catch (SLCSException e) {
             LOG.error("Servlet init failed", e);
@@ -104,19 +106,21 @@ public class LoginServlet extends AbstractServlet implements
             getAuditor().logEvent(login);
 
             // create a new DN
-            String dn = dnBuilder_.createDN(userAttributes);
+            DNBuilder builder = getDNBuilder();
+            String dn = builder.createDN(userAttributes);
             // store the new DN in sessions and get authorization token
             SLCSSessions sessions = getSLCSSessions();
             SLCSSession session = sessions.createSession(dn);
             // store attributes in session
             session.setAttributes(userAttributes);
-            
+
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Session created: " + session );
+                LOG.debug("Session created: " + session);
             }
 
-            String authToken= session.getToken();
-            List extensions = policy_.getRequiredCertificateExtensions(userAttributes);
+            String authToken = session.getToken();
+            CertificatePolicy policy = getCertificatePolicy();
+            List extensions = policy.getRequiredCertificateExtensions(userAttributes);
             String reqUrl = getContextUrl(req, "/certificate");
             sendLoginResponse(req, res, authToken, reqUrl, dn, extensions);
 
@@ -133,6 +137,41 @@ public class LoginServlet extends AbstractServlet implements
 
         }
 
+    }
+
+    /**
+     * @return The {@link DNBuilder} interface
+     */
+    protected DNBuilder getDNBuilder() {
+        return dnBuilder_;
+    }
+
+    /**
+     * Sets the DNBuilder implementation as returned by the factory.
+     * 
+     * @param dnBuilder
+     *            The builder implementing the interface.
+     */
+    protected void setDNBuilder(DNBuilder dnBuilder) {
+        this.dnBuilder_ = dnBuilder;
+    }
+
+    /**
+     * @return The {@link CertificatePolicy} interface
+     */
+    protected CertificatePolicy getCertificatePolicy() {
+        return certificatePolicy_;
+    }
+
+    /**
+     * Sets the {@link CertificatePolicy} implementation as returned by the
+     * factory.
+     * 
+     * @param policy
+     *            The policy implementing the interface.
+     */
+    protected void setCertificatePolicy(CertificatePolicy policy) {
+        this.certificatePolicy_ = policy;
     }
 
     /**
@@ -199,8 +238,7 @@ public class LoginServlet extends AbstractServlet implements
         pw.println("</CertificateRequest>");
         pw.println("</SLCSLoginResponse>");
         if (LOG.isDebugEnabled()) {
-            LOG.debug("sending SLCSLoginResponse:\n"
-                    + sw.getBuffer().toString());
+            LOG.debug("sending SLCSLoginResponse:\n" + sw.getBuffer().toString());
         }
         // write response back to client
         res.setContentType("text/xml");
