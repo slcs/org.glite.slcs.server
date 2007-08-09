@@ -1,5 +1,5 @@
 /*
- * $Id: CertificateServlet.java,v 1.3 2007/06/11 13:08:05 vtschopp Exp $
+ * $Id: CertificateServlet.java,v 1.4 2007/08/09 13:32:04 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -41,7 +41,7 @@ import org.glite.slcs.session.SLCSSessions;
  * Servlet implementation class for Servlet: CertificateServlet
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class CertificateServlet extends AbstractServlet {
 
@@ -52,10 +52,10 @@ public class CertificateServlet extends AbstractServlet {
     private static Log LOG = LogFactory.getLog(CertificateServlet.class);
 
     /** Online CA client */
-    private CAClient onlineCA_ = null;
+    private CAClient caClient_ = null;
 
     /** Certificate policy */
-    private CertificatePolicy policy_ = null;
+    private CertificatePolicy certificatePolicy_ = null;
 
     /**
      * Default constructor.
@@ -74,12 +74,12 @@ public class CertificateServlet extends AbstractServlet {
         try {
             // get the online CA client
             LOG.info("instantiate CAClient...");
-            onlineCA_ = CAClientFactory.getInstance();
-            registerSLCSServerComponent(onlineCA_);
+            caClient_ = CAClientFactory.getInstance();
+            registerSLCSServerComponent(caClient_);
 
             LOG.info("instantiate CertificatePolicy...");
-            policy_ = CertificatePolicyFactory.getInstance();
-            registerSLCSServerComponent(policy_);
+            certificatePolicy_ = CertificatePolicyFactory.getInstance();
+            registerSLCSServerComponent(certificatePolicy_);
 
         } catch (SLCSException e) {
             LOG.error("Servlet init failed", e);
@@ -135,11 +135,13 @@ public class CertificateServlet extends AbstractServlet {
                 // check certificate against policy
                 LOG.debug("check certificate request against policy...");
                 List userAttributes = session.getAttributes();
-                if (policy_.isCertificateRequestValid(certificateRequest, userAttributes)) {
+                CertificatePolicy policy = getCertificatePolicy();
+                if (policy.isCertificateRequestValid(certificateRequest, userAttributes)) {
 
                     // request certificate
                     LOG.debug("get CA connection");
-                    CAConnection connection = onlineCA_.getConnection();
+                    CAClient onlineCA= getCAClient();
+                    CAConnection connection = onlineCA.getConnection();
                     LOG.debug("create CA request");
                     CARequest csrRequest = connection.createRequest(certificateRequest);
                     LOG.info("send certificate request to CA server");
@@ -232,5 +234,20 @@ public class CertificateServlet extends AbstractServlet {
         out.close();
 
     }
+    
+    /**
+     * @return The implementation of the {@link CertificatePolicy} interface
+     */
+    protected CertificatePolicy getCertificatePolicy() {
+        return certificatePolicy_;
+    }
 
+    /**
+     * @return The implementation of the {@link CAClient} interface
+     */
+    protected CAClient getCAClient() {
+        return caClient_;
+    }
+    
+    
 }
