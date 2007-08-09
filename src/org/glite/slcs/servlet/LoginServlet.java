@@ -1,5 +1,5 @@
 /*
- * $Id: LoginServlet.java,v 1.4 2007/08/09 13:14:41 vtschopp Exp $
+ * $Id: LoginServlet.java,v 1.5 2007/08/09 13:17:54 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,7 +37,7 @@ import org.glite.slcs.session.SLCSSessions;
  * Servlet implementation class for Servlet: LoginServlet
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class LoginServlet extends AbstractServlet implements
         javax.servlet.Servlet {
@@ -70,14 +70,12 @@ public class LoginServlet extends AbstractServlet implements
         try {
 
             LOG.info("instantiate DNBuilder...");
-            DNBuilder dnBuilder = DNBuilderFactory.getInstance();
-            setDNBuilder(dnBuilder);
-            registerSLCSServerComponent(dnBuilder);
+            dnBuilder_ = DNBuilderFactory.getInstance();
+            registerSLCSServerComponent(dnBuilder_);
 
             LOG.info("instantiate CertificatePolicy...");
-            CertificatePolicy policy = CertificatePolicyFactory.getInstance();
-            setCertificatePolicy(policy);
-            registerSLCSServerComponent(policy);
+            certificatePolicy_ = CertificatePolicyFactory.getInstance();
+            registerSLCSServerComponent(certificatePolicy_);
 
         } catch (SLCSException e) {
             LOG.error("Servlet init failed", e);
@@ -140,38 +138,17 @@ public class LoginServlet extends AbstractServlet implements
     }
 
     /**
-     * @return The {@link DNBuilder} interface
+     * @return The implementation of the {@link DNBuilder} interface
      */
     protected DNBuilder getDNBuilder() {
         return dnBuilder_;
     }
 
     /**
-     * Sets the DNBuilder implementation as returned by the factory.
-     * 
-     * @param dnBuilder
-     *            The builder implementing the interface.
-     */
-    protected void setDNBuilder(DNBuilder dnBuilder) {
-        this.dnBuilder_ = dnBuilder;
-    }
-
-    /**
-     * @return The {@link CertificatePolicy} interface
+     * @return The implementation of the {@link CertificatePolicy} interface
      */
     protected CertificatePolicy getCertificatePolicy() {
         return certificatePolicy_;
-    }
-
-    /**
-     * Sets the {@link CertificatePolicy} implementation as returned by the
-     * factory.
-     * 
-     * @param policy
-     *            The policy implementing the interface.
-     */
-    protected void setCertificatePolicy(CertificatePolicy policy) {
-        this.certificatePolicy_ = policy;
     }
 
     /**
