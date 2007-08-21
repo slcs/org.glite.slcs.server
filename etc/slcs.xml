@@ -19,7 +19,7 @@
     SLCS server configuration file
 
     Author: Valery Tschopp - <tschopp@switch.ch>
-    Version: $Id: slcs.xml,v 1.5 2007/07/23 10:57:32 vtschopp Exp $ 
+    Version: $Id: slcs.xml,v 1.6 2007/08/21 11:56:47 vtschopp Exp $ 
 -->
 <SLCSServerConfiguration>
 
@@ -34,12 +34,12 @@
             CleaningInterval: time between 2 memory cleaning rounds (second)
         -->
         <SLCSSessions implementation="org.glite.slcs.session.impl.MemorySessions">
-            <SessionTTL>60</SessionTTL>
-            <CleaningInterval>30</CleaningInterval>
+            <SessionTTL>30</SessionTTL>
+            <CleaningInterval>60</CleaningInterval>
         </SLCSSessions>
 
         <DNBuilder implementation="org.glite.slcs.dn.impl.FunctionalPatternBuilder">
-            <DNPattern>DC=ch\,DC=switch\,DC=slcs\,mappedValue(${urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization})\,CN=${urn:mace:dir:attribute-def:givenName} ${urn:mace:dir:attribute-def:sn} hashValue(${urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID})</DNPattern>
+            <DNPattern>DC=ch,DC=switch,DC=slcs,mappedValue(${urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization}),CN=${urn:mace:dir:attribute-def:givenName} ${urn:mace:dir:attribute-def:sn} hashValue(${urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID})</DNPattern>
             <MappedValues attributeName="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">
                 <MappedValue attributeValue="switch.ch">O=Switch - Teleinformatikdienste fuer Lehre und Forschung</MappedValue>
                 <MappedValue attributeValue="vho-switchaai.ch">OU=SWITCHaai Virtual Home Organization</MappedValue>
@@ -62,9 +62,9 @@
         <CertificatePolicy implementation="org.glite.slcs.policy.impl.NoCertificatePolicy">
         </CertificatePolicy>
         -->
-        <CertificatePolicy implementation="org.glite.slcs.policy.impl.SWITCHSLCSCertificatePolicy">
+        <CertificatePolicy implementation="org.glite.slcs.policy.impl.MandatoryCertificateExtensionsPolicy">
             <CertificateExtensions>
-                <CertificateExtension id="KeyUsage" critical="true">DigitalSignature\,KeyEncipherment</CertificateExtension>
+                <CertificateExtension id="KeyUsage" critical="true">DigitalSignature,KeyEncipherment</CertificateExtension>
                 <CertificateExtension id="SubjectAltName" critical="false">email:${urn:mace:dir:attribute-def:mail}</CertificateExtension>
                 <CertificateExtension id="CertificatePolicies" critical="false">2.16.756.1.2.6.4.1.0</CertificateExtension>
                 <CertificateExtension id="ExtendedKeyUsage" critical="false">ClientAuth</CertificateExtension>
