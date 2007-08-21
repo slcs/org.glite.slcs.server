@@ -1,5 +1,5 @@
 /*
- * $Id: MandatoryCertificateExtensionsPolicy.java,v 1.2 2007/08/21 12:10:18 vtschopp Exp $
+ * $Id: MandatoryCertificateExtensionsPolicy.java,v 1.3 2007/08/21 12:14:35 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -27,6 +27,9 @@ import org.glite.slcs.policy.CertificatePolicy;
  * MandatoryCertificateExtensionsPolicy implements a {@link CertificatePolicy}
  * where all defined {@link CertificateExtension}s are mandatory and exclusive.
  * 
+ * <p>In the <code>&lt;CertificateExtension&gt;</code> element, the value of the extension can use
+ * variable in the form <code>${attribute-name}</code> to have user dependent value resolved dynamically. 
+ * 
  * <p>Configuration example:
  * <pre>
  *  &lt;CertificatePolicy implementation=&quot;org.glite.slcs.policy.impl.MandatoryCertificateExtensionsPolicy&quot;&gt;
@@ -48,7 +51,7 @@ import org.glite.slcs.policy.CertificatePolicy;
  * </pre>
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MandatoryCertificateExtensionsPolicy implements CertificatePolicy {
 
