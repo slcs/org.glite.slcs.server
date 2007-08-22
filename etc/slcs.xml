@@ -19,12 +19,12 @@
     SLCS server configuration file
 
     Author: Valery Tschopp - <tschopp@switch.ch>
-    Version: $Id: slcs.xml,v 1.6 2007/08/21 11:56:47 vtschopp Exp $ 
+    Version: $Id: slcs.xml,v 1.7 2007/08/22 11:38:58 vtschopp Exp $ 
 -->
 <SLCSServerConfiguration>
 
     <!-- Shibboleth Attributes Definition -->
-    <AttributeDefinitions filename="/opt/glite/etc/glite-slcs-server/slcs/attributes-def.xml" />
+    <AttributeDefinitions filename="/opt/glite/etc/glite-slcs-server/slcs/attribute-defs.xml" />
 
     <!-- SLCS Server Components Configuration -->
     <SLCSComponentsConfiguration>
