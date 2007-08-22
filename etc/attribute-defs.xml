@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: attributes-def.xml,v 1.2 2007/03/16 15:05:10 vtschopp Exp $ -->
+<!-- $Id: attribute-defs.xml,v 1.1 2007/08/22 11:38:03 vtschopp Exp $ -->
 
+<!--
+    Shibboleth attribute definition for the SWITCHaai federation.
+    See online documentation:
+        http://www.switch.ch/aai
+        http://www.switch.ch/aai/support/documents/attributes.html
+-->
 <AttributeDefinitions>
 	<AttributeDefinition
 		name="urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID"
