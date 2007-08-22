@@ -19,7 +19,7 @@
     glite-slcs-server configuration
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: web.xml,v 1.4 2007/07/24 10:57:59 vtschopp Exp $
+    Version: $Id: web.xml,v 1.5 2007/08/22 11:40:00 vtschopp Exp $
 -->
 <web-app id="SLCS"
          version="2.4">
@@ -56,7 +56,7 @@
         <!-- MANDATORY: AttributeDefintions XML filename -->
         <init-param>
             <param-name>AttributeDefinitions</param-name>
-            <param-value>/opt/glite/etc/glite-slcs-server/attributes-def.xml</param-value>
+            <param-value>/opt/glite/etc/glite-slcs-server/attribute-defs.xml</param-value>
         </init-param>
     </filter>
 
@@ -81,7 +81,7 @@
         <!-- MANDATORY: AttributeDefintions XML filename -->
         <init-param>
             <param-name>AttributeDefinitions</param-name>
-            <param-value>/opt/glite/etc/glite-slcs-server/attributes-def.xml</param-value>
+            <param-value>/opt/glite/etc/glite-slcs-server/attribute-defs.xml</param-value>
         </init-param>
     </filter>
     
