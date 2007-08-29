@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerVersion.java,v 1.8 2007/07/26 14:44:45 vtschopp Exp $
+ * $Id: SLCSServerVersion.java,v 1.9 2007/08/29 15:28:27 vtschopp Exp $
  * 
  * Created on May 5, 2006 by tschopp
  *
@@ -13,21 +13,21 @@ package org.glite.slcs;
  * SLCSServerVersion and Copyright constants.
  *
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class SLCSServerVersion {
 
     /** Major version number */
     static public final int MAJOR= 1;
     /** Minor version number */
-    static public final int MINOR= 0;
+    static public final int MINOR= 1;
     /** Revision version number */
     static public final int REVISION= 0;    
     /** Build number */
-    static public final int BUILD= 2;
+    static public final int BUILD= 1;
     
     /** Copyright */
-    static public final String COPYRIGHT= "Copyright (c) Members of the EGEE Collaboration";
+    static public final String COPYRIGHT= "Copyright (c) 2007 Members of the EGEE Collaboration";
     
     private SLCSServerVersion() {}
     
@@ -41,6 +41,13 @@ public class SLCSServerVersion {
         sb.append(REVISION).append('-');
         sb.append(BUILD);
         return sb.toString();
+    }
+    
+    /**
+     * @return The copyright
+     */
+    static public String getCopyright() {
+        return COPYRIGHT;
     }
 
 
