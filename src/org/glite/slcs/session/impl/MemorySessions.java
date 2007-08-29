@@ -1,5 +1,5 @@
 /*
- * $Id: MemorySessions.java,v 1.5 2007/04/19 15:59:12 vtschopp Exp $
+ * $Id: MemorySessions.java,v 1.6 2007/08/29 15:21:42 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,10 +27,10 @@ import org.glite.slcs.util.Utils;
 
 /**
  * MemorySessions is the memory implementation of the SLCSSessions. Uses a
- * cleaning thread to delete expired sessions.
+ * cleaning task to delete expired sessions.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class MemorySessions implements SLCSSessions {
 
@@ -36,7 +38,8 @@ public class MemorySessions implements SLCSSessions {
     public static Log LOG = LogFactory.getLog(MemorySessions.class);
 
     /** Date format for toString */
-    static private SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+    static private SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(
+            "yyyy.MM.dd HH:mm:ss");
 
     /** hashtable to store the (token,SessionEntry) pair */
     private Hashtable sessions_ = null;
@@ -101,7 +104,7 @@ public class MemorySessions implements SLCSSessions {
     public void shutdown() {
         // stop the cleaning thread
         if (memorySessionsCleaner_ != null) {
-            LOG.info("stop cleaning thread");
+            LOG.info("shutdown the MemorySessionsCleaner");
             memorySessionsCleaner_.shutdown();
             memorySessionsCleaner_ = null;
         }
@@ -192,7 +195,7 @@ public class MemorySessions implements SLCSSessions {
      * SessionEntry implements the SLCSSession interface.
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.5 $
+     * @version $Revision: 1.6 $
      */
     public class SessionEntry implements SLCSSession {
 
@@ -308,43 +311,62 @@ public class MemorySessions implements SLCSSessions {
     }
 
     /**
-     * MemorySessionsCleaner is a cleaning thread which delete all expired SLCS
-     * sessions.
+     * MemorySessionsCleaner is a cleaning task which removes the expired SLCS
+     * sessions every given time interval.
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.5 $
+     * @version $Revision: 1.6 $
      */
-    private class MemorySessionsCleaner extends Thread {
-        private volatile boolean running_ = false;
+    private class MemorySessionsCleaner extends Timer {
 
         private long cleaningInterval_ = 60 * 1000; // one minute
 
+        /**
+         * Creates a {@link MemorySessionsCleaner} object with default 60
+         * seconds interval.
+         */
         public MemorySessionsCleaner() {
             this(60);
         }
 
+        /**
+         * Creates a {@link MemorySessionsCleaner} object with the given
+         * interval in seconds.
+         * 
+         * @param seconds
+         *            The interval between to run.
+         */
         public MemorySessionsCleaner(int seconds) {
-            super("MemorySessionsCleaner");
+            super(true); // daemon
             this.cleaningInterval_ = seconds * 1000;
-            this.running_ = true;
-            setDaemon(true);
+        }
 
+        public void start() {
+            LOG.info("schedule the MemorySessionsCleaningTask ("
+                    + cleaningInterval_ + " ms)");
+            scheduleAtFixedRate(new MemorySessionsCleaningTask(), 0,
+                    cleaningInterval_);
         }
 
         public void shutdown() {
-            this.running_ = false;
-            interrupt();
+            LOG.info("cancel the MemorySessionsCleaningTask");
+            this.cancel();
         }
 
-        public void run() {
-            LOG.info("MemorySessionsCleaner (" + cleaningInterval_
-                    + " ms) started");
-            while (running_) {
+        /**
+         * MemorySessionsCleaningTask scheduled by the MemorySessionsCleaner
+         * every cleaningInterval to remove the expired SLCS sessions.
+         */
+        class MemorySessionsCleaningTask extends TimerTask {
+
+            /**
+             * Removes expired SLCSSessions.
+             */
+            public void run() {
                 synchronized (sessionsMutex_) {
                     if (!sessions_.isEmpty()) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("MemorySessionsCleaner cleaning sessions: "
-                                    + sessions_.size());
+                            LOG.debug("checking sessions: " + sessions_.size());
                         }
                         Enumeration sessionEntries = sessions_.elements();
                         while (sessionEntries.hasMoreElements()) {
@@ -356,15 +378,7 @@ public class MemorySessions implements SLCSSessions {
                         }
                     }
                 }
-                try {
-                    // the sleep interval
-                    sleep(this.cleaningInterval_);
-                } catch (InterruptedException e) {
-                    // LOG.debug("MemorySessionsCleaner interrupted");
-                    running_ = false;
-                }
             }
-            LOG.info("MemorySessionsCleaner terminated.");
         }
 
     }
