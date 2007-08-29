@@ -1,4 +1,4 @@
-$Id: ServerManual.txt,v 1.1 2007/08/24 15:28:40 vtschopp Exp $
+$Id: INSTALL,v 1.1 2007/08/29 15:51:07 vtschopp Exp $
 --
 SHORT LIVED CREDENTIAL SERVICE (SLCS)
 SERVER ADMINISTRATOR MANUAL
@@ -947,4 +947,4 @@ ClientAuth
 </SLCSServerConfiguration>
 
 -- 
-$Id: ServerManual.txt,v 1.1 2007/08/24 15:28:40 vtschopp Exp $
+$Id: INSTALL,v 1.1 2007/08/29 15:51:07 vtschopp Exp $
