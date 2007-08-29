@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.8 2007/04/19 16:00:53 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.9 2007/08/29 15:24:20 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
+import org.glite.slcs.SLCSServerVersion;
 import org.glite.slcs.attribute.AttributeDefinition;
 import org.glite.slcs.attribute.AttributeDefinitions;
 import org.glite.slcs.attribute.AttributeDefinitionsFactory;
@@ -38,7 +39,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -142,6 +143,7 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     protected SLCSServerConfiguration(String filename)
             throws SLCSConfigurationException {
         super();
+        LOG.info("SLCSServerVersion=" + SLCSServerVersion.getVersion());
         LOG.info("XMLFilename=" + filename);
         FileConfiguration configuration = loadConfiguration(filename);
         // setFileConfiguration call checkConfiguration...
