@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.13 2007/08/30 10:47:29 vtschopp Exp $
+    Version: $Id: build.xml,v 1.14 2007/08/30 11:27:07 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -175,7 +175,8 @@
         <javadoc packagenames="org.glite.slcs.*"
             excludepackagenames="org.glite.slcs.struts.*"
             sourcepath="${src.dir}"
-            destdir="${javadoc.dir}" />
+            destdir="${javadoc.dir}"
+	        classpathref="compile.path"/>
     </target>
     
     <!-- prepare installation layout in ${install.dir} -->
