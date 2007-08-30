@@ -1,0 +1,11 @@
+Version 1.1.0
+-------------
+* SLCS configuration slcs.xml updated. No need to escape comma (,) anymore.
+* Use Timer and TimerTask instead of Thread.
+
+Version 1.0.0
+-------------
+* Initial release of the SLCS server
+
+--
+$Id: CHANGELOG,v 1.1 2007/08/30 10:55:21 vtschopp Exp $
