@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlList.java,v 1.2 2007/03/19 13:56:44 vtschopp Exp $
+ * $Id: AccessControlList.java,v 1.3 2007/08/30 11:41:35 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -20,7 +20,7 @@ import org.glite.slcs.attribute.Attribute;
  * attributes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface AccessControlList {
 
@@ -37,7 +37,7 @@ public interface AccessControlList {
     /**
      * Initializes the necessary resources.
      * 
-     * @param config
+     * @param filterConfig
      *            The {@link FilterConfig} object
      * @throws SLCSException
      *             If an initialization error occurs

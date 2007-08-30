@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlListEditor.java,v 1.4 2007/03/19 13:57:57 vtschopp Exp $
+ * $Id: AccessControlListEditor.java,v 1.5 2007/08/30 11:41:35 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -17,7 +17,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * Interface for the Shibboleth access control list editor.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface AccessControlListEditor extends SLCSServerComponent {
 
@@ -36,7 +36,7 @@ public interface AccessControlListEditor extends SLCSServerComponent {
     /**
      * Returns the list of {@link AccessControlRule}s for the given group name.
      * 
-     * @param group
+     * @param groupName
      *            The rules group name. Use <code>null</code> for all rules.
      * @return The list of {@link AccessControlRule}s for this group.
      */
@@ -84,7 +84,7 @@ public interface AccessControlListEditor extends SLCSServerComponent {
      * Removes a rule from the access control list and returns the result list
      * of rules.
      * 
-     * @param rule
+     * @param ruleId
      *            The rule ID to remove.
      * @return <code>true</code> iff the operation succeed.
      */

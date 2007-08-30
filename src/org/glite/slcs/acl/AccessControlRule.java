@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlRule.java,v 1.4 2007/04/20 12:55:54 vtschopp Exp $
+ * $Id: AccessControlRule.java,v 1.5 2007/08/30 11:41:35 vtschopp Exp $
  * 
  * Created on Aug 30, 2006 by Valery Tschopp <tschopp@switch.ch>
  *
@@ -26,7 +26,7 @@ import org.glite.slcs.attribute.Attribute;
  * </pre>
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class AccessControlRule {
 
@@ -54,8 +54,8 @@ public class AccessControlRule {
      * 
      * @param id
      *            The rule id.
-     * @param group
-     *            The rule group.
+     * @param groupName
+     *            The rule group name.
      */
     public AccessControlRule(int id, String groupName) {
         id_ = id;
@@ -105,8 +105,8 @@ public class AccessControlRule {
     /**
      * Sets the group of the rule.
      * 
-     * @param group
-     *            The group of the rule.
+     * @param groupName
+     *            The group name of the rule.
      */
     public void setGroupName(String groupName) {
         groupName_ = groupName;
