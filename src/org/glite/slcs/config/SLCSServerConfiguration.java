@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.10 2007/08/29 15:29:56 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.11 2007/08/31 08:45:58 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -39,7 +39,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -82,18 +82,12 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
      */
     static public synchronized void initialize(ServletContext ctxt)
             throws SLCSConfigurationException {
-        if (SINGLETON == null) {
-            LOG.debug("create new SLCSServerConfiguration...");
-            String filename = DEFAULT_CONFIGURATION_FILE;
-            if (ctxt.getInitParameter(CONFIGURATION_FILE_KEY) != null) {
-                filename = ctxt.getInitParameter(CONFIGURATION_FILE_KEY);
-            }
-            LOG.info(CONFIGURATION_FILE_KEY + "=" + filename);
-            SINGLETON = new SLCSServerConfiguration(filename);
+        LOG.debug("initialize SLCSServerConfiguration(ServletContext)...");
+        String filename = DEFAULT_CONFIGURATION_FILE;
+        if (ctxt.getInitParameter(CONFIGURATION_FILE_KEY) != null) {
+            filename = ctxt.getInitParameter(CONFIGURATION_FILE_KEY);
         }
-        else {
-            LOG.info("SLCSServerConfiguration already initialized");
-        }
+        initialize(filename);
     }
 
     /**
@@ -107,8 +101,9 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
      */
     static public synchronized void initialize(String filename)
             throws SLCSConfigurationException {
+        LOG.info(CONFIGURATION_FILE_KEY + "=" + filename);
         if (SINGLETON == null) {
-            LOG.info(CONFIGURATION_FILE_KEY + "=" + filename);
+            LOG.info("create new SLCSServerConfiguration");
             SINGLETON = new SLCSServerConfiguration(filename);
         }
         else {
@@ -123,7 +118,8 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
      */
     static public synchronized SLCSServerConfiguration getInstance() {
         if (SINGLETON == null) {
-            throw new IllegalStateException("Not initialized: call SLCSServerConfiguration.initialize(...) first.");
+            throw new IllegalStateException(
+                    "Not initialized: call SLCSServerConfiguration.initialize(...) first.");
         }
         return SINGLETON;
     }
@@ -143,7 +139,8 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     protected SLCSServerConfiguration(String filename)
             throws SLCSConfigurationException {
         super();
-        LOG.info("SLCSServerVersion=" + SLCSServerVersion.getVersion() + " " + SLCSServerVersion.getCopyright());
+        LOG.info("SLCSServerVersion=" + SLCSServerVersion.getVersion() + " "
+                + SLCSServerVersion.getCopyright());
         LOG.info("XMLFilename=" + filename);
         FileConfiguration configuration = loadConfiguration(filename);
         // setFileConfiguration call checkConfiguration...
@@ -161,8 +158,9 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
             attributeDefinitions_ = AttributeDefinitionsFactory.getInstance(definitionsFile);
         } catch (SLCSException e) {
             LOG.error(e);
-            throw new SLCSConfigurationException("Failed to create AttributeDefinitions: "
-                    + definitionsFile, e);
+            throw new SLCSConfigurationException(
+                    "Failed to create AttributeDefinitions: " + definitionsFile,
+                    e);
         }
     }
 
@@ -260,10 +258,11 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
             LOG.error("SLCSServerConfiguration(" + filename + "): "
                     + COMPONENTSCONFIGURATION_PREFIX
                     + ".AccessControlListEditor[@implementation] missing");
-            throw new SLCSConfigurationException("Element "
-                    + COMPONENTSCONFIGURATION_PREFIX
-                    + ".AccessControlListEditor[@implementation] not defined in "
-                    + filename);
+            throw new SLCSConfigurationException(
+                    "Element "
+                            + COMPONENTSCONFIGURATION_PREFIX
+                            + ".AccessControlListEditor[@implementation] not defined in "
+                            + filename);
         }
         // GroupManager
         if (!contains(COMPONENTSCONFIGURATION_PREFIX
