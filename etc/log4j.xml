@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <!-- 
-$Id: log4j.xml,v 1.4 2007/08/31 08:25:52 vtschopp Exp $
+$Id: log4j.xml,v 1.5 2007/08/31 09:02:37 vtschopp Exp $
 
 Copyright (c) 2004. Members of the EGEE Collaboration. http://www.eu-egee.org
 
@@ -12,12 +12,6 @@ NOTICE: log4j.xml file must be in classpath
 <log4j:configuration debug="false"
     xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <!-- root logger level -->
-    <root> 
-        <priority value="info" /> 
-        <appender-ref ref="logfile" /> 
-    </root>
-    
     <!-- simple file appender -->
     <appender name="file" class="org.apache.log4j.FileAppender"> 
         <param name="File" value="/opt/glite/var/log/glite-slcs-server.log"/> 
@@ -83,5 +77,11 @@ NOTICE: log4j.xml file must be in classpath
     <logger name="org.apache.struts">
         <level value="warn"/>
     </logger>
+
+    <!-- root logger level -->
+    <root> 
+        <priority value="info" /> 
+        <appender-ref ref="logfile" /> 
+    </root>
     
 </log4j:configuration>
