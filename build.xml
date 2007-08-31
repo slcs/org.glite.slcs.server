@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.14 2007/08/30 11:27:07 vtschopp Exp $
+    Version: $Id: build.xml,v 1.15 2007/08/31 13:57:15 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -148,7 +148,7 @@
             </webinf>
             <!-- WEB-INF/classes content -->
             <classes dir="${etc.dir}">
-                <include name="log4j.xml" />
+<!--                <include name="log4j.xml" /> -->
                 <include name="*.properties" />
             </classes>
             <!-- WEB-INF/lib content -->
