@@ -19,7 +19,7 @@
     glite-slcs-server configuration
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: web.xml,v 1.5 2007/08/22 11:40:00 vtschopp Exp $
+    Version: $Id: web.xml,v 1.6 2007/08/31 13:49:31 vtschopp Exp $
 -->
 <web-app id="SLCS"
          version="2.4">
@@ -31,6 +31,11 @@
         <!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath -->
         <param-name>SLCSServerConfigurationFile</param-name>
         <param-value>/opt/glite/etc/glite-slcs-server/slcs.xml</param-value>
+    </context-param>
+    <context-param>
+        <!-- Log4JConfigurationFile: absolute filename or file in classpath -->
+        <param-name>Log4JConfigurationFile</param-name>
+        <param-value>/opt/glite/etc/glite-slcs-server/log4j.xml</param-value>
     </context-param>
 
     <!-- Shibboleth Authorization Filter -->
