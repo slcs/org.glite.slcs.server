@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="/repository/externals/bouncycastle/1.34/noarch/jars/bcmail-jdk15-134.jar"/>
 	<classpathentry kind="lib" path="/repository/externals/apache-struts/1.3.5/noarch/struts-1.3.5/lib/struts-core-1.3.5.jar"/>
 	<classpathentry kind="lib" path="/repository/externals/commons-collections/3.2.0/noarch/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="/repository/externals/log4j/1.2.8/noarch/dist/lib/log4j-1.2.8.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
