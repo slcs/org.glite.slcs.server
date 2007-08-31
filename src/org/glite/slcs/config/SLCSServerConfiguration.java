@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.12 2007/08/31 13:55:00 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.13 2007/08/31 15:06:15 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -10,7 +10,6 @@ package org.glite.slcs.config;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-import javax.xml.parsers.FactoryConfigurationError;
 
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.logging.Log;
@@ -42,7 +41,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
