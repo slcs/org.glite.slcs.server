@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <!-- 
-$Id: log4j.xml,v 1.3 2007/08/31 07:50:28 vtschopp Exp $
+$Id: log4j.xml,v 1.4 2007/08/31 08:25:52 vtschopp Exp $
 
 Copyright (c) 2004. Members of the EGEE Collaboration. http://www.eu-egee.org
 
@@ -11,15 +11,31 @@ NOTICE: log4j.xml file must be in classpath
 -->
 <log4j:configuration debug="false"
     xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <!-- root logger level -->
+    <root> 
+        <priority value="info" /> 
+        <appender-ref ref="logfile" /> 
+    </root>
     
-    <!-- log file appender -->
-    <appender name="logfile" class="org.apache.log4j.FileAppender"> 
+    <!-- simple file appender -->
+    <appender name="file" class="org.apache.log4j.FileAppender"> 
         <param name="File" value="/opt/glite/var/log/glite-slcs-server.log"/> 
         <layout class="org.apache.log4j.PatternLayout"> 
             <param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %C{1}.%M: %m%n"/> 
         </layout> 
     </appender> 
     
+    <!-- log file appender -->
+    <appender name="logfile" class="org.apache.log4j.RollingFileAppender"> 
+        <param name="File" value="/opt/glite/var/log/glite-slcs-server.log"/> 
+        <param name="MaxFileSize" value="1MB"/> 
+        <param name="MaxBackupIndex" value="10"/> 
+        <layout class="org.apache.log4j.PatternLayout"> 
+            <param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] %C{1}.%M: %m%n"/> 
+        </layout> 
+    </appender> 
+
     <!-- stdout appender -->
     <appender name="stdout" class="org.apache.log4j.ConsoleAppender"> 
         <param name="Target" value="System.out"/> 
@@ -68,10 +84,4 @@ NOTICE: log4j.xml file must be in classpath
         <level value="warn"/>
     </logger>
     
-    <!-- root logger level -->
-    <root> 
-        <priority value="info" /> 
-        <appender-ref ref="logfile" /> 
-    </root>
-
 </log4j:configuration>
