@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.11 2007/08/31 08:45:58 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.12 2007/08/31 13:55:00 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -10,10 +10,13 @@ package org.glite.slcs.config;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.xml.parsers.FactoryConfigurationError;
 
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.SLCSServerVersion;
@@ -39,7 +42,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -47,7 +50,7 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     public static Log LOG = LogFactory.getLog(SLCSServerConfiguration.class);
 
     /**
-     * Parameter name in the context of the web.xml file
+     * Parameter name in the context or in the web.xml file
      */
     static private String CONFIGURATION_FILE_KEY = "SLCSServerConfigurationFile";
 
@@ -55,6 +58,13 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
      * Default server configuration filename
      */
     static private String DEFAULT_CONFIGURATION_FILE = "slcs.xml";
+
+    /**
+     * Parameter name in the context or in the web.xml file
+     */
+    static private String LOG4J_CONFIGURATION_FILE_KEY = "Log4JConfigurationFile";
+
+    static private boolean LOG4J_CONFIGURED = false;
 
     /**
      * Key prefix for a server components configuration in the configuration
@@ -82,12 +92,41 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
      */
     static public synchronized void initialize(ServletContext ctxt)
             throws SLCSConfigurationException {
+        configureLog4J(ctxt);
         LOG.debug("initialize SLCSServerConfiguration(ServletContext)...");
         String filename = DEFAULT_CONFIGURATION_FILE;
         if (ctxt.getInitParameter(CONFIGURATION_FILE_KEY) != null) {
             filename = ctxt.getInitParameter(CONFIGURATION_FILE_KEY);
         }
         initialize(filename);
+    }
+
+    /**
+     * Configures the Log4J engine with an external <code>log4j.xml</code>
+     * file. The Servlet context must define a
+     * <code>Log4JConfigurationFile</code> parameter with the absolute path of
+     * the Log4J config file.
+     * 
+     * @param ctxt
+     *            The {@link ServletContext} object.
+     */
+    private static void configureLog4J(ServletContext ctxt) {
+        if (!LOG4J_CONFIGURED) {
+            // try to configure log4j
+            if (ctxt.getInitParameter(LOG4J_CONFIGURATION_FILE_KEY) != null) {
+                String log4j = ctxt.getInitParameter(LOG4J_CONFIGURATION_FILE_KEY);
+                System.out.println("INFO: "
+                        + SLCSServerConfiguration.class.getName() + ": load "
+                        + LOG4J_CONFIGURATION_FILE_KEY + "=" + log4j);
+                if (log4j.endsWith(".xml")) {
+                    DOMConfigurator.configure(log4j);
+                }
+                else {
+                    PropertyConfigurator.configure(log4j);
+                }
+            }
+            LOG4J_CONFIGURED = true;
+        }
     }
 
     /**
