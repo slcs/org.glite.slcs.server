@@ -1,0 +1,15 @@
+TODO:
+----
+- read the org.glite.slcs.filter.AttributesAuthorizationFilter 
+  configuration parameters from SLCSServerConfiguration file and
+  not from the FilterConfig anymore. because web.xml is in the 
+  war file and can not be modified before deployment...
+  -> add AtttributesAuthorizationFilter element in slcs.xml file
+  
+- how to load log4j.xml (context param) for the filter logging too?
+
+- implement a clean and full auditor.
+
+- solution to display audit event for all group the admin belongs to.
+--
+$Id: TODO,v 1.1 2007/09/14 11:43:28 vtschopp Exp $
