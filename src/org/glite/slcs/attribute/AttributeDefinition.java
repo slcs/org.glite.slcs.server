@@ -1,5 +1,5 @@
 /*
- * $Id: AttributeDefinition.java,v 1.3 2007/06/11 12:45:40 vtschopp Exp $
+ * $Id: AttributeDefinition.java,v 1.4 2007/09/18 15:27:47 vtschopp Exp $
  * 
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -12,7 +12,7 @@ package org.glite.slcs.attribute;
  * and a required flag.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class AttributeDefinition {
 
@@ -27,6 +27,9 @@ public class AttributeDefinition {
 
     /** Is the attribute required */
     private boolean required_ = false;
+
+    /** Is the attribute value case sensitive */
+    protected boolean caseSensitive_ = true;
 
     /**
      * Named constructor.
@@ -127,7 +130,7 @@ public class AttributeDefinition {
     public boolean isRequired() {
         return required_;
     }
-    
+
     public boolean getRequired() {
         return required_;
     }
@@ -140,6 +143,19 @@ public class AttributeDefinition {
         required_ = required;
     }
 
+    /**
+     * Sets the case sensitivity of the attribute value
+     * 
+     * @param caseSensitive
+     *            if the attribute value is case sensitive or not
+     */
+    public void setCaseSensitive(boolean caseSensitive) {
+        caseSensitive_ = caseSensitive;
+    }
+
+    public boolean isCaseSensitive() {
+        return caseSensitive_;
+    }
     /*
      * (non-Javadoc)
      * 
@@ -158,15 +174,21 @@ public class AttributeDefinition {
             sb.append(":").append(header_);
         }
         else {
-            sb.append(":null");            
+            sb.append(":null");
         }
         if (hasDisplayName()) {
             sb.append(":").append(displayName_);
         }
         else {
-            sb.append(":null");            
+            sb.append(":null");
         }
-        if (isRequired()) {
+        if (isCaseSensitive()) {
+            sb.append(":true");
+        }
+        else {
+            sb.append(":false");
+        }
+         if (isRequired()) {
             sb.append(":true");
         }
         else {
