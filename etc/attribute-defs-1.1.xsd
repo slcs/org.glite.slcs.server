@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: attribute-defs-1.1.xsd,v 1.1 2007/09/18 12:47:00 vtschopp Exp $ -->
+<xsd:schema 
+	targetNamespace="urn:x-glite:slcs:server:config:1.1" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns="urn:x-glite:slcs:server:config:1.1" 
+	elementFormDefault="qualified">
+
+	<xsd:element name="AttributeDefinitions" type="AttributeDefinitionList" />
+
+	<xsd:complexType name="AttributeDefinitionList">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="AttributeDefinition" type="AttributeDefinitionType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="AttributeDefinitionType">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="name" type="xsd:string" use="required" />
+				<xsd:attribute name="header" type="xsd:string" use="required" />
+				<xsd:attribute name="required" type="xsd:boolean" use="optional" default="false" />
+				<xsd:attribute name="caseSensitive" type="xsd:boolean" use="optional" default="true" />
+				<xsd:attribute name="displayName" type="xsd:string" use="required" />
+				<xsd:anyAttribute namespace="##any" processContents="lax" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+</xsd:schema>
