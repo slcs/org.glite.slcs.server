@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: attribute-defs.xml,v 1.1 2007/08/22 11:38:03 vtschopp Exp $ -->
+<!-- $Id: attribute-defs.xml,v 1.2 2007/09/18 14:55:05 vtschopp Exp $ -->
 
 <!--
     Shibboleth attribute definition for the SWITCHaai federation.
@@ -28,11 +28,13 @@
 		name="urn:mace:dir:attribute-def:mail"
 		header="Shib-InetOrgPerson-mail" 
 		required="true" 
+		caseSensitive="false"
 		displayName="Email" />
 	<AttributeDefinition 
 		name="urn:mace:dir:attribute-def:eduPersonAffiliation"
 		header="Shib-EP-Affiliation"
-		required="false" 
+		required="true" 
+		caseSensitive="false"
 		displayName="Affiliation" />
 	<AttributeDefinition
 		name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization"
