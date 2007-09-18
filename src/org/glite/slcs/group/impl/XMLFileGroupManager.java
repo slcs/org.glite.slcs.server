@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileGroupManager.java,v 1.6 2007/04/20 13:03:11 vtschopp Exp $
+ * $Id: XMLFileGroupManager.java,v 1.7 2007/09/18 14:59:33 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -35,7 +35,7 @@ import org.glite.slcs.group.GroupMember;
  * GroupManager implementation, based on XML file. TODO: describe XML format
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class XMLFileGroupManager implements GroupManager,
         FileConfigurationListener {
@@ -334,9 +334,9 @@ public class XMLFileGroupManager implements GroupManager,
      */
     public void init(SLCSServerConfiguration config) throws SLCSException {
         // read config param from SLCSServerConfiguration
-        String groupsFile = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+        String groupsFilename = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
                 + ".GroupManager.GroupsFile");
-        LOG.info("GroupsFile=" + groupsFile);
+        LOG.info("GroupsFile=" + groupsFilename);
         String groupsFileMonitoringInterval = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
                 + ".GroupManager.GroupsFileMonitoringInterval");
         LOG.info("GroupsFileMonitoringInterval=" + groupsFileMonitoringInterval);
@@ -349,12 +349,13 @@ public class XMLFileGroupManager implements GroupManager,
         LOG.info("AdministratorGroup=" + adminGroupName_);
 
         // create the XML group configuration file
-        groupsConfiguration_ = createGroupsConfiguration(groupsFile);
+        groupsConfiguration_ = createGroupsConfiguration(groupsFilename);
         // create the groups list
         groups_ = createGroups(groupsConfiguration_);
 
         // create and start the file monitor
-        groupsFileMonitor_ = FileConfigurationMonitor.createFileConfigurationMonitor(groupsConfiguration_, groupsFileMonitoringInterval, this);
+        File groupsFile = groupsConfiguration_.getFile();
+        groupsFileMonitor_ = FileConfigurationMonitor.createFileConfigurationMonitor(groupsFile, groupsFileMonitoringInterval, this);
         groupsFileMonitor_.start();
     }
 
