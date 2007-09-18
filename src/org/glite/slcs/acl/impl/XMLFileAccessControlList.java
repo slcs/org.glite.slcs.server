@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileAccessControlList.java,v 1.4 2007/04/20 12:57:56 vtschopp Exp $
+ * $Id: XMLFileAccessControlList.java,v 1.5 2007/09/18 14:58:33 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -34,7 +34,7 @@ import org.glite.slcs.config.FileConfigurationMonitor;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @see org.glite.slcs.acl.AccessControlList
  * @see org.glite.slcs.config.FileConfigurationListener
  */
@@ -69,7 +69,8 @@ public class XMLFileAccessControlList implements AccessControlList,
         String filename = filterConfig.getInitParameter("ACLFile");
         LOG.info("ACLFile=" + filename);
         if (filename == null || filename.equals("")) {
-            throw new SLCSConfigurationException("Filter parameter ACLFile is missing or empty");
+            throw new SLCSConfigurationException(
+                    "Filter parameter ACLFile is missing or empty");
         }
 
         // load the XML file
@@ -82,7 +83,9 @@ public class XMLFileAccessControlList implements AccessControlList,
         String monitoringInterval = filterConfig.getInitParameter("ACLFileMonitoringInterval");
         if (monitoringInterval != null) {
             LOG.info("ACLFileMonitoringInterval=" + monitoringInterval);
-            aclConfigurationMonitor_ = FileConfigurationMonitor.createFileConfigurationMonitor(aclXMLConfiguration_, monitoringInterval, this);
+            File file = aclXMLConfiguration_.getFile();
+            aclConfigurationMonitor_ = FileConfigurationMonitor.createFileConfigurationMonitor(
+                    file, monitoringInterval, this);
             // and start
             aclConfigurationMonitor_.start();
         }
@@ -150,11 +153,16 @@ public class XMLFileAccessControlList implements AccessControlList,
      * recreate all dependent parameters.
      */
     private synchronized void reloadACLConfiguration() {
-        LOG.info("reload file: " + aclXMLConfiguration_.getFileName());
-        // reload the FileConfiguration
-        aclXMLConfiguration_.reload();
-        // recreate the ACL access control rules
-        aclAccessControlRules_ = createACLAccessControlRules(aclXMLConfiguration_);
+        String filename = aclXMLConfiguration_.getFileName();
+        LOG.info("reload file: " + filename);
+        try {
+            // reload the XML file
+            aclXMLConfiguration_ = createACLXMLConfiguration(filename);
+            // recreate the ACL access control rules
+            aclAccessControlRules_ = createACLAccessControlRules(aclXMLConfiguration_);
+        } catch (SLCSConfigurationException e) {
+            LOG.error("Failed to reload ACLConfiguration: " + filename, e);
+        }
     }
 
     /**
@@ -179,8 +187,8 @@ public class XMLFileAccessControlList implements AccessControlList,
             }
         } catch (ConfigurationException e) {
             LOG.error("Failed to create XMLConfiguration: " + filename, e);
-            throw new SLCSConfigurationException("Failed to create XMLConfiguration: "
-                    + filename, e);
+            throw new SLCSConfigurationException(
+                    "Failed to create XMLConfiguration: " + filename, e);
         }
         return config;
     }
@@ -229,6 +237,9 @@ public class XMLFileAccessControlList implements AccessControlList,
                 rule.addAttribute(attribute);
             }
             // add the rule to the list
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("adding rule in ACL: " + rule);
+            }
             accessControlRules.add(rule);
 
         } // while
