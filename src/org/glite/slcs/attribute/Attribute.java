@@ -1,5 +1,5 @@
 /*
- * $Id: Attribute.java,v 1.1 2007/03/16 14:33:23 vtschopp Exp $
+ * $Id: Attribute.java,v 1.2 2007/09/18 15:29:21 vtschopp Exp $
  * 
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -11,7 +11,7 @@ package org.glite.slcs.attribute;
  * A simple Attribute is a name-value tuple.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Attribute extends AttributeDefinition {
 
@@ -25,7 +25,7 @@ public class Attribute extends AttributeDefinition {
      *            The attribute name
      */
     public Attribute(String name) {
-        super(name, null,null);
+        super(name, null, null);
     }
 
     /**
@@ -78,9 +78,9 @@ public class Attribute extends AttributeDefinition {
         return hasName() && hasValue();
     }
 
-    
     /*
      * (non-Javadoc)
+     * 
      * @see org.glite.slcs.AttributeDefinition#toString()
      */
     public String toString() {
@@ -88,7 +88,8 @@ public class Attribute extends AttributeDefinition {
         sb.append("Attribute[");
         if (hasName()) {
             sb.append(getName());
-        } else {
+        }
+        else {
             sb.append("Undefined");
         }
         if (hasValue()) {
@@ -98,7 +99,7 @@ public class Attribute extends AttributeDefinition {
         return sb.toString();
 
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -113,8 +114,11 @@ public class Attribute extends AttributeDefinition {
     }
 
     /**
-     * Checks for equality. Two attributes are equal if the name
-     * and value are equals.
+     * Checks for equality. Two attributes are equal if the name and value are
+     * equals. If the attribute is not case sensitive, then the value is
+     * compared case insensitive.
+     * 
+     * @return <code>true</code> if the attribute name and value are equals.
      * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -129,13 +133,20 @@ public class Attribute extends AttributeDefinition {
         if (name_ == null) {
             if (other.name_ != null)
                 return false;
-        } else if (!name_.equals(other.name_))
+        }
+        else if (!name_.equals(other.name_))
             return false;
         if (value_ == null) {
             if (other.value_ != null)
                 return false;
-        } else if (!value_.equals(other.value_))
+        }
+        // case in/sensitive value checks
+        if (caseSensitive_ && !value_.equals(other.value_)) {
             return false;
+        }
+        else if (!caseSensitive_ && !value_.equalsIgnoreCase(other.value_)) {
+            return false;            
+        }
         return true;
     }
 
