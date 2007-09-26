@@ -1,5 +1,5 @@
 /*
- * $Id: Attribute.java,v 1.2 2007/09/18 15:29:21 vtschopp Exp $
+ * $Id: Attribute.java,v 1.3 2007/09/26 15:09:06 vtschopp Exp $
  * 
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -11,7 +11,7 @@ package org.glite.slcs.attribute;
  * A simple Attribute is a name-value tuple.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Attribute extends AttributeDefinition {
 
@@ -141,11 +141,13 @@ public class Attribute extends AttributeDefinition {
                 return false;
         }
         // case in/sensitive value checks
-        if (caseSensitive_ && !value_.equals(other.value_)) {
-            return false;
+        if (caseSensitive_) {
+            if (!value_.equals(other.value_))
+                return false;
         }
-        else if (!caseSensitive_ && !value_.equalsIgnoreCase(other.value_)) {
-            return false;            
+        else {
+            if (!value_.equalsIgnoreCase(other.value_))
+                return false;
         }
         return true;
     }
