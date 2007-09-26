@@ -22,7 +22,7 @@ import org.glite.slcs.util.Utils;
  * Helper class for the AttributeDefintions.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class AttributeDefinitionsImpl extends SLCSConfiguration implements
         AttributeDefinitions {
@@ -87,11 +87,11 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
             // create a new attribute definition
             AttributeDefinition attributeDef = new AttributeDefinition(name, header, displayName);
             // required default: false
-            if (required != null && required.equals("true")) {
+            if (required != null && required.equalsIgnoreCase("true")) {
                 attributeDef.setRequired(true);
             }
             // caseSensitive default: true
-            if (caseSensitive != null && caseSensitive.equals("false")) {
+            if (caseSensitive != null && caseSensitive.equalsIgnoreCase("false")) {
                 attributeDef.setCaseSensitive(false);
             }
             // add in the attribute's definitions map
