@@ -1,9 +1,21 @@
 /*
- * $Id: AttributesAuthorizationFilter.java,v 1.4 2007/07/19 13:41:51 vtschopp Exp $
+ * Copyright (c) Members of the EGEE Collaboration. 2004. 
+ * See http://www.eu-egee.org/partners/ for details on the copyright
+ * holders.  
  *
- * Copyright (c) Members of the EGEE Collaboration. 2004.
- * See http://eu-egee.org/partners/ for details on the copyright holders.
- * For license conditions see the license file or http://eu-egee.org/license.html 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ *
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ * 
+ * $Id: AttributesAuthorizationFilter.java,v 1.5 2007/09/26 14:51:44 vtschopp Exp $
  */
 package org.glite.slcs.filter;
 
@@ -26,6 +38,7 @@ import org.glite.slcs.acl.AccessControlList;
 import org.glite.slcs.acl.AccessControlListFactory;
 import org.glite.slcs.attribute.AttributeDefinitions;
 import org.glite.slcs.attribute.AttributeDefinitionsFactory;
+import org.glite.slcs.config.Log4JConfiguration;
 
 /**
  * AttributesAuthorizationFilter is an ACL filter based on Shibboleth
@@ -33,7 +46,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @see org.glite.slcs.acl.AccessControlList
  */
 public class AttributesAuthorizationFilter implements Filter {
@@ -53,13 +66,19 @@ public class AttributesAuthorizationFilter implements Filter {
      * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
      */
     public void init(FilterConfig filterConfig) throws ServletException {
+
+        // try to configure log4j
+        Log4JConfiguration.configure(filterConfig.getServletContext());
+
         try {
             LOG.info("create and initialize new AccessControlList");
             accessControlList_ = AccessControlListFactory.newInstance(filterConfig);
         } catch (SLCSException e) {
-            LOG.error("Failed to instantiate and initalize AccessControlList", e);
-            throw new ServletException("Failed to instantiate and initalize AccessControlList: "
-                    + e, e);
+            LOG.error("Failed to instantiate and initalize AccessControlList",
+                    e);
+            throw new ServletException(
+                    "Failed to instantiate and initalize AccessControlList: "
+                            + e, e);
         }
         String attributeDefinitionFile = filterConfig.getInitParameter("AttributeDefinitions");
         try {
@@ -67,8 +86,9 @@ public class AttributesAuthorizationFilter implements Filter {
         } catch (SLCSException e) {
             LOG.error("Failed to instantiate AttributeDefinitions("
                     + attributeDefinitionFile + ")", e);
-            throw new ServletException("Failed to instantiate AttributeDefinitions("
-                    + attributeDefinitionFile + "): " + e, e);
+            throw new ServletException(
+                    "Failed to instantiate AttributeDefinitions("
+                            + attributeDefinitionFile + "): " + e, e);
         }
     }
 
@@ -95,7 +115,8 @@ public class AttributesAuthorizationFilter implements Filter {
                     + remoteAddress + ") is not authorized: " + userAttributes);
             // TODO: custom 401 error page
             HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Based on your attributes, you are not authorized to access this service");
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                    "Based on your attributes, you are not authorized to access this service");
         }
         else {
             // user is authorized or not a HttpServletRequest, continue
