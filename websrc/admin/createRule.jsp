@@ -2,6 +2,8 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 
+<!-- $Id: createRule.jsp,v 1.5 2007/10/23 14:08:05 vtschopp Exp $ -->
+
 <h2>New Access Control Rule</h2>
 
 <p>
@@ -33,7 +35,7 @@ If the chosen group defines a rule constraint, all the constrained attributes (m
 			<table class="attributes-box">
 			<logic:iterate name="ruleBean" property="attributes" id="attribute" indexId="i">
 				<tr>
-                <logic:equal name="attribute" property="required" value="true">
+                <logic:equal name="attribute" property="constrained" value="true">
 					<td class="attribute-name">
 						<bean:write name="attribute" property="displayName" />
 						<html:hidden name="attribute"  property="name" indexed="true"/>
@@ -44,7 +46,7 @@ If the chosen group defines a rule constraint, all the constrained attributes (m
 					</td>
 					<td><font color="red">*</font></td>
 				</logic:equal>
-                <logic:equal name="attribute" property="required" value="false">
+                <logic:equal name="attribute" property="constrained" value="false">
 					<td>
 						<html:select name="attribute" property="name" indexed="true" styleClass="attribute-name-select">
 							<html:optionsCollection name="ruleBean"
@@ -82,7 +84,8 @@ If the chosen group defines a rule constraint, all the constrained attributes (m
 <ul>
 <li>First select the group for the rule and press <span class="button"><bean:message key="button.rule.setgroup"/></span></li>
 <li>Then add/edit/remove the attributes required to identify the user. The attributes <span class="attribute-name">AAI UniqueID</span> or <span class="attribute-name">Email</span> are recommended for this purpose.</li>
-<li>The attribute value must match exactly (case sensitive) the value of the user's attribute. Ask the user to dump his attributes using the <a href="https://aai-viewer.switch.ch/aai" target="aai-viewer">AAI Attributes Viewer</a> to determine the exact attribute value.</li>
+<li>The attribute value must match the value of the user's attribute. Check the <html:link action="/admin/attributeDefinitions" styleClass="button"><bean:message key="navigation.attributeDefinitions"/></html:link> to determine if an attribute value is case sensitive or not.</li>
+<li>You can ask users to dump their attributes using the <a href="https://aai-viewer.switch.ch/aai" target="aai-viewer">AAI Attributes Viewer</a> to determine the exact attribute value.</li>
 <li>When you are finished press on <span class="button"><bean:message key="button.rule.create"/></span> to store the rule.</li>
 </ul>
 </small>

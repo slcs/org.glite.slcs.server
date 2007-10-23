@@ -2,11 +2,13 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 
+<!-- $Id: editRule.jsp,v 1.5 2007/10/23 14:08:32 vtschopp Exp $ -->
+
 <h2>Edit Access Control Rule</h2>
 
 <p>
 If the group defines a rule constraint, the constrained attributes (marked with <font color="red">*</font>) 
-can not be deleted.
+can not be edited or deleted.
 </p>
 
 <html:errors/>
@@ -26,7 +28,7 @@ can not be deleted.
 			<table class="attributes-box">
 			<logic:iterate name="ruleBean" property="attributes" id="attribute" indexId="i">
 				<tr>
-				<logic:equal name="attribute" property="required" value="true">
+				<logic:equal name="attribute" property="constrained" value="true">
 					<td class="attribute-name">
 						<bean:write name="attribute" property="displayName" />
 						<html:hidden name="attribute"  property="name" indexed="true"/>
@@ -37,7 +39,7 @@ can not be deleted.
 					</td>
 					<td><font color="red">*</font></td>
                 </logic:equal>
-				<logic:equal name="attribute" property="required" value="false">
+				<logic:equal name="attribute" property="constrained" value="false">
 					<td>
 						<html:select name="attribute" property="name" indexed="true" styleClass="attribute-name-select">
 							<html:optionsCollection name="ruleBean"	
@@ -72,5 +74,10 @@ can not be deleted.
 </html:form>
 
 <p>
-<small>Only attribute with a non empty value will be stored when you click on <span class="button"><bean:message key="button.rule.save"/></span></small>
+<small>
+<ul>
+<li>The attribute value must match the value of the user's attribute. Check the <html:link action="/admin/attributeDefinitions" styleClass="button"><bean:message key="navigation.attributeDefinitions"/></html:link> to determine if an attribute value is case sensitive or not.</li>
+<li>You can ask users to dump their attributes using the <a href="https://aai-viewer.switch.ch/aai" target="aai-viewer">AAI Attributes Viewer</a> to determine the exact attribute value.</li>
+<li>Only attribute with a non empty value will be stored when you click on <span class="button"><bean:message key="button.rule.save"/></span></li>
+</small>
 </p>

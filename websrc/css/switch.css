@@ -1,5 +1,5 @@
 /*
- *   $Id: switch.css,v 1.1 2007/04/20 12:52:21 vtschopp Exp $
+ *   $Id: switch.css,v 1.2 2007/10/23 14:09:07 vtschopp Exp $
  */
 
 body {
@@ -132,6 +132,23 @@ h1, h2, h3 {
 .attribute-value-input {
     text-align: left;
     color: rgb(226,140,5);
+    padding: 2px;
+}
+
+.attribute-def-name {
+    white-space: nowrap;
+    text-align: left;
+    color: rgb(0,43,127);
+    padding: 2px;
+}
+
+
+.attribute-def-value {
+    white-space: nowrap;
+	text-align: left;
+    color: rgb(226,140,5);
+    border-style: solid;
+    border-width: thin;
     padding: 2px;
 }
 
