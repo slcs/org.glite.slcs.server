@@ -32,6 +32,11 @@
 		<put name="title" value="SLCSadmin - Edit Access Control Rule"/>
 		<put name="body"  value="/admin/editRule.jsp"/>
 	</definition>
+
+	<definition name="tiles.attributeDefinitions" extends="tiles.layout">
+		<put name="title" value="SLCSadmin - Attribute Definitions"/>
+		<put name="body"  value="/admin/attributeDefinitions.jsp"/>
+	</definition>
 	
 
 </tiles-definitions>

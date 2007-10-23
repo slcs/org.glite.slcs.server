@@ -19,6 +19,7 @@
 		<forward name="admin.page.createRule" path="tiles.createRule" />
 		<forward name="admin.page.editRule" path="tiles.editRule" />
 		<forward name="admin.page.error" path="tiles.error" />
+		<forward name="admin.page.attributeDefinitions" path="tiles.attributeDefinitions" />
 	</global-forwards>
 	
 	
@@ -29,6 +30,9 @@
 		<action path="/admin/home"
 				type="org.glite.slcs.struts.action.HomeAction"
 				unknown="true" />
+
+		<action path="/admin/attributeDefinitions"
+				type="org.glite.slcs.struts.action.AttributeDefinitionsAction" />
 		
 		<action path="/admin/listRules" 
 			    type="org.glite.slcs.struts.action.ListAccessControlRulesAction"
