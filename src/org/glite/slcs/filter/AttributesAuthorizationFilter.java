@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  * 
- * $Id: AttributesAuthorizationFilter.java,v 1.5 2007/09/26 14:51:44 vtschopp Exp $
+ * $Id: AttributesAuthorizationFilter.java,v 1.6 2007/11/01 14:30:34 vtschopp Exp $
  */
 package org.glite.slcs.filter;
 
@@ -46,7 +46,7 @@ import org.glite.slcs.config.Log4JConfiguration;
  * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @see org.glite.slcs.acl.AccessControlList
  */
 public class AttributesAuthorizationFilter implements Filter {
@@ -82,7 +82,8 @@ public class AttributesAuthorizationFilter implements Filter {
         }
         String attributeDefinitionFile = filterConfig.getInitParameter("AttributeDefinitions");
         try {
-            attributeDefinitions_ = AttributeDefinitionsFactory.getInstance(attributeDefinitionFile);
+            AttributeDefinitionsFactory.initialize(attributeDefinitionFile);
+            attributeDefinitions_ = AttributeDefinitionsFactory.getInstance();
         } catch (SLCSException e) {
             LOG.error("Failed to instantiate AttributeDefinitions("
                     + attributeDefinitionFile + ")", e);
@@ -104,7 +105,7 @@ public class AttributesAuthorizationFilter implements Filter {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             LOG.info("check authorization: " + httpRequest.getRequestURI());
             // get shib user attributes
-            userAttributes = getUserAttributes(httpRequest);
+            userAttributes = attributeDefinitions_.getUserAttributes(httpRequest);
             // check if user is authorized
             authorized = accessControlList_.isAuthorized(userAttributes);
 
@@ -116,7 +117,7 @@ public class AttributesAuthorizationFilter implements Filter {
             // TODO: custom 401 error page
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                    "Based on your attributes, you are not authorized to access this service");
+                    "Based on your Shibboleth attributes, you are not authorized to access this service");
         }
         else {
             // user is authorized or not a HttpServletRequest, continue
@@ -130,21 +131,6 @@ public class AttributesAuthorizationFilter implements Filter {
     public void destroy() {
         LOG.info("shutdown ACL implementation");
         accessControlList_.shutdown();
-    }
-
-    /**
-     * Reads the required authorization attributes from the request headers.
-     * 
-     * @param req
-     *            The HttpServletRequest to read attributes from.
-     * @return A List of attributes
-     * @see org.glite.slcs.acl.AccessControlList#getAuthorizationAttributeNames()
-     */
-    private List getUserAttributes(HttpServletRequest req) {
-        // uses the AttributeDefinitions engine to read the attributes from
-        // the request
-        List userAttributes = attributeDefinitions_.getUserAttributes(req);
-        return userAttributes;
     }
 
 }
