@@ -1,5 +1,5 @@
 /*
- * $Id: Group.java,v 1.3 2007/04/20 13:01:59 vtschopp Exp $
+ * $Id: Group.java,v 1.4 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -23,7 +23,7 @@ import org.glite.slcs.attribute.Attribute;
  * {@link Attribute}s list required for each rule, can be added.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Group {
 
@@ -150,7 +150,7 @@ public class Group {
      *            The attribute to add as rule constraint.
      */
     public void addRuleAttributesConstraint(Attribute attribute) {
-        attribute.setRequired(true);
+        attribute.setConstrained(true);
         ruleAttributesConstraint_.add(attribute);
     }
 
@@ -160,6 +160,12 @@ public class Group {
      */
     public void setRuleAttributesConstraint(List ruleConstraints) {
         ruleAttributesConstraint_ = ruleConstraints;
+        // set the attributes as constrained
+        Iterator constrainedAttributes = ruleAttributesConstraint_.iterator();
+        while (constrainedAttributes.hasNext()) {
+            Attribute attribute = (Attribute) constrainedAttributes.next();
+            attribute.setConstrained(true);
+        }
     }
 
     /*

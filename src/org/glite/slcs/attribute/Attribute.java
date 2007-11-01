@@ -1,5 +1,5 @@
 /*
- * $Id: Attribute.java,v 1.3 2007/09/26 15:09:06 vtschopp Exp $
+ * $Id: Attribute.java,v 1.4 2007/11/01 14:35:11 vtschopp Exp $
  * 
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -11,7 +11,7 @@ package org.glite.slcs.attribute;
  * A simple Attribute is a name-value tuple.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Attribute extends AttributeDefinition {
 
@@ -19,12 +19,24 @@ public class Attribute extends AttributeDefinition {
     String value_ = null;
 
     /**
+     * <code>true</code> if the attribute is constrained by a rule constraint
+     */
+    private boolean constrained_ = false;
+
+    /**
+     * Constructor. Create a empty dummy attribute.
+     */
+    public Attribute() {
+        super(null, null, null);
+    }
+
+    /**
      * Constructor
      * 
      * @param name
      *            The attribute name
      */
-    public Attribute(String name) {
+    protected Attribute(String name) {
         super(name, null, null);
     }
 
@@ -35,8 +47,9 @@ public class Attribute extends AttributeDefinition {
      *            The attribute name
      * @param value
      *            The attribute value
+     * @see AttributeDefinitions#createAttribute(String, String);
      */
-    public Attribute(String name, String value) {
+    protected Attribute(String name, String value) {
         this(name);
         setValue(value);
     }
@@ -150,6 +163,23 @@ public class Attribute extends AttributeDefinition {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * @return <code>true</code> if the attribute is constrained by a group
+     *         rule constraint.
+     */
+    public boolean isConstrained() {
+        return this.constrained_;
+    }
+
+    /**
+     * Sets the attribute constraint.
+     * 
+     * @param constrained
+     */
+    public void setConstrained(boolean constrained_) {
+        this.constrained_ = constrained_;
     }
 
 }

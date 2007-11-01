@@ -1,13 +1,11 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.14 2007/09/26 14:36:22 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.15 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
  * For license conditions see the license file or http://eu-egee.org/license.html 
  */
 package org.glite.slcs.config;
-
-import java.util.List;
 
 import javax.servlet.ServletContext;
 
@@ -17,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.SLCSServerVersion;
-import org.glite.slcs.attribute.AttributeDefinition;
 import org.glite.slcs.attribute.AttributeDefinitions;
 import org.glite.slcs.attribute.AttributeDefinitionsFactory;
 
@@ -39,7 +36,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -145,6 +142,7 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     protected SLCSServerConfiguration(String filename)
             throws SLCSConfigurationException {
         super();
+        // echo server version in log file
         LOG.info("SLCSServerVersion=" + SLCSServerVersion.getVersion() + " "
                 + SLCSServerVersion.getCopyright());
         LOG.info("XMLFilename=" + filename);
@@ -161,7 +159,8 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
         // read filename from config and getInstance
         String definitionsFile = getString("AttributeDefinitions[@filename]");
         try {
-            attributeDefinitions_ = AttributeDefinitionsFactory.getInstance(definitionsFile);
+            AttributeDefinitionsFactory.initialize(definitionsFile);
+            attributeDefinitions_ = AttributeDefinitionsFactory.getInstance();
         } catch (SLCSException e) {
             LOG.error(e);
             throw new SLCSConfigurationException(
@@ -171,21 +170,7 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     }
 
     /**
-     * @return
-     */
-    public List getRequiredAttributeNames() {
-        return attributeDefinitions_.getRequiredAttributeNames();
-    }
-
-    /**
-     * @return The list of {@link AttributeDefinition}s
-     */
-    public List getAttributeDefinitionsList() {
-        return attributeDefinitions_.getAttributeDefinitionsList();
-    }
-
-    /**
-     * @return The {@link AttributeDefinitions} object
+     * @return The {@link AttributeDefinitions} instance.
      */
     public AttributeDefinitions getAttributeDefinitions() {
         return attributeDefinitions_;

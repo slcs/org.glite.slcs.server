@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileAccessControlListEditor.java,v 1.4 2007/03/19 14:05:50 vtschopp Exp $
+ * $Id: XMLFileAccessControlListEditor.java,v 1.5 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -8,6 +8,7 @@
 package org.glite.slcs.acl.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import org.glite.slcs.config.SLCSServerConfiguration;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @see org.glite.slcs.acl.AccessControlListEditor
  */
 public class XMLFileAccessControlListEditor implements AccessControlListEditor {
@@ -59,10 +60,8 @@ public class XMLFileAccessControlListEditor implements AccessControlListEditor {
      * @see org.glite.slcs.acl.AccessControlListEditor#getAccessControlRules()
      */
     public List getAccessControlRules() {
-        XMLOperation operation = new ListAccessControlRulesXMLOperation(null);
-        xmlProcessor_.process(operation);
-        List rules = operation.getResults();
-        return rules;
+        String all= null;
+        return getAccessControlRules(all);
     }
 
     /*
@@ -74,6 +73,8 @@ public class XMLFileAccessControlListEditor implements AccessControlListEditor {
         XMLOperation operation = new ListAccessControlRulesXMLOperation(groupName);
         xmlProcessor_.process(operation);
         List rules = operation.getResults();
+        // sort the rules by groupname and id
+        Collections.sort(rules,new AccessControlRuleComparator());
         return rules;
     }
 
@@ -90,6 +91,8 @@ public class XMLFileAccessControlListEditor implements AccessControlListEditor {
             List rules = getAccessControlRules(groupName);
             allRules.addAll(rules);
         }
+        // sort the rules by groupname and id
+        Collections.sort(allRules,new AccessControlRuleComparator());
         return allRules;
     }
 

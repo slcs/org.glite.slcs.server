@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileGroupManager.java,v 1.7 2007/09/18 14:59:33 vtschopp Exp $
+ * $Id: XMLFileGroupManager.java,v 1.8 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -35,7 +35,7 @@ import org.glite.slcs.group.GroupMember;
  * GroupManager implementation, based on XML file. TODO: describe XML format
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class XMLFileGroupManager implements GroupManager,
         FileConfigurationListener {
@@ -130,7 +130,7 @@ public class XMLFileGroupManager implements GroupManager,
                         for (int k = 0; k < attributeNames.size(); k++) {
                             String name = (String) attributeNames.get(k);
                             String value = (String) attributeValues.get(k);
-                            Attribute attribute = new Attribute(name, value);
+                            Attribute attribute = attributeDefinitions.createAttribute(name, value);
                             // add attribute to the group membership attributes
                             // list
                             memberAttributes.add(attribute);
@@ -163,13 +163,11 @@ public class XMLFileGroupManager implements GroupManager,
                     for (int k = 0; k < attributeNames.size(); k++) {
                         String name = (String) attributeNames.get(k);
                         String value = (String) attributeValues.get(k);
-                        Attribute attribute = new Attribute(name, value);
+                        Attribute attribute = attributeDefinitions.createAttribute(name, value);
                         // add attribute constraint list
-                        attribute.setRequired(true);
+                        attribute.setConstrained(true);
                         constrainedAttributes.add(attribute);
                     }
-                    // set the display name to all constrained attribute
-                    attributeDefinitions.setDisplayNames(constrainedAttributes);
                     // set the group ACL rule constraint
                     group.setRuleAttributesConstraint(constrainedAttributes);
                 }

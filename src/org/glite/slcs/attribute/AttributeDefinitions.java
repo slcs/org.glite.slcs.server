@@ -1,5 +1,5 @@
 /*
- * $Id: AttributeDefinitions.java,v 1.2 2007/03/19 09:05:53 vtschopp Exp $
+ * $Id: AttributeDefinitions.java,v 1.3 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -8,15 +8,31 @@
 package org.glite.slcs.attribute;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Helper class for the attribute definitions as defined by the XML file
+ * attribute-defs.xml.
+ * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface AttributeDefinitions {
+
+    /**
+     * Creates an {@link Attribute} with the given name and value. The attribute
+     * properties <code>required</code>, <code>displayName</code> and
+     * <code>caseSensitive</code> are set as defined by the attribute
+     * definitions.
+     * 
+     * @param name
+     *            The attribute name.
+     * @param value
+     *            The attribute value.
+     * @return The new attribute with all properties set.
+     */
+    public Attribute createAttribute(String name, String value);
 
     /**
      * Return the list of user's {@link Attribute}s, as defined in the
@@ -29,9 +45,9 @@ public interface AttributeDefinitions {
     public List getUserAttributes(HttpServletRequest request);
 
     /**
-     * @return The list of {@link AttributeDefinition}s
+     * @return The list of {@link AttributeDefinition}
      */
-    public List getAttributeDefinitionsList();
+    public List getAttributeDefinitions();
 
     /**
      * Gets the display name, as defined by the {@link AttributeDefinition}s,
@@ -45,35 +61,6 @@ public interface AttributeDefinitions {
     public String getAttributeDisplayName(Attribute attribute);
 
     /**
-     * Returns the HTTP request header name for the given attribute
-     * 
-     * @param attribute
-     *            The Attribute object
-     * @return The header name.
-     */
-    public String getAttributeHeader(Attribute attribute);
-
-    /**
-     * Returns the defined attribute name corresponding to the given header
-     * name.
-     * 
-     * @param header
-     *            The HTTP request header name.
-     * @return The defined attribute name or <code>null</code> if not defined.
-     */
-    public String getAttributeName(String header);
-
-    /**
-     * Checks if the attribute is required as defined by the attribute
-     * definitions.
-     * 
-     * @param attribute
-     *            The attribute to check
-     * @return <code>true</code> if the attribute is required
-     */
-    public boolean isAttributeRequired(Attribute attribute);
-
-    /**
      * Sets the display name, as defined in the {@link AttributeDefinition}s,
      * for all attributes in the list.
      * 
@@ -81,13 +68,6 @@ public interface AttributeDefinitions {
      *            The list of attributes to set display name.
      */
     public void setDisplayNames(List attributes);
-
-    /**
-     * Returns the mapping between HTTP request header name and Attribute name.
-     * 
-     * @return the map of header - name
-     */
-    public Map getAttributesHeaderNameMapping();
 
     /**
      * Returns a list of attribute names defined as required.

@@ -1,5 +1,5 @@
 /*
- * $Id: GroupManager.java,v 1.4 2007/04/20 13:01:11 vtschopp Exp $
+ * $Id: GroupManager.java,v 1.5 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -14,7 +14,7 @@ import org.glite.slcs.attribute.Attribute;
 
 /**
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface GroupManager extends SLCSServerComponent {
 
@@ -36,7 +36,7 @@ public interface GroupManager extends SLCSServerComponent {
     
     /**
      * Returns the list of {@link Group} where the user, identified by his
-     * {@link Attribute}s list, belong.
+     * {@link Attribute}s list, belong to.
      * 
      * @param userAttributes
      *            The list of user {@link Attribute}.
@@ -75,7 +75,7 @@ public interface GroupManager extends SLCSServerComponent {
 
     /**
      * Checks if the user, identified by his {@link Attribute}s list, is an
-     * administrator.
+     * administrator (like root).
      * 
      * @param userAttributes
      * @return <code>true</code> if the user belong to the administrator

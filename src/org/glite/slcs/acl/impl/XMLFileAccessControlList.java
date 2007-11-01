@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileAccessControlList.java,v 1.5 2007/09/18 14:58:33 vtschopp Exp $
+ * $Id: XMLFileAccessControlList.java,v 1.6 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -24,6 +24,8 @@ import org.glite.slcs.SLCSException;
 import org.glite.slcs.acl.AccessControlList;
 import org.glite.slcs.acl.AccessControlRule;
 import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.attribute.AttributeDefinitions;
+import org.glite.slcs.attribute.AttributeDefinitionsFactory;
 import org.glite.slcs.config.FileConfigurationEvent;
 import org.glite.slcs.config.FileConfigurationListener;
 import org.glite.slcs.config.FileConfigurationMonitor;
@@ -34,7 +36,7 @@ import org.glite.slcs.config.FileConfigurationMonitor;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @see org.glite.slcs.acl.AccessControlList
  * @see org.glite.slcs.config.FileConfigurationListener
  */
@@ -48,7 +50,7 @@ public class XMLFileAccessControlList implements AccessControlList,
     private XMLConfiguration aclXMLConfiguration_ = null;
 
     /** List of Access Control Rules */
-    private List aclAccessControlRules_ = null;
+    private List accessControlRules_ = null;
 
     /** ACL file change monitor */
     private FileConfigurationMonitor aclConfigurationMonitor_ = null;
@@ -77,7 +79,7 @@ public class XMLFileAccessControlList implements AccessControlList,
         aclXMLConfiguration_ = createACLXMLConfiguration(filename);
 
         // create the access control rules list
-        aclAccessControlRules_ = createACLAccessControlRules(aclXMLConfiguration_);
+        accessControlRules_ = createACLAccessControlRules(aclXMLConfiguration_);
 
         // deals with the FileConfigurationMonitor
         String monitoringInterval = filterConfig.getInitParameter("ACLFileMonitoringInterval");
@@ -101,13 +103,14 @@ public class XMLFileAccessControlList implements AccessControlList,
             LOG.debug("userAttributes=" + userAttributes);
         }
         boolean authorized = false;
-        Iterator rules = aclAccessControlRules_.iterator();
+        Iterator rules = accessControlRules_.iterator();
         while (!authorized && rules.hasNext()) {
             AccessControlRule rule = (AccessControlRule) rules.next();
             List ruleAttributes = rule.getAttributes();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("checking rule:" + rule);
             }
+            // only rule attrs know if they are caseSensitive or not...
             if (userAttributes.containsAll(ruleAttributes)) {
                 authorized = true;
                 LOG.info("User authorized by rule: " + rule);
@@ -159,7 +162,7 @@ public class XMLFileAccessControlList implements AccessControlList,
             // reload the XML file
             aclXMLConfiguration_ = createACLXMLConfiguration(filename);
             // recreate the ACL access control rules
-            aclAccessControlRules_ = createACLAccessControlRules(aclXMLConfiguration_);
+            accessControlRules_ = createACLAccessControlRules(aclXMLConfiguration_);
         } catch (SLCSConfigurationException e) {
             LOG.error("Failed to reload ACLConfiguration: " + filename, e);
         }
@@ -228,11 +231,12 @@ public class XMLFileAccessControlList implements AccessControlList,
                 // error, skipping
                 continue;
             }
+            AttributeDefinitions attributeDefinitions = AttributeDefinitionsFactory.getInstance();
             List attributeValues = config.getList(rulePrefix + ".Attribute");
             for (int j = 0; j < attributeNames.size(); j++) {
                 String name = (String) attributeNames.get(j);
                 String value = (String) attributeValues.get(j);
-                Attribute attribute = new Attribute(name, value);
+                Attribute attribute = attributeDefinitions.createAttribute(name, value);
                 // add attribute to the rule
                 rule.addAttribute(attribute);
             }

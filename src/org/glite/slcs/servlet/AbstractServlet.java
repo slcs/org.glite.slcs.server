@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractServlet.java,v 1.2 2007/06/11 13:08:05 vtschopp Exp $
+ * $Id: AbstractServlet.java,v 1.3 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -38,7 +38,7 @@ import org.glite.slcs.session.SLCSSessionsFactory;
  * AbstractServlet is the base class for the SLCS servlets.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class AbstractServlet extends HttpServlet {
 
@@ -193,7 +193,9 @@ public abstract class AbstractServlet extends HttpServlet {
     protected Attribute getUserAgentAttribute(HttpServletRequest req) {
         String userAgent = req.getHeader("User-Agent");
         if (userAgent != null) {
-            return new Attribute("UserAgent", userAgent);
+            AttributeDefinitions attributeDefinitions= configuration_.getAttributeDefinitions();
+            Attribute userAgentAttribute= attributeDefinitions.createAttribute("UserAgent", userAgent);
+            return userAgentAttribute;
         }
         else {
             return null;
@@ -210,7 +212,9 @@ public abstract class AbstractServlet extends HttpServlet {
     protected Attribute getRemoteAddressAttribute(HttpServletRequest req) {
         String remoteAddress = req.getRemoteAddr();
         if (remoteAddress != null) {
-            return new Attribute("RemoteAddress", remoteAddress);
+            AttributeDefinitions attributeDefinitions= configuration_.getAttributeDefinitions();
+            Attribute remoteAddressAttribute = attributeDefinitions.createAttribute("RemoteAddress", remoteAddress);
+            return remoteAddressAttribute;
         }
         else {
             return null;
@@ -284,7 +288,8 @@ public abstract class AbstractServlet extends HttpServlet {
             userAttributeNames.add(attributeName);
         }
         // compare with the required attribute names
-        List requiredAttributeNames= configuration_.getRequiredAttributeNames();
+        AttributeDefinitions attributeDefinitions = configuration_.getAttributeDefinitions();
+        List requiredAttributeNames= attributeDefinitions.getRequiredAttributeNames();
         Iterator requiredNames = requiredAttributeNames.iterator();
         while (requiredNames.hasNext()) {
             String requiredName = (String) requiredNames.next();

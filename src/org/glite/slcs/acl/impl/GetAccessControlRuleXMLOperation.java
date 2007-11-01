@@ -1,5 +1,5 @@
 /*
- * $Id: GetAccessControlRuleXMLOperation.java,v 1.2 2007/03/19 14:05:50 vtschopp Exp $
+ * $Id: GetAccessControlRuleXMLOperation.java,v 1.3 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -14,12 +14,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.acl.AccessControlRule;
 import org.glite.slcs.attribute.Attribute;
+import org.glite.slcs.attribute.AttributeDefinitions;
+import org.glite.slcs.attribute.AttributeDefinitionsFactory;
 
 /**
  * XMLOperation to get an AccessControlRule from the XML ACL file.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class GetAccessControlRuleXMLOperation extends XMLOperation {
 
@@ -38,6 +40,9 @@ public class GetAccessControlRuleXMLOperation extends XMLOperation {
      */
     private AccessControlRule accessControlRule_ = null;
 
+    /** The attribute definitions */
+    private AttributeDefinitions attributeDefinitions_ = null;
+    
     /**
      * Constructor
      * 
@@ -47,6 +52,8 @@ public class GetAccessControlRuleXMLOperation extends XMLOperation {
     public GetAccessControlRuleXMLOperation(int ruleId) {
         super();
         ruleId_ = ruleId;
+        attributeDefinitions_ = AttributeDefinitionsFactory.getInstance();
+
     }
 
     protected void doProcessing(XMLConfiguration config) {
@@ -90,7 +97,7 @@ public class GetAccessControlRuleXMLOperation extends XMLOperation {
                 for (int j = 0; j < attributeNames.size(); j++) {
                     String name = (String) attributeNames.get(j);
                     String value = (String) attributeValues.get(j);
-                    Attribute attribute = new Attribute(name, value);
+                    Attribute attribute = attributeDefinitions_.createAttribute(name, value);
                     rule.addAttribute(attribute);
                 }
 

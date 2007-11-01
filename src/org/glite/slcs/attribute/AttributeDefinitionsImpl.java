@@ -22,7 +22,7 @@ import org.glite.slcs.util.Utils;
  * Helper class for the AttributeDefintions.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class AttributeDefinitionsImpl extends SLCSConfiguration implements
         AttributeDefinitions {
@@ -40,7 +40,7 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
     private Map headerNameMapping_ = null;
 
     /**
-     * Constructor called by factory
+     * Constructor only called by factory
      * 
      * @param filename
      *            The attribute definitions XML filename
@@ -58,6 +58,12 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
 
     }
 
+    /**
+     * Parses the attribute definitions XML file and creates the list of
+     * attributeDefinitions.
+     * 
+     * @throws SLCSConfigurationException
+     */
     private void parseAttributeDefinitions() throws SLCSConfigurationException {
         // create the map and lists
         attributeDefinitions_ = new HashMap();
@@ -81,14 +87,16 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
             // add the attribute header - names in the mapping table
             headerNameMapping_.put(header, name);
             // create a new attribute definition
-            AttributeDefinition attributeDef = new AttributeDefinition(name, header, displayName);
+            AttributeDefinition attributeDef = new AttributeDefinition(name,
+                    header, displayName);
             // required default: false
             if (required != null && required.equalsIgnoreCase("true")) {
                 requiredAttributeNames_.add(name);
                 attributeDef.setRequired(true);
             }
             // caseSensitive default: true
-            if (caseSensitive != null && caseSensitive.equalsIgnoreCase("false")) {
+            if (caseSensitive != null
+                    && caseSensitive.equalsIgnoreCase("false")) {
                 attributeDef.setCaseSensitive(false);
             }
             // add in the attribute's definitions map
@@ -100,6 +108,28 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
         LOG.info("RequiredAttributeNames=" + requiredAttributeNames_);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.attribute.AttributeDefinitions#createAttribute(java.lang.String,
+     *      java.lang.String)
+     */
+    public Attribute createAttribute(String name, String value) {
+        Attribute attribute = new Attribute(name, value);
+        AttributeDefinition attributeDefinition = (AttributeDefinition) attributeDefinitions_.get(name);
+        if (attributeDefinition != null) {
+            attribute.setDisplayName(attributeDefinition.getDisplayName());
+            attribute.setCaseSensitive(attributeDefinition.isCaseSensitive());
+            attribute.setRequired(attributeDefinition.isRequired());
+        }
+        return attribute;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.attribute.AttributeDefinitions#getUserAttributes(javax.servlet.http.HttpServletRequest)
+     */
     public List getUserAttributes(HttpServletRequest request) {
         // list of user attributes
         List attributes = new ArrayList();
@@ -121,14 +151,18 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
                         String attrValue = attrValues[i];
                         attrValue = attrValue.trim();
                         Attribute attribute = new Attribute(attrName, attrValue);
+                        AttributeDefinition attributeDefinition = (AttributeDefinition) attributeDefinitions_.get(attrName);
+                        if (attributeDefinition != null) {
+                            attribute.setDisplayName(attributeDefinition.getDisplayName());
+                            attribute.setCaseSensitive(attributeDefinition.isCaseSensitive());
+                            attribute.setRequired(attributeDefinition.isRequired());
+                        }
                         attributes.add(attribute);
                     }
                 }
 
             }
         }
-        // set all display name as defined by the attribute definitions
-        setDisplayNames(attributes);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("attributes=" + attributes);
@@ -141,11 +175,12 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
      * 
      * @see org.glite.slcs.attribute.AttributeDefinitions#getAttributeDefinitionsList()
      */
-    public List getAttributeDefinitionsList() {
+    public List getAttributeDefinitions() {
         Collection definitions = attributeDefinitions_.values();
         List attributeDefinitions = new ArrayList(definitions);
         // XXX: sort by display name
-        Collections.sort(attributeDefinitions, new AttributeDefinitionComparator());
+        Collections.sort(attributeDefinitions,
+                new AttributeDefinitionComparator());
         return attributeDefinitions;
     }
 
@@ -163,26 +198,15 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
         return null;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Returns the attribute name for the given HTTP header.
      * 
-     * @see org.glite.slcs.attribute.AttributeDefinitions#getHeader(org.glite.slcs.attribute.Attribute)
+     * @param header
+     *            The HTTP header name.
+     * @return The attribute name or <code>null</code> if the header is not
+     *         mapped.
      */
-    public String getAttributeHeader(Attribute attribute) {
-        String attrName = attribute.getName();
-        if (attributeDefinitions_.containsKey(attrName)) {
-            AttributeDefinition attrDef = (AttributeDefinition) attributeDefinitions_.get(attrName);
-            return attrDef.getHeader();
-        }
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.glite.slcs.attribute.AttributeDefinitions#getName(java.lang.String)
-     */
-    public String getAttributeName(String header) {
+    private String getAttributeName(String header) {
         if (headerNameMapping_.containsKey(header)) {
             String name = (String) headerNameMapping_.get(header);
             return name;
@@ -202,7 +226,23 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
             return attrDef.isRequired();
         }
         else {
-            return false;
+            return AttributeDefinition.DEFAULT_REQUIRED;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.glite.slcs.attribute.AttributeDefinitions#isAttributeCaseSensitive(org.glite.slcs.attribute.Attribute)
+     */
+    public boolean isAttributeCaseSensitive(Attribute attribute) {
+        String attrName = attribute.getName();
+        if (attributeDefinitions_.containsKey(attrName)) {
+            AttributeDefinition attrDef = (AttributeDefinition) attributeDefinitions_.get(attrName);
+            return attrDef.isCaseSensitive();
+        }
+        else {
+            return AttributeDefinition.DEFAULT_CASE_SENSITIVE;
         }
     }
 
@@ -218,15 +258,6 @@ public class AttributeDefinitionsImpl extends SLCSConfiguration implements
             String displayName = getAttributeDisplayName(attr);
             attr.setDisplayName(displayName);
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.glite.slcs.attribute.AttributeDefinitions#getDefinedAttributeHeaders()
-     */
-    public Map getAttributesHeaderNameMapping() {
-        return headerNameMapping_;
     }
 
     /*

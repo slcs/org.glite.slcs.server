@@ -1,5 +1,5 @@
 /*
- * $Id: AttributeDefinition.java,v 1.4 2007/09/18 15:27:47 vtschopp Exp $
+ * $Id: AttributeDefinition.java,v 1.5 2007/11/01 14:35:11 vtschopp Exp $
  * 
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -12,9 +12,12 @@ package org.glite.slcs.attribute;
  * and a required flag.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class AttributeDefinition {
+    
+    public static boolean DEFAULT_REQUIRED = false;
+    public static boolean DEFAULT_CASE_SENSITIVE = true;
 
     /** The attribute name */
     protected String name_ = null;
@@ -26,10 +29,10 @@ public class AttributeDefinition {
     private String displayName_ = null;
 
     /** Is the attribute required */
-    private boolean required_ = false;
+    private boolean required_ = DEFAULT_REQUIRED;
 
     /** Is the attribute value case sensitive */
-    protected boolean caseSensitive_ = true;
+    protected boolean caseSensitive_ = DEFAULT_CASE_SENSITIVE;
 
     /**
      * Named constructor.

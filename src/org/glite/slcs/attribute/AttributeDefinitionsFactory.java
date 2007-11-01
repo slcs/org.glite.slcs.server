@@ -1,5 +1,5 @@
 /*
- * $Id: AttributeDefinitionsFactory.java,v 1.3 2007/03/19 09:05:53 vtschopp Exp $
+ * $Id: AttributeDefinitionsFactory.java,v 1.4 2007/11/01 14:35:11 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -13,29 +13,52 @@ import org.glite.slcs.SLCSException;
 
 public class AttributeDefinitionsFactory {
 
+    /** Singleton */
+    static private AttributeDefinitions SINGLETON = null;
+
     /** Logging */
     static private Log LOG = LogFactory.getLog(AttributeDefinitionsFactory.class);
 
-    /** Singleton */
-    static private AttributeDefinitions SINGELTON = null;
-
     /**
+     * Initializes the factory with the given attribute definitions XML file.
+     * 
      * @param filename
-     * @return
      * @throws SLCSException
      */
-    static public synchronized AttributeDefinitions getInstance(String filename)
+    static public synchronized void initialize(String filename)
             throws SLCSException {
-        if (SINGELTON == null) {
-            SINGELTON = newInstance(filename);
+        if (SINGLETON == null) {
+            LOG.info("create new AttributeDefinitions: " + filename);
+            SINGLETON = newInstance(filename);
         }
-        return SINGELTON;
+        else {
+            LOG.info("AttributeDefinitions already initialized");
+        }
     }
 
     /**
+     * Gets the initialized singleton instance of the attribute definitions.
+     * 
+     * @return the {@link AttributeDefinitions}.
+     * @throws IllegalStateException
+     *             if the getInstance method is called on a uninitialized
+     *             factory.
+     */
+    static public synchronized AttributeDefinitions getInstance() {
+        if (SINGLETON == null) {
+            throw new IllegalStateException(
+                    "Not initialized: call AttributeDefinitionsFactory.initialize(...) first.");
+        }
+        return SINGLETON;
+
+    }
+
+    /**
+     * Creates a new instance of the implementing class.
+     * 
      * @param filename
-     *            The XML filename
-     * @return
+     *            The attribute definitions XML filename
+     * @return a new {@link AttributeDefinitions} instance.
      * @throws SLCSException
      */
     static protected AttributeDefinitions newInstance(String filename)
