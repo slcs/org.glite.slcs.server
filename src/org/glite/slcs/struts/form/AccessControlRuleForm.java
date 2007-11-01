@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlRuleForm.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
+ * $Id: AccessControlRuleForm.java,v 1.3 2007/11/01 14:32:46 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -112,7 +112,7 @@ public class AccessControlRuleForm extends ActionForm implements Factory {
      * Factory method for the {@link LazyList} to auto grow
      */
     public Object create() {
-        return new Attribute(null);
+        return new Attribute();
     }
     
     

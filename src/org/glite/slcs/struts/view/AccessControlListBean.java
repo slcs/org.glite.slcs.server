@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlListBean.java,v 1.2 2007/06/11 13:10:59 vtschopp Exp $
+ * $Id: AccessControlListBean.java,v 1.3 2007/11/01 14:32:46 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -7,12 +7,7 @@
  */
 package org.glite.slcs.struts.view;
 
-import java.util.Iterator;
 import java.util.List;
-
-import org.glite.slcs.acl.AccessControlRule;
-import org.glite.slcs.attribute.AttributeDefinitions;
-import org.glite.slcs.config.SLCSServerConfiguration;
 
 public class AccessControlListBean {
 
@@ -22,7 +17,6 @@ public class AccessControlListBean {
 
     public AccessControlListBean(List rules) {
         rules_ = rules;
-        setRuleAttributesDisplayNames();
     }
 
     public List getAccessControlRules() {
@@ -48,18 +42,5 @@ public class AccessControlListBean {
     public String getGroupName() {
         return groupName_;
     }
-    
-    
-    
-    private void setRuleAttributesDisplayNames() {
-        // set the DisplayName for all attributes in all rules
-        SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
-        AttributeDefinitions attributeDefinitions = config.getAttributeDefinitions();
-        Iterator iter= rules_.iterator();
-        while (iter.hasNext()) {
-            AccessControlRule rule = (AccessControlRule) iter.next();
-            List ruleAttributes= rule.getAttributes();
-            attributeDefinitions.setDisplayNames(ruleAttributes);
-        }        
-    }
+        
 }

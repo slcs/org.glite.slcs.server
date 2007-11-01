@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractAction.java,v 1.3 2007/06/11 13:10:59 vtschopp Exp $
+ * $Id: AbstractAction.java,v 1.4 2007/11/01 14:32:46 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -20,6 +20,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.glite.slcs.SLCSServerVersion;
 import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.attribute.AttributeDefinitions;
 import org.glite.slcs.config.SLCSServerConfiguration;
@@ -57,7 +58,7 @@ public abstract class AbstractAction extends Action {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        beforeAction();
+        beforeAction(form, request, response);
 
         ActionForward forward = executeAction(mapping, form, request, response);
 
@@ -66,7 +67,11 @@ public abstract class AbstractAction extends Action {
         return forward;
     }
 
-    protected void beforeAction() {
+    protected void beforeAction(ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) {
+        List userAttributes = getUserAttributes(request);
+        request.setAttribute("userAttributes", userAttributes);
+        request.setAttribute("serverVersion", SLCSServerVersion.getVersion());
     }
 
     protected abstract ActionForward executeAction(ActionMapping mapping,
@@ -104,56 +109,10 @@ public abstract class AbstractAction extends Action {
         return userAttributes;
     }
 
-    /**
-     * Returns the <code>User-Agent</code> request header as {@link Attribute}.
-     * 
-     * @param req
-     *            The {@link HttpServletRequest} object
-     * @return The User-Agent {@link Attribute} or <code>null</code> if not
-     *         set.
-     */
-    protected Attribute getUserAgentAttribute(HttpServletRequest req) {
-        String userAgent = req.getHeader("User-Agent");
-        if (userAgent != null) {
-            return new Attribute("User-Agent", userAgent);
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns the request remote address as {@link Attribute} named
-     * <code>Remote-Address</code>.
-     * 
-     * @param req
-     *            The {@link HttpServletRequest} object
-     * @return The Remote-Address {@link Attribute} or <code>null</code> if
-     *         not set.
-     */
-    protected Attribute getRemoteAddressAttribute(HttpServletRequest req) {
-        String remoteAddress = req.getRemoteAddr();
-        if (remoteAddress != null) {
-            return new Attribute("Remote-Address", remoteAddress);
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns the List of required Shibboleth attributes as defined in the SLCS
-     * server configuration file under element
-     * ShibbolethConfiguration.RequiredAttributes
-     * 
-     * @return List of attribute names.
-     */
-    protected List getRequiredAttributeNames() {
+    protected AttributeDefinitions getAttributeDefinitions() {
         SLCSServerConfiguration config = SLCSServerConfiguration.getInstance();
-        List requiredAttributeNames = config.getRequiredAttributeNames();
-        return requiredAttributeNames;
+        return config.getAttributeDefinitions();
     }
-
     /**
      * Return the servlet URL for the servlet path. The servlet path must starts
      * with '/' and is relative the the context root.
