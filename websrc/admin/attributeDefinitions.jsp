@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 
-<!-- $Id: attributeDefinitions.jsp,v 1.1 2007/10/23 14:08:30 vtschopp Exp $ -->
+<!-- $Id: attributeDefinitions.jsp,v 1.2 2007/11/01 14:38:53 vtschopp Exp $ -->
 
 <h2>Attribute Definitions</h2>
 
@@ -27,11 +27,7 @@ This is the list of the Shibboleth attribute definitions used by the SLCS server
 	</logic:iterate>
 </table>
 <p>
-<small>
-Attribute with case insensitive value can be used in access control rule. This is typically the
-case with the <span class="attribute-name">Email</span> attribute: the rule based authorization decision
-will be evaluated case insensitively for the email address of the user.
-</small>
+Attribute value are used in access control rule. To match a rule the attribute value is compared case sensitive or unsensitive as defined by these definitions. This is typically the case with the <span class="attribute-name">Email</span> attribute: the rule based authorization decision will be evaluated case insensitively for the email address of the user (i.e. JohnDoe@example.org == johndoe@EXAMPLE.org)
 </p>
 </div>
 
