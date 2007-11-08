@@ -1,5 +1,6 @@
 TODO:
 ----
+- move AttributeDefinitions configuration in Context
   
 - read the org.glite.slcs.filter.AttributesAuthorizationFilter 
   configuration parameters from SLCSServerConfiguration file and
