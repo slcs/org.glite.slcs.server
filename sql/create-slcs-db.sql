@@ -1,3 +1,9 @@
+##
+# Creates the SLCS audit database
+##
+# $Id: create-slcs-db.sql,v 1.2 2007/11/12 15:12:06 vtschopp Exp $
+##
+
 CREATE DATABASE slcs;
 
 USE slcs;
