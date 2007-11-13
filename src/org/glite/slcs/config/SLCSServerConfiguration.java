@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.15 2007/11/01 14:35:11 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.16 2007/11/13 14:11:31 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -36,7 +36,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -89,6 +89,9 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
         String filename = DEFAULT_CONFIGURATION_FILE;
         if (ctxt.getInitParameter(CONFIGURATION_FILE_KEY) != null) {
             filename = ctxt.getInitParameter(CONFIGURATION_FILE_KEY);
+        }
+        else {
+            LOG.warn("Parameter " + CONFIGURATION_FILE_KEY + " not found in the Servlet context, using default file: " + filename);
         }
         initialize(filename);
     }
