@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.15 2007/08/31 13:57:15 vtschopp Exp $
+    Version: $Id: build.xml,v 1.16 2007/11/13 14:41:34 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -39,6 +39,7 @@
     <property name="websrc.dir" location="${basedir}/websrc" />
     <property name="etc.dir" location="${basedir}/etc" />
     <property name="doc.dir" location="${basedir}/doc" />
+    <property name="sql.dir" location="${basedir}/sql" />
     
     <!-- build dirs -->
     <property name="build.dir" location="${basedir}/build" />
@@ -199,13 +200,16 @@
         <mkdir dir="${install.webapps.dir}"/>
         <mkdir dir="${install.doc.dir}"/>
         <mkdir dir="${install.javadoc.dir}"/>
-        <!-- etc config -->
+        <!-- etc config + SQL script -->
         <copy todir="${install.etc.dir}">
             <fileset dir="${etc.dir}">
                 <include name="*.xml" />
                 <include name="*.jks" />
             </fileset>
-        </copy>
+            <fileset dir="${sql.dir}">
+                <include name="*.sql" />
+            </fileset>
+         </copy>
         <!-- doc -->
         <copy todir="${install.doc.dir}">
             <fileset dir="${doc.dir}" />
@@ -238,7 +242,7 @@
     <!-- create local standalone tar.gz distribution  -->
     <target name="local-dist" depends="clean,full-package">
         <property name="dist.file"
-            value="${package.name}-${package.version}-jdk${ant.java.version}-${DSTAMP}.tar.gz" />
+            value="${package.name}-${package.version}-jdk${ant.java.version}.tar.gz" />
         <tar destfile="${dist.file}" compression="gzip" basedir="${install.dir}" />
    </target>
     
