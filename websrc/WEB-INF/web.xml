@@ -19,7 +19,7 @@
     glite-slcs-server configuration
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: web.xml,v 1.6 2007/08/31 13:49:31 vtschopp Exp $
+    Version: $Id: web.xml,v 1.7 2007/11/13 14:39:22 vtschopp Exp $
 -->
 <web-app id="SLCS"
          version="2.4">
@@ -27,8 +27,12 @@
     <display-name>Short Lived Credential Service</display-name>
     
     <!-- SLCS Server Configuration -->
+    <!-- IMPORTANT NOTICE: 
+         the <context-param/> elements are overridden by the XML context file
+         /etc/tomcat5/Catalina/localhost/SLCS.xml
+    -->
     <context-param>
-        <!-- MANDATORY SLCSServerConfigurationFile: absolute filename or file in classpath -->
+        <!-- SLCSServerConfigurationFile: absolute filename or file in classpath -->
         <param-name>SLCSServerConfigurationFile</param-name>
         <param-value>/opt/glite/etc/glite-slcs-server/slcs.xml</param-value>
     </context-param>
@@ -37,6 +41,12 @@
         <param-name>Log4JConfigurationFile</param-name>
         <param-value>/opt/glite/etc/glite-slcs-server/log4j.xml</param-value>
     </context-param>
+    <context-param>
+        <!-- AttributeDefinitonsFile: absolute filename or file in classpath -->
+        <param-name>AttributeDefinitionsFile</param-name>
+        <param-value>/opt/glite/etc/glite-slcs-server/attribute-defs.xml</param-value>
+    </context-param>
+
 
     <!-- Shibboleth Authorization Filter -->
     <filter>
@@ -58,11 +68,6 @@
             <!-- 1 min = 60 sec -->
             <param-value>60</param-value>
         </init-param>
-        <!-- MANDATORY: AttributeDefintions XML filename -->
-        <init-param>
-            <param-name>AttributeDefinitions</param-name>
-            <param-value>/opt/glite/etc/glite-slcs-server/attribute-defs.xml</param-value>
-        </init-param>
     </filter>
 
     <filter>
@@ -82,11 +87,6 @@
         <init-param>
             <param-name>ACLFileMonitoringInterval</param-name>
             <param-value>300</param-value>
-        </init-param>
-        <!-- MANDATORY: AttributeDefintions XML filename -->
-        <init-param>
-            <param-name>AttributeDefinitions</param-name>
-            <param-value>/opt/glite/etc/glite-slcs-server/attribute-defs.xml</param-value>
         </init-param>
     </filter>
     
