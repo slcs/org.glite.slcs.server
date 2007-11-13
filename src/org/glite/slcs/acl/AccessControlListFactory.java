@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControlListFactory.java,v 1.3 2007/11/01 14:35:10 vtschopp Exp $
+ * $Id: AccessControlListFactory.java,v 1.4 2007/11/13 14:13:27 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -9,12 +9,10 @@ package org.glite.slcs.acl;
 
 import javax.servlet.FilterConfig;
 
-import org.glite.slcs.SLCSConfigurationException;
-import org.glite.slcs.SLCSException;
-import org.glite.slcs.attribute.AttributeDefinitionsFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glite.slcs.SLCSConfigurationException;
+import org.glite.slcs.SLCSException;
 
 /**
  * AccessControlListFactory is a factory to create new
@@ -22,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
  * FilterConfiguration.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class AccessControlListFactory {
 
@@ -41,14 +39,6 @@ public class AccessControlListFactory {
      */
     public static AccessControlList newInstance(
             FilterConfig filterConfig) throws SLCSException {
-        // initialize attribute definitions
-        String attributeDefinitions= filterConfig.getInitParameter("AttributeDefinitions");
-        // check null or empty
-        if (attributeDefinitions == null || attributeDefinitions.equals("")) {
-            throw new SLCSConfigurationException("Filter parameter AttributeDefinitions is missing or empty");
-        }
-        LOG.info("initialize AttributeDefintions: " + attributeDefinitions);
-        AttributeDefinitionsFactory.initialize(attributeDefinitions);
         
         // get implementing class name
         String className= filterConfig.getInitParameter("ACLImplementation");
