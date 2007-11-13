@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerConfiguration.java,v 1.16 2007/11/13 14:11:31 vtschopp Exp $
+ * $Id: SLCSServerConfiguration.java,v 1.17 2007/11/13 14:35:26 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -36,7 +36,7 @@ import org.glite.slcs.attribute.AttributeDefinitionsFactory;
  * </pre>
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class SLCSServerConfiguration extends SLCSConfiguration {
 
@@ -70,9 +70,11 @@ public class SLCSServerConfiguration extends SLCSConfiguration {
     private AttributeDefinitions attributeDefinitions_ = null;
 
     /**
-     * Initialize the singleton instance of the SLCSServerConfiguration. Try to
-     * configure the log4j engine by loading the config file define in the web
-     * application context under <code>Log4JConfigureFile</code>.
+     * Initialize the singleton instance of the SLCSServerConfiguration.<p> 
+     * Use the servlet context parameter <code>SLCSServerConfigurationFile</code> to
+     * determine the configuration file to load. 
+     * <p>Try to configure the log4j engine by loading the config file define in the
+     * servlet context parameter <code>Log4JConfigureFile</code>.
      * 
      * @param ctxt
      *            The ServletContext
