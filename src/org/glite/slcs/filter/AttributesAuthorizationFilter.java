@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  * 
- * $Id: AttributesAuthorizationFilter.java,v 1.6 2007/11/01 14:30:34 vtschopp Exp $
+ * $Id: AttributesAuthorizationFilter.java,v 1.7 2007/11/13 14:34:14 vtschopp Exp $
  */
 package org.glite.slcs.filter;
 
@@ -25,6 +25,7 @@ import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -46,7 +47,7 @@ import org.glite.slcs.config.Log4JConfiguration;
  * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @see org.glite.slcs.acl.AccessControlList
  */
 public class AttributesAuthorizationFilter implements Filter {
@@ -67,8 +68,9 @@ public class AttributesAuthorizationFilter implements Filter {
      */
     public void init(FilterConfig filterConfig) throws ServletException {
 
+        ServletContext context = filterConfig.getServletContext();
         // try to configure log4j
-        Log4JConfiguration.configure(filterConfig.getServletContext());
+        Log4JConfiguration.configure(context);
 
         try {
             LOG.info("create and initialize new AccessControlList");
@@ -80,16 +82,15 @@ public class AttributesAuthorizationFilter implements Filter {
                     "Failed to instantiate and initalize AccessControlList: "
                             + e, e);
         }
-        String attributeDefinitionFile = filterConfig.getInitParameter("AttributeDefinitions");
+        
+        // initialize the AttributeDefintions from the servlet context
         try {
-            AttributeDefinitionsFactory.initialize(attributeDefinitionFile);
+            AttributeDefinitionsFactory.initialize(context);
             attributeDefinitions_ = AttributeDefinitionsFactory.getInstance();
         } catch (SLCSException e) {
-            LOG.error("Failed to instantiate AttributeDefinitions("
-                    + attributeDefinitionFile + ")", e);
+            LOG.error("Failed to instantiate AttributeDefinitions", e);
             throw new ServletException(
-                    "Failed to instantiate AttributeDefinitions("
-                            + attributeDefinitionFile + "): " + e, e);
+                    "Failed to initialize and create the AttributeDefinitions" + e, e);
         }
     }
 
