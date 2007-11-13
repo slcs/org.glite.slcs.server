@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileAccessControlList.java,v 1.6 2007/11/01 14:35:11 vtschopp Exp $
+ * $Id: XMLFileAccessControlList.java,v 1.7 2007/11/13 16:18:47 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.FileConfiguration;
@@ -36,7 +37,7 @@ import org.glite.slcs.config.FileConfigurationMonitor;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @see org.glite.slcs.acl.AccessControlList
  * @see org.glite.slcs.config.FileConfigurationListener
  */
@@ -68,6 +69,11 @@ public class XMLFileAccessControlList implements AccessControlList,
      * @see org.glite.slcs.acl.AccessControlList#init(javax.servlet.FilterConfig)
      */
     public void init(FilterConfig filterConfig) throws SLCSException {
+        
+        // initialize the AttributeDefintions from the servlet context
+        ServletContext context = filterConfig.getServletContext();
+        AttributeDefinitionsFactory.initialize(context);
+
         String filename = filterConfig.getInitParameter("ACLFile");
         LOG.info("ACLFile=" + filename);
         if (filename == null || filename.equals("")) {
