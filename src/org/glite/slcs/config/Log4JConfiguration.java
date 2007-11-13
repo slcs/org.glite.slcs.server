@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  * 
- * $Id: Log4JConfiguration.java,v 1.1 2007/09/26 14:32:43 vtschopp Exp $ 
+ * $Id: Log4JConfiguration.java,v 1.2 2007/11/13 14:10:21 vtschopp Exp $ 
  */
 package org.glite.slcs.config;
 
@@ -31,7 +31,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  * <code>Log4JConfigurationFile</code> and configure the Log4J engine with it.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Log4JConfiguration {
 
@@ -54,7 +54,7 @@ public class Log4JConfiguration {
      * @param ctxt
      *            The {@link ServletContext} object.
      */
-    public static void configure(ServletContext ctxt) {
+    public static synchronized void configure(ServletContext ctxt) {
         if (!LOG4J_CONFIGURED) {
             // try to configure log4j
             if (ctxt.getInitParameter(LOG4J_CONFIGURATION_FILE_KEY) != null) {
@@ -71,9 +71,9 @@ public class Log4JConfiguration {
             }
             else {
                 System.err.println("WARN: "
-                        + Log4JConfiguration.class.getName() + ": "
+                        + Log4JConfiguration.class.getName() + ": Parameter "
                         + LOG4J_CONFIGURATION_FILE_KEY
-                        + " not found in ServletContext.");
+                        + " not found in the Servlet context.");
 
             }
             LOG4J_CONFIGURED = true;
