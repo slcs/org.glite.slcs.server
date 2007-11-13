@@ -1,11 +1,25 @@
 ##
-# Creates the SLCS audit database
+# Creates the SLCS audit database (MySQL 4.1 or better)
+#
+# root# mysql < create-slcs-db.sql
 ##
-# $Id: create-slcs-db.sql,v 1.2 2007/11/12 15:12:06 vtschopp Exp $
+# $Id: create-slcs-db.sql,v 1.3 2007/11/13 09:39:22 vtschopp Exp $
 ##
 
+#
+# create the DB
+#
 CREATE DATABASE slcs;
 
+#
+# create the user
+#
+GRANT INSERT ON slcs.* TO slcs@localhost IDENTIFIED BY 'slcs';
+FLUSH PRIVILEGES;
+
+#
+# create the tables
+#
 USE slcs;
 DROP TABLE IF EXISTS AuditEvent;
 CREATE TABLE AuditEvent (
@@ -13,7 +27,7 @@ CREATE TABLE AuditEvent (
 	# event 
 	eventType INTEGER NOT NULL,
 	eventLevel INTEGER NOT NULL,
-	eventDate TIMESTAMP NOT NULL CURRENT_TIMESTAMP,
+	eventDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	eventMessage VARCHAR(255) NOT NULL,
 	# user attributes
 	attributeUniqueId VARCHAR(255),
