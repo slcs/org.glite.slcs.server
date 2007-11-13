@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  * 
- * $Id: AttributesAuthorizationFilter.java,v 1.7 2007/11/13 14:34:14 vtschopp Exp $
+ * $Id: AttributesAuthorizationFilter.java,v 1.8 2007/11/13 14:34:42 vtschopp Exp $
  */
 package org.glite.slcs.filter;
 
@@ -47,7 +47,7 @@ import org.glite.slcs.config.Log4JConfiguration;
  * to checks if the user is authorized.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @see org.glite.slcs.acl.AccessControlList
  */
 public class AttributesAuthorizationFilter implements Filter {
@@ -90,7 +90,7 @@ public class AttributesAuthorizationFilter implements Filter {
         } catch (SLCSException e) {
             LOG.error("Failed to instantiate AttributeDefinitions", e);
             throw new ServletException(
-                    "Failed to initialize and create the AttributeDefinitions" + e, e);
+                    "Failed to initialize and create the AttributeDefinitions: " + e, e);
         }
     }
 
