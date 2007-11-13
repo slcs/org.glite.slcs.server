@@ -1,29 +1,33 @@
 <!--
-$Id: context.xml,v 1.4 2007/11/08 11:40:13 vtschopp Exp $
+$Id: context.xml,v 1.5 2007/11/13 14:36:22 vtschopp Exp $
 
 Copy this context file in $CATALANIA_HOME/conf/[enginename]/[hostname]/[webappname].xml
-i.e. /usr/tomcat/conf/Catalina/localhost/SLCS.xml to deploy as /SLCS
+i.e. /etc/tomcat5/Catalina/localhost/SLCS.xml to deploy as /SLCS
+
+IMPORTANT NOTICE: 
+These context parameters override the <context-param> elementis from the web application
+WEB-INF/web.xml file.
 -->
 <Context 
     docBase="/opt/glite/share/webapps/glite-slcs-server.war"
     reloadable="true"
     debug="0">
 
-    <!-- Context parameter: location of the SLCS server configuration file -->
+    <!-- Context parameter: absolute location of the SLCS server configuration file -->
     <Parameter 
         name="SLCSServerConfigurationFile"
         value="/opt/glite/etc/glite-slcs-server/slcs.xml"
         override="false"
         type="java.lang.String"/>
 
-    <!-- Context parameter: location of the log4j configuration file -->
+    <!-- Context parameter: absolute location of the log4j configuration file -->
     <Parameter 
         name="Log4JConfigurationFile"
         value="/opt/glite/etc/glite-slcs-server/log4j.xml"
         override="false"
         type="java.lang.String"/>
 
-    <!-- Context parameter: location of the AttributeDefinitions file -->
+    <!-- Context parameter: absolute location of the AttributeDefinitions file -->
     <Parameter 
         name="AttributeDefinitionsFile"
         value="/opt/glite/etc/glite-slcs-server/attribute-defs.xml"
