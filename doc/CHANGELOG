@@ -1,10 +1,12 @@
 Version 1.1.2
 -------------
+* Database SQL script updated.
 * AttributeDefinitions can define case sensitiveness of attribute value. 
 * Authorization is handle based on the case sensitiveness of the attribute value.
 * Admin interface modified.
-* Log4J engine configured from webapps context file.
 * Refactoring: AttributeDefinitions class handles all the attributes (creation, extraction, ...).
+* AttributeDefinitions configured from the webapps context file.
+* Log4J engine configured from the webapps context file.
 
 Version 1.1.1
 -------------
@@ -21,4 +23,4 @@ Version 1.0.0
 * Initial release of the SLCS server
 
 --
-$Id: CHANGELOG,v 1.5 2007/11/01 16:56:54 vtschopp Exp $
+$Id: CHANGELOG,v 1.6 2007/11/15 10:02:40 vtschopp Exp $
