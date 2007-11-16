@@ -1,6 +1,7 @@
-Version 1.3.0
+Version 1.2.0
 -------------
-* New CMPClient compatible with an EJBCA online CA server added.
+* New org.glite.slcs.caclient.impl.CMPClient (RFC4210) compatible with an EJBCA online CA 
+  server added.
 
 Version 1.1.2
 -------------
@@ -27,4 +28,4 @@ Version 1.0.0
 * Initial release of the SLCS server
 
 --
-$Id: CHANGELOG,v 1.7 2007/11/16 10:24:37 vtschopp Exp $
+$Id: CHANGELOG,v 1.8 2007/11/16 13:40:19 vtschopp Exp $

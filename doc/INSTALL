@@ -1,26 +1,24 @@
-$Id: INSTALL,v 1.1 2007/08/29 15:51:07 vtschopp Exp $
+$Id: INSTALL,v 1.2 2007/11/16 13:40:19 vtschopp Exp $
 --
-SHORT LIVED CREDENTIAL SERVICE (SLCS)
-SERVER ADMINISTRATOR MANUAL
 
-
-Document identifier: EGEE-II-JRA1-TEC-862731-SLCS-SERVER-MANUAL-v1-0.doc
-Date: 1.08.2007
+Document identifier: EGEE-II-JRA1-TEC-862731-SLCS-SERVER-MANUAL-v1-1.doc
+Date: 13.11.2007
 Activity: JRA1: Middleware
 Document status: DRAFT
 Document link: https://edms.cern.ch/document/862731
 
 
-Abstract: This document describes the installation procedures and configuration options for the Short Lived Credential Service (SLCS) server.
+Abstract: This document describes the installation procedures and configuration options for 
+the Short Lived Credential Service (SLCS) server.
+
 
 
 Copyright notice: 
-Copyright (c) Members of the EGEE-II Collaboration, 2006.
+Copyright © Members of the EGEE-II Collaboration, 2006.
 See www.eu-egee.org for details on the copyright holders.
 EGEE-II ("Enabling Grids for E-sciencE-II") is a project co-funded by the European Commission as an Integrated Infrastructure Initiative within the 6th Framework Programme. EGEE-II began in April 2006 and will run for 2 years.
 For more information on EGEE-II, its partners and contributors please see www.eu-egee.org
-You are permitted to copy and distribute, for non-profit purposes, verbatim copies of this document containing this copyright notice. This includes the right to copy this document in whole or in part, but without modification, into other documents if you attach the following reference to the copied elements: "Copyright (c) Members of the EGEE-II Collaboration 2006. See www.eu-egee.org for details". 
-Using this document in a way and/or for purposes not foreseen in the paragraph above, requires the prior written permission of the copyright holders.
+You are permitted to copy and distribute, for non-profit purposes, verbatim copies of this document containing this copyright notice. This includes the right to copy this document in whole or in part, but without modification, into other documents if you attach the following reference to the copied elements: "Copyright © Members of the EGEE-II Collaboration 2006. See www.eu-egee.org for details". Using this document in a way and/or for purposes not foreseen in the paragraph above, requires the prior written permission of the copyright holders.
 The information contained in this document represents the views of the copyright holders as of the date such views are published. 
 THE INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED BY THE COPYRIGHT HOLDERS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE MEMBERS OF THE EGEE-II COLLABORATION, INCLUDING THE COPYRIGHT HOLDERS, OR THE EUROPEAN COMMISSION BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE INFORMATION CONTAINED IN THIS DOCUMENT, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Trademarks: EGEE and gLite are registered trademarks held by CERN on behalf of the EGEE collaboration. All rights reserved"
@@ -39,34 +37,39 @@ The document contains information about the installation and the configuration o
 1.3. REFERENCES
 
 R1: Shibboleth Interoperability through Short lived Credential Service, https://edms.cern.ch/document/770102/1
-R2: SLCS User Guide,
-https://edms.cern.ch/document/788604/1
+R2: SLCS User Guide, https://edms.cern.ch/document/788604/1
 R3: SLCS Web Administrator Guide, http://www.switch.ch/grid/slcs/documents/webadmin/index.html
 
 1.4. TERMINOLOGY
+
 This subsection provides the definitions of terms, acronyms, and abbreviations required to properly interpret this document.  A complete project glossary is provided in the EGEE glossary http://egee-jra2.web.cern.ch/EGEE-JRA2/Glossary/Glossary.html.
+
 
 
 2. INTRODUCTION
 
-The SLCS (short lived1 credential service) is a service that issues short-lived X.509 credentials based upon successful authentication at a Shibboleth Identity Provider. 
+The SLCS (short lived  credential service) is a service that issues short-lived X.509 credentials based upon successful authentication at a Shibboleth Identity Provider.
 
 The service is described in detail in the document Shibboleth Interoperability through Short-lived Credential Service [R1] and from the user's point of view in the document SLCS User Manual [R2].
 
 2.1. CLIENT-SERVER
 
 The SLCS service is a typical client-server application. 
-The client application slcs-init runs on the gLite-UI. It authenticates the user against a Shibboleth Identity Provider and then requests short-lived certificates from the SLCS server. 
+
+The client application slcs-init runs on the gLite-UI. It authenticates the user against a Shibboleth Identity Provider and then requests short-lived certificates from the SLCS server.
 
 The SLCS server is a Java web application running on a Tomcat server. It acts as a Shibboleth Service Provider and after a successful client authorization, verify the request and ask the Online CA to sign the certificate signing request (CSR) sent by the client.
 
 2.2. SLCS 3-TIER ARCHITECTURE
 
 The SLCS server is deployed within a 3-tier architecture. The SLCS web application uses a shibbolized Apache HTTPS server as front-end and an Online CA server as back-end.
-
+ 
 The front-end is a Shibboleth Service Provider running on Apache as an authentication module. It is responsible to gather the Shibboleth user's attributes. The user requests are then forwarded to the SLCS web application with mod_jk.
+
 The SLCS server web application runs on Tomcat. It receives the user requests and authorizes them. Authorized requests are then processed. A login request will generate a login response to the client. A certificate request, containing the certificate signing request (CSR) generated by the client, will be verified and the CSR will be send to the Online CA server to be signed. The resulting signed certificate is send back to the client. An administrator web interface is also available to manage the access control lists of the service.
+
 The Online CA receives the verified certificate signing requests from the SLCS server, signs them, and returns a valid signed certificate back to the SLCS server.
+
 
 3. SLCS COMPONENTS REQUIREMENT
 
@@ -77,13 +80,11 @@ To install and configure the SLCS server, you first need to install and configur
 3.1. SHIBBOLETH SERVICE PROVIDER FRONT-END
 
 As Shibboleth doesn't provide a native Java implementation, it is necessary to install an Apache server with a Shibboleth SP module and to configure it for your Shibboleth federation. Using Apache as front-end server requires forwarding the request to the Tomcat server running the SLCS application with the mod_jk module.
-
+ 
 3.1.1. Apache Installation
 
 * Refer to the your OS documentation and Apache online documentation to install and configure the HTTPS (SSL) server.
-
 * Refer to your Shibboleth deployment documentation to install and configure the Shibboleth Service Provider module for your Shibboleth federation.
-
 * Refer to the mod_jk online documentation to install and configure the mod_jk module.
 
 3.1.2. Apache Configuration
@@ -130,15 +131,15 @@ Refer to your OS documentation and the online Tomcat documentation to install th
 
 Once the Tomcat server is installed, you only have to define an AJP connector to receive the requests from the Apache server.
 
-A very minimal Tomcat server.xml configuration file, with only one AJP/1.3 connector defined, is given as example:
+A very minimal Tomcat /etc/tomcat5/server.xml configuration file, with only one AJP/1.3 connector defined, is given as example:
 
 <!-- Tomcat minimal server.xml -->
 <Server port="8005" shutdown="SHUTDOWN">
   <Service name="Catalina">
-
+ 
     <!-- Only the AJP 1.3 connector is available on port 8009 -->
     <Connector port="8009" protocol="AJP/1.3" />
-
+ 
     <Engine name="Catalina" defaultHost="localhost">
       <Host name="localhost" appBase="webapps" />
     </Engine>    
@@ -147,7 +148,9 @@ A very minimal Tomcat server.xml configuration file, with only one AJP/1.3 conne
 
 3.3. CERTIFICATE AUTHORITY BACK-END
 
-A Certificate Authority (CA) must sign the certificate signing requests (CSR) received from the client. Therefore, you need to install and configure an online CA implementing the PKIX-CMC protocol (RFC 2797): The Certificate Management Messages over CMS.
+A Certificate Authority (CA) must sign the certificate signing requests (CSR) received from the client. 
+
+Therefore, you need to install and configure an online CA implementing the PKIX-CMC protocol (RFC 2797): The Certificate Management Messages over CMS.
 
 3.3.1. Online CA Installation and Configuration
 
@@ -158,24 +161,22 @@ In our case, we use a Microsoft Standalone Certificate Server, which implements 
 3.4. SLCS PACKAGE
 
 The SLCS server is available as a package in the EGEE software repository. 
-You can download the latest tar.gz or RPM file directly from:
-http://eticssoft.web.cern.ch/eticssoft/repository/org.glite/org.glite.slcs.server/1.0.0/noarch/
 
-The most current version of the SLCS server can be different than 1.0.0, so please adapt the download directory location as well as the SLCS package name accordingly.
+You can download the latest RPM or tar.gz file directly from: http://eticssoft.web.cern.ch/eticssoft/repository/org.glite/org.glite.slcs.server
+
+The most current version of the SLCS server can be different than 1.1.2, so please adapt the download directory location as well as the SLCS package name accordingly.
 
 3.4.1. glite-slcs-server Package Installation
 
-The SLCS server package glite-slcs-server-1.0.0-2.tar.gz or glite-slcs-server-1.0.0-2.noarch.rpm you have downloaded must be installed under the gLite directory: /opt/glite
+The SLCS server package glite-slcs-server-1.1.2-2.tar.gz or glite-slcs-server-1.1.2-2.noarch.rpm you have downloaded must be installed under the gLite directory: /opt/glite
 
 To install the tar.gz package in the /opt/glite directory, use the following command:
 
-root# tar xvzfC glite-slcs-server-1.0.0-2.tar.gz /opt/glite
-...
+    root# tar xvzfC glite-slcs-server-1.1.2-2.tar.gz /opt/glite
 
 To install the RPM package, use the following command:
 
-root# rpm -Uv glite-slcs-server-1.0.0-2.noarch.rpm
-...
+    root# rpm -Uvh glite-slcs-server-1.1.2-2.noarch.rpm
 
 
 4. SLCS ACCESS CONTROL LISTS
@@ -183,7 +184,6 @@ root# rpm -Uv glite-slcs-server-1.0.0-2.noarch.rpm
 The SLCS server uses access control lists (ACL) to grant access to the users or to the administrators. These ACLs are implemented as servlet filters and use an XML file to describe the access rules. The access rules are based on the Shibboleth attributes of the user.
 
 Each ACL XML file is actively monitored by the ACL filter and will be automatically reloaded by the filter if it is modified.
-
 The administrator web interface of the SLCS server allows administrators to manage the users ACL for the SLCS server.
 
 The ACL servlet filters are configured in the web.xml descriptor of the SLCS web application.
@@ -223,75 +223,69 @@ You can refer to the Tomcat online document for more information on the standard
 4.1. USER ACL
 
 The user ACL protects the /SLCS/login servlet and defines who, based on his Shibboleth attributes, have access to the service.
+The default ACL for the users is defined in the XML file: /opt/glite/etc/glite-slcs-server/acl.xml.
 
-The default ACL for the users is defined in the XML file: 
-/opt/glite/etc/glite-slcs-server/acl.xml.
-
-<ShibbolethAccessControlList>
-
+<ShibbolethAccessControlList> 
+ 
  <!-- group of SWITCH users -->
  <AccessControlRule group="SWITCH" id="1">
-  <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">
-   switch.ch
+  <Attribute name="urn:mace:switch.ch:attribute-
+def:swissEduPersonHomeOrganization">
+   switch.ch 
   </Attribute>
-  <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation">
-   staff
+  <Attribute name="urn:mace:dir:attribute-def:eduPersonAffiliation"> 
+   staff 
   </Attribute>
- </AccessControlRule>
-
- <!-- single ETHZ user -->
+ </AccessControlRule> 
+ 
+ <!-- single ETHZ user --> 
  <AccessControlRule group="ETHZ" id="2">
-  <Attribute name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">
-   ethz.ch
+  <Attribute name="urn:mace:switch.ch:attribute-
+def:swissEduPersonHomeOrganization">
+   ethz.ch 
   </Attribute>
-  <Attribute name="urn:mace:dir:attribute-def:mail">
-   john.doe@ethz.ch
+  <Attribute name="urn:mace:dir:attribute-def:mail"> 
+   john.doe@ethz.ch 
   </Attribute>
- </AccessControlRule>
+ </AccessControlRule> 
 
 </ShibbolethAccessControlList>
 
-This default user ACL shows one rule granting access to every user having the Shibboleth attribute Home Organization equals to switch.ch and the attribute Affiliation equals to staff. 
-
-This rule shows a typical access control rule defining a group of users, based on their attribute Affiliation.
+This default user ACL shows one rule granting access to every user having the Shibboleth attribute Home Organization equals to switch.ch and the attribute Affiliation equals to staff. This rule shows a typical access control rule defining a group of users, based on their attribute Affiliation.
 
 4.2. ADMINISTRATOR ACL
 
 The administrator ACL protects the /SLCS/admin servlet and defines which user can access the administrator web interface as administrator.
 
-The default ACL for the administrators is defined in the XML file: 
-/opt/glite/etc/glite-slcs-server/admin-acl.xml.
+The default ACL for the administrators is defined in the XML file: /opt/glite/etc/glite-slcs-server/admin-acl.xml.
 
 <ShibbolethAccessControlList>
-
- <!-- admin user identified by AAI UniqueID -->
+ 
+ <!-- admin user identified by AAI UniqueID --> 
  <AccessControlRule group="admin" id="1">
   <Attribute 
    name="urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID">
    72983479@switch.ch
   </Attribute>
- </AccessControlRule>
-
- <!-- admin user identified email -->
+ </AccessControlRule> 
+ 
+ <!-- admin user identified email --> 
  <AccessControlRule group="admin" id="2">
   <Attribute 
    name="urn:mace:dir:attribute-def:mail">
    john.doe@ethz.ch
   </Attribute>
- </AccessControlRule>
+ </AccessControlRule> 
 
 </ShibbolethAccessControlList>
 
-This default administrator ACL shows one rule granting access to only one user having the Shibboleth attribute AAI UniqueID equals to 72983479@switch.ch. 
-This is a typical example of an access control rule defining a single user.
-
+This default administrator ACL shows one rule granting access to only one user having the Shibboleth attribute AAI UniqueID equals to 72983479@switch.ch. This is a typical example of an access control rule defining a single user.
 
 5. SLCS SERVER CONFIGURATION
 
 The SLCS server web application is completely configured by an XML file. The different components implementation of the SLCS server are defined in the configuration file and dynamically configured.
 
-The main SLCS server XML configuration file (slcs.xml) is located at:
-/opt/glite/etc/glite-slcs-server/slcs.xml.
+The main SLCS server XML configuration file (slcs.xml) is located at: /opt/glite/etc/glite-slcs-server/slcs.xml.
 
 5.1. ATTRIBUTE DEFINITIONS
 
@@ -300,7 +294,7 @@ As the whole SLCS system is based on Shibboleth user's attributes, you must defi
 The attribute definitions XML file used by the SLCS server must be referenced in the <AttributeDefinitions> filename element of the SLCS configuration file slcs.xml as shown below:
 
 <AttributeDefinitions
-   filename="/opt/glite/etc/glite-slcs-server/slcs/attribute-defs.xml" />
+   filename="/opt/glite/etc/glite-slcs-server/attribute-defs.xml" />
 
 The default attribute definitions XML file attribute-defs.xml defines the attributes name, header and displayName as used by the SLCS server for the SWITCHaai Shibboleth federation. 
 
@@ -325,11 +319,13 @@ The default attribute definitions XML file attribute-defs.xml defines the attrib
   name="urn:mace:dir:attribute-def:mail"
   header="Shib-InetOrgPerson-mail" 
   required="true" 
+  caseSensitive="false"  
   displayName="Email" />
  <AttributeDefinition 
   name="urn:mace:dir:attribute-def:eduPersonAffiliation"
   header="Shib-EP-Affiliation"
-  required="true" 
+  required="true"
+  caseSensitive="false"  
   displayName="Affiliation" />
  <AttributeDefinition
   name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization"
@@ -337,7 +333,8 @@ The default attribute definitions XML file attribute-defs.xml defines the attrib
   required="true"
   displayName="Home Organization" />
  <AttributeDefinition
-  name="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganizationType"
+  name="urn:mace:switch.ch:attribute-
+def:swissEduPersonHomeOrganizationType"
   header="Shib-SwissEP-HomeOrganizationType" 
   required="false"
   displayName="Home Organization Type" />
@@ -351,7 +348,7 @@ Each time a user successfully logs in the SLCS server a new session is created. 
 
 The SLCS server session component's implementation must be defined in the <SLCSSessions> implementation element of the slcs.xml configuration file as shown below:
 
-<SLCSSessions
+<SLCSSessions 
  implementation="org.glite.slcs.session.impl.MemorySessions">
   <SessionTTL>60</SessionTTL>
   <CleaningInterval>30</CleaningInterval>
@@ -360,9 +357,7 @@ The SLCS server session component's implementation must be defined in the <SLCSS
 5.2.1. org.glite.slcs.session.impl.MemorySessions Configuration
 
 The org.glite.slcs.session.impl.MemorySessions plug-in implements the SLCSSessions component and has the following configuration elements:
-
 * Element <SessionTTL>: The lifetime of a session in seconds. A session must live long enough to authorize the certificate request coming after the successful login request (Default: 30 seconds). 
-
 * Element <CleaningInterval>: The interval in second between two session cleaning rounds. The cleaning process removes the expired sessions from memory (Default: 60 seconds).
 
 5.3. DN BUILDER
@@ -374,9 +369,7 @@ The SLCS server DN Builder component's implementation must be defined in the <DN
 <DNBuilder
  implementation="org.glite.slcs.dn.impl.FunctionalPatternBuilder">
  <DNPattern>
-C=CH,
-mappedValue(${urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization}),
-CN=${urn:mace:dir:attribute-def:givenName} ${urn:mace:dir:attribute-def:sn} hashValue(${urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID})
+C=CH,mappedValue(${urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization}),CN=${urn:mace:dir:attribute-def:givenName} ${urn:mace:dir:attribute-def:sn} hashValue(${urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID})
   </DNPattern>
  <MappedValues
   attributeName="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">
@@ -393,19 +386,17 @@ With this example configuration, the DN builder will return the DN: C=CH,O=Switc
 
 5.3.1. org.glite.slcs.dn.impl.FunctionalPatternBuilder Configuration
 
-The org.glite.slcs.dn.impl.FunctionalPatternBuilder plug-in implements the SLCS <DNBuilder> component. 
+The org.glite.slcs.dn.impl.FunctionalPatternBuilder plug-in implements the SLCS <DNBuilder> component.
 
 The FunctionalPatternBuilder implementation has the following configuration elements and functionalities:
-
 * Element <DNPattern>: Defines the pattern to create the certificate subject based on the user's attributes. In the pattern you can use variables in the form ${attributeName} or the hashValue(${attributeName}) and mappedValue(${attributeName}) functions.
-  o Variables: You can include variable in the form ${attributeName}. The variable will be evaluated and replaced with the attribute value for this attribute name.
-  o Function hashValue(): The function hashValue(${attributeName}) returns the hexadecimal hash code of the attribute value for the given attribute name. 
-  o Function mappedValue(): The function mappedValue(${attributeName}) returns the value mapped in the <MappedValues> element table corresponding to the given attribute name. If no mapping is found for this attribute name in the mapping table, the simple attribute value is returned.
-
+    o Variables: You can include variable in the form ${attributeName}. The variable will be evaluated and replaced with the attribute value for this attribute name.
+    o Function hashValue(): The function hashValue(${attributeName}) returns the hexadecimal hash code of the attribute value for the given attribute name. 
+    o Function mappedValue(): The function mappedValue(${attributeName}) returns the value mapped in the <MappedValues> element table corresponding to the given attribute name. If no mapping is found for this attribute name in the mapping table, the simple attribute value is returned.
 * Element <MappedValues>: Defines a mapping table for a specific attribute name and used by the function mappedValue(). This table contains one or many <MappedValue> elements defining the string to be returned for the mapped the attribute value.
-  o Sub element <MappedValue>: Defines the string that will map and replace the given attribute value.
-
-If an evaluated attribute value contains special or accentuated characters, their corresponding ASCII equivalent substitutes them.
+    o Sub element <MappedValue>: Defines the string that will map and replace the given attribute value.
+    
+If an evaluated attribute value contains special or accentuated characters, their corresponding ASCII equivalent substitutes them. In example, the attribute value àéûö will be substituted by aeuo.
 
 5.4. CERTIFICATE POLICY
 
@@ -413,46 +404,45 @@ It is possible to define a certificate policy for the certificate to be requeste
 
 The SLCS server Certificate Policy component's implementation must be defined in the <CertificatePolicy> implementation element of the of the slcs.xml configuration file as shown below:
 
-<CertificatePolicy
+<CertificatePolicy 
  implementation="org.glite.slcs.policy.impl.SWITCHSLCSCertificatePolicy">
   <CertificateExtensions>
-    <CertificateExtension id="KeyUsage" critical="true">
+    <CertificateExtension id="KeyUsage" critical="true"> 
       DigitalSignature,KeyEncipherment
     </CertificateExtension>
-    <CertificateExtension id="SubjectAltName" critical="false">
-      email:${urn:mace:dir:attribute-def:mail}
+    <CertificateExtension id="SubjectAltName" critical="false"> 
+      email:${urn:mace:dir:attribute-def:mail} 
     </CertificateExtension>
-    <CertificateExtension id="CertificatePolicies" critical="false">
-      2.16.756.1.2.6.4.1.0
+    <CertificateExtension id="CertificatePolicies" critical="false"> 
+      2.16.756.1.2.6.4.1.0 
     </CertificateExtension>
-    <CertificateExtension id="ExtendedKeyUsage" critical="false">
-      ClientAuth
+    <CertificateExtension id="ExtendedKeyUsage" critical="false"> 
+      ClientAuth 
     </CertificateExtension>
   </CertificateExtensions>
 </CertificatePolicy>
 
 In this example, all certificates requested by the clients, must include only and exactly the following certificate extensions: 
-
 * Key Usage: DigitalSignature and KeyEncipherment.
-* Subject Alternative Name: email:john.doe@ethz.ch. 
+* Subject Alternative Name: email:john.doe@ethz.ch.  
 Notice the use of the variable ${urn:mace:dir:attribute-def:mail}, which will be expanded and replaced by the Email attribute value of the user.
 * Certificate Policies: 2.16.756.1.2.6.4.1.0. The OID of the SWITCH SLCS CA CP/CPS.
 * Extended Key Usage: ClientAuth. Enable client authentication.
 
 5.4.1. org.glite.slcs.policy.impl.SWITCHSLCSCertificatePolicy Configuration
 
-The org.glite.slcs.policy.impl.SWITCHSLCSCertificatePolicy plug-in implements the SLCS <CertificatePolicy> component. 
+The org.glite.slcs.policy.impl.SWITCHSLCSCertificatePolicy plug-in implements the SLCS <CertificatePolicy> component.
 
 The SWITCHSLCSCertificatePolicy implementation checks that the certificate request sent by the client correctly contains every defined certificate extensions. It has the following configuration elements:
-
 * Element <CertificateExtensions>: Defines the list of the <CertificateExtension> elements to be included and checked in every certificate requests received by the client.
-  o Sub element <CertificateExtension>: Defines a certificate extension for the certificate request. The extension is identified by an id and is not critical by default. The available extension id and value(s) are the following:
-    * Id KeyUsage: The key usage extension can have one or more values, separated by comma:
-      * KeyUsage values: DigitalSignature, NonRepudiation, KeyEncipherment, DataEncipherment, KeyAgreement, KeyCertSign, CRLSign, EncipherOnly and DecipherOnly. 
-    * Id ExtendedKeyUsage: The extended key usage extension can have one or more values, separated by comma: 
-      * ExtendedKeyUsage values: AnyExtendedKeyUsage, ServerAuth, ClientAuth, CodeSigning, EmailProtection, IPSecEndSystem, IPSecTunnel, IPSecUser, OCSPSigning and Smartcardlogon.
-   * Id CertificatePolicies: The certificate policies extension can have one or more values, separated by comma. The values are typically the OID of the corresponding CP/CPS.
-   * Id SubjectAltName: The subject alternative name extension can have one or more values, separated by comma. The values must be prefixed by the alternative name type (email: or dns:) and can include an attribute variable in the form ${attribute-name}, which will be dynamically replaced by the corresponding attribute value for the user. Example: email:${urn:mace:dir:attribute-def:mail} or dns:www.example.com
+    o Sub element <CertificateExtension>: Defines a certificate extension for the certificate request. The extension is identified by an id and is not critical by default. The available extension id and value(s) are the following:
+        - Id KeyUsage: The key usage extension can have one or more values, separated by comma:
+            + KeyUsage values: DigitalSignature, NonRepudiation, KeyEncipherment, DataEncipherment, KeyAgreement, KeyCertSign, CRLSign, EncipherOnly and DecipherOnly. 
+        - Id ExtendedKeyUsage: The extended key usage extension can have one or more values, separated by comma: 
+            + ExtendedKeyUsage values: AnyExtendedKeyUsage, ServerAuth, ClientAuth, CodeSigning, EmailProtection, IPSecEndSystem, IPSecTunnel, IPSecUser, OCSPSigning and Smartcardlogon.
+        - Id CertificatePolicies: The certificate policies extension can have one or more values, separated by comma. The values are typically the OID of the corresponding CP/CPS.
+        - Id SubjectAltName: The subject alternative name extension can have one or more values, separated by comma. The values must be prefixed by the alternative name type (email: or dns:) and can include an attribute variable in the form ${attribute-name}, which will be dynamically replaced by the corresponding attribute value for the user.  Example: email:${urn:mace:dir:attribute-def:mail} or dns:www.example.com
+
 
 5.5. ONLINE CA CLIENT
 
@@ -469,7 +459,7 @@ The SLCS server CA client component's implementation must be defined in the <CAC
   </KeyStoreFile>
   <KeyStorePassword>switchgrid</KeyStorePassword>
   <TrustStoreFile>
-    /opt/glite/etc/glite-slcs-server/truststore.swisssignca.jks
+    /opt/glite/etc/glite-slcs-server/truststore.cmc.jks
   </TrustStoreFile> 
 </CAClient>
 
@@ -481,21 +471,25 @@ The Java key store and trust store can be managed with the Java keytool command.
 
 The org.glite.slcs.caclient.impl.CMCClient  is plug-in for the SLCS server <CAClient> component.
 
-The CMCClient implements the PKIX-CMC (RFC 2797: Certificate Management protocol using CMS) over HTTPS and can submit certificate signing requests to the online CA server. The implementation has the following configuration elements:
+The CMCClient implements the PKIX-CMC (RFC 2797: Certificate Management protocol using CMS) over HTTPS and can submit certificate signing requests to the online CA server. 
 
+The implementation has the following configuration elements:
 * Element <CAUrl>: The online CA server endpoint URL to submit the PKIX-CMC signing request. This URL requires usually a HTTPS protocol.
-
 * Element <KeyStoreFile>: The Java key store file containing the client private key and certificate used for the HTTPS client authentication.
-
 * Element <KeyStorePassword>: The password of the Java key store and private key. The key store must have the same password as the private key.
-
 * Element <TrustStoreFile>: The Java trust store file containing the online CA server certificate or the certificate of its authority. This certificate is validated when the HTTPS connection is established.
 
 Please refer to your online CA server documentation to determine which client and server certificate to specify for the client authentication and the HTTPS validation.
 
+5.5.1.1. Java Key Stores
+
+The Java key and trust store files can be manage with the Java keytool command. The keytool command allows you to create the key store for the HTTPS client authentication and to import the online CA server certificate in the trust store.
+
+Please refer to the Java documentation for more information on the keytool command and on the key store files.
+
 5.6. ACL GROUPS MANAGER
 
-Administrators can use the web interface to manage their user ACL rules and grant access to the service. As the user ACL rules are organized in groups, each administrator must belong to one or more ACL groups.
+Administrators can use the web interface to manage their user ACL rules and grant access to the service. As the user ACL rules are organized in groups, each administrator must belong to one or more ACL groups. 
 
 An administrator can only manage the ACL rules of the groups he belongs to; meanwhile, a special group exist to define the administrator of all the administrators. Each administrator member of this super administrator group can manage all the existing user ACL rules.
 
@@ -514,16 +508,14 @@ The SLCS server Group Manager component's implementation must be defined in the 
   </GroupsFileMonitoringInterval>
 </GroupManager>
 
+
 5.6.1. org.glite.slcs.group.impl.XMLFileGroupManager Configuration
 
 The org.glite.slcs.group.impl.XMLFileGroupManager plug-in implements the SLCS <GroupManager> component for XML ACL group file. 
 
 The XMLFileGroupManager implementation has the following configuration elements and functionalities:
-
 * Element <AdministratorGroup>: Defines the special super administrator group name. Each administrator member of this group can manage all the existing user ACL groups.
-
 * Element <GroupsFile>: The absolute location of the XML groups file.
-
 * Element <GroupsFileMonitoringInterval>: The interval in seconds between two checks for a file modification. If the XML groups file is modified, it will be automatically reloaded by the SLCS server (Default: 600 seconds).
 
 5.6.1.1. XML ACL Groups File
@@ -573,9 +565,8 @@ The default XML ACL Groups file is located at: /opt/glite/etc/glite-slcs-server/
  </Group>
 </Groups>
 
-In this example, the administrator with the attribute AAI UniqueID as 112358@switch.ch is the super administrator, because he is member of the admin group. 
+In this example, the administrator with the attribute AAI UniqueID as 112358@switch.ch is the super administrator, because he is member of the admin group. Two other ACL groups are defined and both contain attribute constraint for the ACL rules. For example the ACL group SWITCH defines administrator membership for all administrators having the attribute Affiliation as staff. And, because of the rule constraint defined, if an administrator creates a new ACL rule in this group, it will automatically include the attribute Home Organization as switch.ch.
 
-Two other ACL groups are defined and both contain attribute constraint for the ACL rules. For example the ACL group SWITCH defines administrator membership for all administrators having the attribute Affiliation as staff. And, because of the rule constraint defined, if an administrator creates a new ACL rule in this group, it will automatically include the attribute Home Organization as switch.ch.
 
 5.7. ACL EDITOR ENGINE
 
@@ -593,17 +584,17 @@ The SLCS server ACL Editor engine implementation must be defined in the <AccessC
   </AdminACLFile>
 </AccessControlListEditor>
 
+
 5.7.1. org.glite.slcs.acl.impl.XMLFileAccessControlListEditor Configuration
 
 The org.glite.slcs.acl.impl.XMLFileAccessControlListEditor engine implements the SLCS server <AccessControlListEditor> component for the underlying XML based ACL files. 
 
 It has the following configuration elements:
-
 * Element <ACLFile>: Absolute location of the XML user ACL file. This file location must be the same as the one used by the user ACL filter in the web.xml descriptor. 
-
 * Element <AdminACLFile>: Absolute location of the XML admin ACL file. This file location must be the same as the one used by the admin ACL filter in the web.xml descriptor. 
 
 When administrators create, edit or delete an existing ACL rule, the edition engine modifies and stores the corresponding XML file. If the file was modified, the ACL filter will automatically reload it.
+
 
 5.8. AUDITOR
 
@@ -618,26 +609,36 @@ The SLCS server audit component must be defined in the <Auditor> element of the 
   <Password>slcs</Password>
 </Auditor>
 
-5.8.1. org.glite.slcs.audit.impl.DatabaseAuditor Configuration 
+
+5.8.1. Create the MySQL Database
+
+If you use the DatabaseAuditor plug-in then you must have a MySQL server running and create the necessary SLCS audit tables.
+
+To create the database and the table use the SQL script as follow:
+
+root# mysql < /opt/glite/etc/glite-slcs-server/create-slcs-db.sql
+
+This script creates the slcs database, the slcs user and the necessary tables.
+
+
+5.8.2. org.glite.slcs.audit.impl.DatabaseAuditor Configuration 
 
 The org.glite.slcs.audit.impl.DatabaseAuditor plug-in implements the SLCS server Auditor component. It uses a SQL database to store the audit events.
+
 The DatabaseAuditor has the following configuration elements:
-
 * Element <JDBCDriver>: The Java class name of the JDBC driver used to connect to the database. The SLCS server dynamically loads the JDBC driver.
-
 * Element <ConnectionUrl>: The JDBC connection URL to connect to the database and table. Please refer to the JDBC driver documentation for the connection URL configuration.
-
 * Element <User>: The username for the JDBC connection to the database.
-
 * Element <Password>: The password of the user for the JDBC connection to the database.
 
 You will find more information on the JDBC configuration in your JDBC driver documentation.
 
+
 5.9. LOGGING
 
-The SLCS server is using the commons-logging and Log4J frameworks for the logging. By default all the logging information for the SLCS server is store in: /opt/glite/var/log/glite-slcs-server.log
+The SLCS server is using the Log4J frameworks for the logging. By default all the logging information for the SLCS server is store in: /opt/glite/var/log/glite-slcs-server.log
 
-Once the web application is deployed, you can modify the logging configuration. The configuration of the logging is fully defined in the Log4J XML configuration file:  $TOMCAT_HOME/webapps/SLCS/WEB-INF/classes/log4j.xml
+The configuration of the logging is fully defined in the Log4J XML configuration file: /opt/glite/etc/glite-slcs-server/log4j.xml
 
 You must restart the web application if you have modified the logging configuration.
 
@@ -654,32 +655,83 @@ Given that the Tomcat server is running under user tomcat, you must set read per
 
 You can use the following commands to set the correct file and directory permissions for the user tomcat:
 
-root# chown -R tomcat /opt/glite/etc/glite-slcs-server
-root# chmod o+rw /opt/glite/etc/glite-slcs-server/*acl.xml
-root# chown tomcat /opt/glite/var/log/glite-slcs-server.log
+root# chown ÐR tomcat /opt/glite/etc/glite-slcs-server
+root# chmod o+rw /opt/glite/etc/glite-slcs-server/*acl.xml 
+root# chown tomcat /opt/glite/var/log/glite-slcs-server.log 
 root# chmod o+rw /opt/glite/var/log/glite-slcs-server.log
 
 If you have modified the default configuration you must adapt theses commands to the directories and files you chose.
 
 6.2. DEPLOY SLCS CONTEXT
 
-Deploying the SLCS web application only requires to copy the /opt/glite/etc/glite-slcs-server/context.xml file into the $TOMCAT/conf/Catalina/localhost directory with the correct context name. 
+Deploying the SLCS web application requires to copy the web application context file /opt/glite/etc/glite-slcs-server/context.xml into the /etc/tomcat5/Catalina/localhost directory with the correct context name.
 
 To deploy the SLCS web application under the context root /SLCS use the following command:
 
-root# cp /opt/glite/etc/glite-slcs-server/context.xml 
-$TOMCAT/conf/Catalina/localhost/SLCS.xml
+root# cp /opt/glite/etc/glite-slcs-server/context.xml \ 
+         /etc/tomcat5/Catalina/localhost/SLCS.xml
 
 Depending on your Tomcat configuration, you should perhaps restart the Tomcat server the first time you deploy the SLCS web application.
 
 6.3. TEST THE INSTALLATION
 
-To test the SLCS server installation and deployment, open your favourite web browser at: https://<HOSTNAME>/SLCS
+To test the SLCS server installation and deployment, open your favourite web browser at:
+
+    https://<HOSTNAME>/SLCS/
+
+You can also test the SLCS web administration tool at:
+
+    https://<HOSTNAME>/SLCS/admin
 
 
 7. ANNEXE
 
-7.1. SLCS WEB APPLICATION DESCRIPTOR: web.xml
+7.1. SLCS WEB APPLICATION CONTEXT DESCRIPTOR: SLCS.XML
+
+<!--
+IMPORTANT NOTICE: 
+These context parameters override the <context-param> elements from the 
+web application: WEB-INF/web.xml file.
+-->
+<Context 
+  docBase="/opt/glite/share/webapps/glite-slcs-server.war"
+  reloadable="true"
+  debug="0">
+
+  <!--
+  Context parameter: 
+  absolute location of the SLCS server configuration file 
+  -->
+  <Parameter 
+     name="SLCSServerConfigurationFile"
+     value="/opt/glite/etc/glite-slcs-server/slcs.xml"
+     override="false"
+     type="java.lang.String"/>
+
+  <!--
+  Context parameter: absolute location of the log4j configuration file 
+  -->
+  <Parameter 
+     name="Log4JConfigurationFile"
+     value="/opt/glite/etc/glite-slcs-server/log4j.xml"
+     override="false"
+     type="java.lang.String"/>
+
+  <!-- 
+  Context parameter: absolute location of the AttributeDefinitions file 
+  -->
+  <Parameter 
+     name="AttributeDefinitionsFile"
+     value="/opt/glite/etc/glite-slcs-server/attribute-defs.xml"
+     override="false"
+     type="java.lang.String"/>
+
+</Context>
+
+
+7.2. SLCS WEB APPLICATION DESCRIPTOR: WEB.XML
+
+SCLS web application descriptor: WEB-INF/web.xml
 
 <web-app 
  id="SLCS"
@@ -688,74 +740,69 @@ To test the SLCS server installation and deployment, open your favourite web bro
   <display-name>Short Lived Credential Service</display-name>
     
   <!-- SLCS Server Configuration -->
+  <!-- IMPORTANT NOTICE: 
+       the <context-param/> elements are overridden by the XML 
+       context file
+         /etc/tomcat5/Catalina/localhost/SLCS.xml
+  -->
   <context-param>
+    <!-- SLCSServerConfigurationFile: absolute filename -->
     <param-name>SLCSServerConfigurationFile</param-name>
     <param-value>/opt/glite/etc/glite-slcs-server/slcs.xml</param-value>
   </context-param>
-
+  <context-param>
+    <!-- Log4JConfigurationFile: absolute filename -->
+    <param-name>Log4JConfigurationFile</param-name>
+    <param-value>/opt/glite/etc/glite-slcs-server/log4j.xml</param-value>
+  </context-param>
+  <context-param>
+    <!-- AttributeDefinitonsFile: absolute filename -->
+    <param-name>AttributeDefinitionsFile</param-name>
+    <param-value>/opt/glite/etc/glite-slcs-server/attribute-defs.xml</param-value>
+  </context-param> 
+ 
   <!-- Shibboleth Authorization Filter -->
   <filter>
     <filter-name>LoginAuthorizationFilter</filter-name>
-    <filter-class>
-org.glite.slcs.filter.AttributesAuthorizationFilter
-    </filter-class>
+    <filter-class>org.glite.slcs.filter.AttributesAuthorizationFilter</filter-class>
     <!-- MANDATORY ACLImplementation: class name of implementation -->
     <init-param>
       <param-name>ACLImplementation</param-name>
-      <param-value>
-org.glite.slcs.acl.impl.XMLFileAccessControlList
-      </param-value>
+      <param-value>org.glite.slcs.acl.impl.XMLFileAccessControlList</param-value>
     </init-param>
     <!-- MANDATORY ACLFile: REQUIRED(filename) for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
     <init-param>
       <param-name>ACLFile</param-name>
       <param-value>/opt/glite/etc/glite-slcs-server/acl.xml</param-value>
     </init-param>
-    <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
+    <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, 
+the ACLFile will be monitored and reload on a file change -->
     <init-param>
       <param-name>ACLFileMonitoringInterval</param-name>
       <!-- 1 min = 60 sec -->
       <param-value>60</param-value>
     </init-param>
-    <!-- MANDATORY: AttributeDefintions XML filename -->
-    <init-param>
-      <param-name>AttributeDefinitions</param-name>
-      <param-value>
-/opt/glite/etc/glite-slcs-server/attribute-defs.xml
-      </param-value>
-    </init-param>
   </filter>
 
   <filter>
     <filter-name>AdminAuthorizationFilter</filter-name>
-    <filter-class>
-org.glite.slcs.filter.AttributesAuthorizationFilter
-    </filter-class>
+    <filter-class>org.glite.slcs.filter.AttributesAuthorizationFilter</filter-class>
     <!-- MANDATORY ACLImplementation: class name of implementation -->
     <init-param>
       <param-name>ACLImplementation</param-name>
-      <param-value>
-org.glite.slcs.acl.impl.XMLFileAccessControlList
-      </param-value>
+      <param-value>org.glite.slcs.acl.impl.XMLFileAccessControlList</param-value>
     </init-param>
-    <!-- MANDATORY ACLFile: REQUIRED for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
+    <!-- MANDATORY ACLFile: REQUIRED for 
+org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
     <init-param>
       <param-name>ACLFile</param-name>
-      <param-value>
-/opt/glite/etc/glite-slcs-server/admin-acl.xml
-      </param-value>
+      <param-value>/opt/glite/etc/glite-slcs-server/admin-acl.xml</param-value>
     </init-param>
-    <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
+    <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, 
+the ACLFile will be monitored and reload on a file change -->
     <init-param>
       <param-name>ACLFileMonitoringInterval</param-name>
       <param-value>300</param-value>
-    </init-param>
-    <!-- MANDATORY: AttributeDefintions XML filename -->
-    <init-param>
-      <param-name>AttributeDefinitions</param-name>
-      <param-value>
-/opt/glite/etc/glite-slcs-server/attribute-defs.xml
-      </param-value>
     </init-param>
   </filter>
     
@@ -772,7 +819,7 @@ org.glite.slcs.acl.impl.XMLFileAccessControlList
   </filter-mapping>
 
 
-  <!-- Servlets -->
+  <!-- Servlets --> 
   <!-- SLCS login -->
   <servlet>
     <display-name>SLCS Login</display-name>
@@ -821,14 +868,15 @@ org.glite.slcs.acl.impl.XMLFileAccessControlList
 
 </web-app>
 
+7.3. SLCS SERVER CONFIGURATION FILE: SLCS.XML
 
-7.2. SLCS SERVER CONFIGURATION FILE: slcs.xml
+SLCS configuration file: /opt/glite/etc/glite-slcs-server/slcs.xml
 
 <SLCSServerConfiguration>
 
   <!-- Shibboleth Attribute Definitions for SWITCHaai -->
   <AttributeDefinitions
-   filename="/opt/glite/etc/glite-slcs-server/slcs/attribute-defs.xml"/>
+   filename="/opt/glite/etc/glite-slcs-server/attribute-defs.xml"/>
 
   <!-- SLCS Server Components Configuration -->
   <SLCSComponentsConfiguration>
@@ -841,52 +889,22 @@ org.glite.slcs.acl.impl.XMLFileAccessControlList
 
     <DNBuilder 
      implementation="org.glite.slcs.dn.impl.FunctionalPatternBuilder">
-      <DNPattern>
-DC=ch,DC=switch,DC=slcs,mappedValue(${urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization}),CN=${urn:mace:dir:attribute-def:givenName} ${urn:mace:dir:attribute-def:sn} hashValue(${urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID})
-      </DNPattern>
+      <DNPattern>DC=ch,DC=switch,DC=slcs,mappedValue(${urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization}),CN=${urn:mace:dir:attribute-def:givenName} ${urn:mace:dir:attribute-def:sn} hashValue(${urn:mace:switch.ch:attribute-def:swissEduPersonUniqueID})      </DNPattern>
       <MappedValues attributeName="urn:mace:switch.ch:attribute-def:swissEduPersonHomeOrganization">
-         <MappedValue attributeValue="switch.ch">
-O=Switch - Teleinformatikdienste fuer Lehre und Forschung
-         </MappedValue>
-         <MappedValue attributeValue="vho-switchaai.ch">
-OU=SWITCHaai Virtual Home Organization
-         </MappedValue>
-         <MappedValue attributeValue="ethz.ch">
-O=ETH Zuerich
-         </MappedValue>
-         <MappedValue attributeValue="epfl.ch">
-O=Ecole polytechnique federale de Lausanne (EPFL)
-         </MappedValue>
-         <MappedValue attributeValue="unibas.ch">
-O=Universitaet Basel
-         </MappedValue>
-         <MappedValue attributeValue="unibe.ch">
-O=Universitaet Bern
-         </MappedValue>
-         <MappedValue attributeValue="unifr.ch">
-O=Universite de Fribourg
-         </MappedValue>
-         <MappedValue attributeValue="unige.ch">
-O=Universite de Geneve
-         </MappedValue>
-         <MappedValue attributeValue="unil.ch">
-O=Universite de Lausanne
-         </MappedValue>
-         <MappedValue attributeValue="unilu.ch">
-O=Universitaet Luzern
-         </MappedValue>
-         <MappedValue attributeValue="unine.ch">
-O=Universite de Neuchatel
-         </MappedValue>
-         <MappedValue attributeValue="unisg.ch">
-O=Universitaet St. Gallen
-         </MappedValue>
-         <MappedValue attributeValue="unisi.ch">
-O=Universita della Svizzera Italiana
-         </MappedValue>
-         <MappedValue attributeValue="unizh.ch">
-O=Universitaet Zuerich
-         </MappedValue>
+         <MappedValue attributeValue="switch.ch">O=Switch - Teleinformatikdienste fuer Lehre und Forschung</MappedValue>
+         <MappedValue attributeValue="vho-switchaai.ch">OU=SWITCHaai Virtual Home Organization</MappedValue>
+         <MappedValue attributeValue="ethz.ch">O=ETH Zuerich</MappedValue>
+         <MappedValue attributeValue="epfl.ch">O=Ecole polytechnique federale de Lausanne (EPFL)</MappedValue>
+         <MappedValue attributeValue="unibas.ch">O=Universitaet Basel</MappedValue>
+         <MappedValue attributeValue="unibe.ch">O=Universitaet Bern</MappedValue>
+         <MappedValue attributeValue="unifr.ch">O=Universite de Fribourg</MappedValue>
+         <MappedValue attributeValue="unige.ch">O=Universite de Geneve</MappedValue>
+         <MappedValue attributeValue="unil.ch">O=Universite de Lausanne</MappedValue>
+         <MappedValue attributeValue="unilu.ch">O=Universitaet Luzern</MappedValue>
+         <MappedValue attributeValue="unine.ch">O=Universite de Neuchatel</MappedValue>
+         <MappedValue attributeValue="unisg.ch">O=Universitaet St. Gallen</MappedValue>
+         <MappedValue attributeValue="unisi.ch">O=Universita della Svizzera Italiana</MappedValue>
+         <MappedValue attributeValue="unizh.ch">O=Universitaet Zuerich</MappedValue>
        </MappedValues>
      </DNBuilder>
 
@@ -926,19 +944,13 @@ ClientAuth
      </Auditor>
         
      <AccessControlListEditor implementation="org.glite.slcs.acl.impl.XMLFileAccessControlListEditor">
-       <ACLFile>
-/opt/glite/etc/glite-slcs-server/acl.xml
-       </ACLFile>
-       <AdminACLFile>
-/opt/glite/etc/glite-slcs-server/admin-acl.xml
-       </AdminACLFile>
+       <ACLFile>/opt/glite/etc/glite-slcs-server/acl.xml</ACLFile>
+       <AdminACLFile>/opt/glite/etc/glite-slcs-server/admin-acl.xml</AdminACLFile>
      </AccessControlListEditor>
 
      <GroupManager implementation="org.glite.slcs.group.impl.XMLFileGroupManager">
        <AdministratorGroup>admin</AdministratorGroup>
-       <GroupsFile>
-/opt/glite/etc/glite-slcs-server/admin-groups.xml
-       </GroupsFile>
+       <GroupsFile>/opt/glite/etc/glite-slcs-server/admin-groups.xml</GroupsFile>
        <GroupsFileMonitoringInterval>600</GroupsFileMonitoringInterval>
      </GroupManager>
 
@@ -946,5 +958,15 @@ ClientAuth
 
 </SLCSServerConfiguration>
 
--- 
-$Id: INSTALL,v 1.1 2007/08/29 15:51:07 vtschopp Exp $
+
+EGEE-II INFSO-RI-031688
+© Members of EGEE-II collaboration
+PUBLIC 
+30 / 30
+
+SHORT LIVED CREDENTIAL SERVICE
+Server Administrator Manual
+Doc. Identifier: EGEE-II-JRA1-TEC-862731-SLCS-SERVER-MANUAL-v1-1.doc
+
+Date: 13.11.2007 
+
