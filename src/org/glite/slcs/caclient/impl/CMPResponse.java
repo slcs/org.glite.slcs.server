@@ -1,5 +1,5 @@
 /**
- * $Id: CMPResponse.java,v 1.1 2007/11/16 10:10:39 mikkonen Exp $
+ * $Id: CMPResponse.java,v 1.2 2007/11/16 15:03:15 mikkonen Exp $
  *
  * Created on 11/07/2007 by Henri Mikkonen <henri.mikkonen@hip.fi>
  *
@@ -52,52 +52,52 @@ public class CMPResponse implements CAResponse {
      * @param cmpServerPost the <code>PostMethod</code> to be released
      * @throws CMPException
      */
-	protected CMPResponse(InputStream input, PostMethod cmpServerPost) throws CMPException {
-		if (input == null) {
-			log.error("No input for the response!");
-		} else {
-			try {
-				this.pkiMessage = PKIMessage.getInstance(new ASN1InputStream(input).readObject());
-			} catch (IOException e) {
-				log.error("Error while creating PKIMessage object! " + e.getMessage());
-				throw new CMPException(e);
-			} finally {
-				cmpServerPost.releaseConnection();
-			}
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.glite.slcs.caclient.CAResponse#getCertificate(java.security.Principal)
-	 */
-	public Certificate getCertificate(Principal principal) throws CMPException, SLCSException {
-		CertRepMessage certRepMessage = this.pkiMessage.getBody().getCp();
-		// Get the first message in the chain
-		CertResponse certResp = certRepMessage.getResponse(0);
-		if (certResp == null) {
-			log.error("No certificates found from the response!");
-			return null;
-		}
-		X509CertificateStructure certSt = certResp.getCertifiedKeyPair().getCertOrEncCert().getCertificate();
-		X509CertificateObject certObject = null;
-		try {
-			// generate the certificate object
-			certObject = new X509CertificateObject(certSt);
-		} catch (Exception e) {
-			log.error("Error while creating certObject: " + e);
-			throw new CMPException(e);
-		}
-		if (certObject.getSubjectDN().equals(principal)) {
-			log.info("The certificate subject matched with the requested one.");
-			X509Certificate cert = (X509Certificate)certObject;
-			try {
-				return new Certificate(cert);
-			} catch (GeneralSecurityException e) {
-				throw new SLCSException(e);
-			}
-		} else {
-			log.warn("The certificate subject did NOT match with the requested one!");
-			return null;
-		}
-	}
+    protected CMPResponse(InputStream input, PostMethod cmpServerPost) throws CMPException {
+        if (input == null) {
+            log.error("No input for the response!");
+        } else {
+            try {
+                this.pkiMessage = PKIMessage.getInstance(new ASN1InputStream(input).readObject());
+            } catch (IOException e) {
+                log.error("Error while creating PKIMessage object! " + e.getMessage());
+                throw new CMPException(e);
+            } finally {
+                cmpServerPost.releaseConnection();
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.glite.slcs.caclient.CAResponse#getCertificate(java.security.Principal)
+     */
+    public Certificate getCertificate(Principal principal) throws CMPException, SLCSException {
+        CertRepMessage certRepMessage = this.pkiMessage.getBody().getCp();
+        // Get the first message in the chain
+        CertResponse certResp = certRepMessage.getResponse(0);
+        if (certResp == null) {
+            log.error("No certificates found from the response!");
+            return null;
+        }
+        X509CertificateStructure certSt = certResp.getCertifiedKeyPair().getCertOrEncCert().getCertificate();
+        X509CertificateObject certObject = null;
+        try {
+            // generate the certificate object
+            certObject = new X509CertificateObject(certSt);
+        } catch (Exception e) {
+            log.error("Error while creating certObject: " + e);
+            throw new CMPException(e);
+        }
+        if (certObject.getSubjectDN().equals(principal)) {
+            log.info("The certificate subject matched with the requested one.");
+            X509Certificate cert = (X509Certificate)certObject;
+            try {
+                return new Certificate(cert);
+            } catch (GeneralSecurityException e) {
+                throw new SLCSException(e);
+            }
+        } else {
+            log.warn("The certificate subject did NOT match with the requested one!");
+            return null;
+        }
+    }
 }

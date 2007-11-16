@@ -1,5 +1,5 @@
 /**
- * $Id: CMPException.java,v 1.1 2007/11/16 10:10:39 mikkonen Exp $
+ * $Id: CMPException.java,v 1.2 2007/11/16 15:03:15 mikkonen Exp $
  *
  * Created on 11/07/2007 by Henri Mikkonen <henri.mikkonen@hip.fi>
  *
@@ -18,12 +18,12 @@ import org.glite.slcs.SLCSException;
  */
 public class CMPException extends SLCSException {
 
-	private static final long serialVersionUID = -1038235987633255148L;
+    private static final long serialVersionUID = -1038235987633255148L;
 
     /*
      * Constructs a <code>CMPException</code>
      */
-	public CMPException() {
+    public CMPException() {
         super();
     }
 
@@ -31,7 +31,7 @@ public class CMPException extends SLCSException {
      * Constructs a <code>CMPException</code>
      * @param str
      */
-	public CMPException(String str) {
+    public CMPException(String str) {
         super(str);
     }
 
