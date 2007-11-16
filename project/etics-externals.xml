@@ -19,7 +19,7 @@
     ETICS externals dependencies definition
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: etics-externals.xml,v 1.7 2007/07/23 09:18:24 vtschopp Exp $
+    Version: $Id: etics-externals.xml,v 1.8 2007/11/16 10:11:02 vtschopp Exp $
 -->
 <project name="etics-externals">
 
@@ -215,6 +215,13 @@
         <include name="**/servlet-api.jar" />
     </define-ext-path>
 
+    <!-- novosec-bc-ext -->
+    <define-ext-dir external="ext.novosec-bc-ext" />
+    <define-ext-path external="ext.novosec-bc-ext">
+        <include name="**/*.jar" />
+    </define-ext-path>
+
+
     <!-- ========================================================
          TARGET
          ======================================================== -->
@@ -235,6 +242,7 @@
         <download-ext external="ext.log4j" />
         <download-ext external="ext.mysql-jdbc" />
         <download-ext external="ext.tomcat" />
+        <download-ext external="ext.novosec-bc-ext" />
     </target>
 
 </project>
