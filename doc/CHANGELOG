@@ -1,3 +1,7 @@
+Version 1.3.0
+-------------
+* New CMPClient compatible with an EJBCA online CA server added.
+
 Version 1.1.2
 -------------
 * Database SQL script updated.
@@ -23,4 +27,4 @@ Version 1.0.0
 * Initial release of the SLCS server
 
 --
-$Id: CHANGELOG,v 1.6 2007/11/15 10:02:40 vtschopp Exp $
+$Id: CHANGELOG,v 1.7 2007/11/16 10:24:37 vtschopp Exp $
