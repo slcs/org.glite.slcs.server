@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.16 2007/11/13 14:41:34 vtschopp Exp $
+    Version: $Id: build.xml,v 1.17 2007/11/16 10:13:07 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -72,6 +72,7 @@
             <path refid="ext.commons-logging.path"/>
             <path refid="ext.log4j.path"/>
             <path refid="ext.tomcat.path"/>
+            <path refid="ext.novosec-bc-ext.path"/>
         </path>
         <path id="test.path">
             <path refid="compile.path"/>
@@ -137,6 +138,7 @@
             <fileset refid="ext.commons-logging.fileset"/>
             <fileset refid="ext.log4j.fileset"/>
             <fileset refid="ext.mysql-jdbc.fileset"/>
+            <fileset refid="ext.novosec-bc-ext.fileset"/>
         </copy>
         
         <!-- create war file -->
@@ -271,6 +273,7 @@
        <download-ext external="ext.log4j" />
        <download-ext external="ext.mysql-jdbc" />
        <download-ext external="ext.tomcat" />
+       <download-ext external="ext.novosec-bc-ext" />
     </target>
     
 </project>
