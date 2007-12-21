@@ -1,5 +1,5 @@
 /*
- * $Id: FunctionalPatternBuilder.java,v 1.4 2007/03/19 15:45:55 vtschopp Exp $
+ * $Id: FunctionalPatternBuilder.java,v 1.5 2007/12/21 10:07:14 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,7 +37,7 @@ import org.glite.slcs.util.Utils;
  * TODO: document SLCSServerConfiguration parameters.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
@@ -127,6 +127,18 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
             // get attribute name and value
             String name = (String) names.next();
             String value = (String) attributes.get(name);
+
+            // BUG FIX: check multi-value and get only first one
+            if (!name.equals("UserAgent") && value.indexOf(';') != -1) {
+                String multiValue= value;
+                int idx= multiValue.indexOf(';');
+                value= multiValue.substring(0, idx);
+                value= value.trim();
+                LOG.warn("Attribute " + name + " is multi-valued: " + multiValue + ". Using only the first value: " + value);
+                if (value.length() <= 0) {
+                    throw new ServiceException("Empty multi-valued attribute first value: " + name + "=" + value);
+                }
+            }
 
             // variable placeholder
             String placeholder = "${" + name + "}";
