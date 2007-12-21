@@ -1,5 +1,5 @@
 /*
- * $Id: LoginServlet.java,v 1.5 2007/08/09 13:17:54 vtschopp Exp $
+ * $Id: LoginServlet.java,v 1.6 2007/12/21 10:07:46 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,7 +37,7 @@ import org.glite.slcs.session.SLCSSessions;
  * Servlet implementation class for Servlet: LoginServlet
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class LoginServlet extends AbstractServlet implements
         javax.servlet.Servlet {
@@ -112,9 +112,7 @@ public class LoginServlet extends AbstractServlet implements
             // store attributes in session
             session.setAttributes(userAttributes);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Session created: " + session);
-            }
+            LOG.info("Session created: " + session);
 
             String authToken = session.getToken();
             CertificatePolicy policy = getCertificatePolicy();
