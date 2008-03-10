@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.17 2007/11/16 10:13:07 vtschopp Exp $
+    Version: $Id: build.xml,v 1.18 2008/03/10 12:52:01 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -115,6 +115,13 @@
         <jar jarfile="${build.dir}/${package.name}.jar" basedir="${classes.dir}" />
     </target>
 
+    <!-- stage glite-slcs-server.jar in ../stage/lib dir -->
+    <target name="stage" depends="jar">
+        <echo message="stage in ${stage.lib.dir}" />
+        <mkdir dir="${stage.lib.dir}" />
+        <copy todir="${stage.lib.dir}" file="${build.dir}/${package.name}.jar" />
+    </target>
+   
     <target name="war" depends="jar">
         <echo message="war webapp: ${package.name}"/>
         <delete file="${build.dir}/${package.name}.war" failonerror="false"/>
@@ -179,7 +186,7 @@
             excludepackagenames="org.glite.slcs.struts.*"
             sourcepath="${src.dir}"
             destdir="${javadoc.dir}"
-	        classpathref="compile.path"/>
+            classpathref="compile.path"/>
     </target>
     
     <!-- prepare installation layout in ${install.dir} -->
