@@ -19,7 +19,7 @@
     ETICS build for org.glite.slcs.server
 
     Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: build.xml,v 1.19 2008/04/11 14:55:07 vtschopp Exp $
+    Version: $Id: build.xml,v 1.20 2008/04/22 15:28:56 vtschopp Exp $
 -->
 <project name="org.glite.slcs.server" default="local-dist" basedir=".">
 
@@ -64,12 +64,12 @@
             <pathelement location="${stage.lib.dir}/glite-slcs-common.jar"/>
             <path refid="ext.apache-struts.path"/>
             <path refid="ext.bouncycastle.path"/>
-            <path refid="ext.commons-codec.path"/>
-            <path refid="ext.commons-collections.path"/>
-            <path refid="ext.commons-configuration.path"/>
-            <path refid="ext.commons-httpclient.path"/>
-            <path refid="ext.commons-lang.path"/>
-            <path refid="ext.commons-logging.path"/>
+            <path refid="ext.jakarta-commons-codec.path"/>
+            <path refid="ext.jakarta-commons-collections.path"/>
+            <path refid="ext.jakarta-commons-configuration.path"/>
+            <path refid="ext.jakarta-commons-httpclient.path"/>
+            <path refid="ext.jakarta-commons-lang.path"/>
+            <path refid="ext.jakarta-commons-logging.path"/>
             <path refid="ext.log4j.path"/>
             <path refid="ext.tomcat.path"/>
             <path refid="ext.novosec-bc-ext.path"/>
@@ -137,12 +137,12 @@
         <copy todir="${build.lib.dir}" flatten="true">
             <fileset refid="ext.apache-struts.fileset"/>
             <fileset refid="ext.bouncycastle.fileset"/>
-            <fileset refid="ext.commons-codec.fileset"/>
-            <fileset refid="ext.commons-collections.fileset"/>
-            <fileset refid="ext.commons-configuration.fileset"/>
-            <fileset refid="ext.commons-httpclient.fileset"/>
-            <fileset refid="ext.commons-lang.fileset"/>
-            <fileset refid="ext.commons-logging.fileset"/>
+            <fileset refid="ext.jakarta-commons-codec.fileset"/>
+            <fileset refid="ext.jakarta-commons-collections.fileset"/>
+            <fileset refid="ext.jakarta-commons-configuration.fileset"/>
+            <fileset refid="ext.jakarta-commons-httpclient.fileset"/>
+            <fileset refid="ext.jakarta-commons-lang.fileset"/>
+            <fileset refid="ext.jakarta-commons-logging.fileset"/>
             <fileset refid="ext.log4j.fileset"/>
             <fileset refid="ext.mysql-jdbc.fileset"/>
             <fileset refid="ext.novosec-bc-ext.fileset"/>
@@ -270,12 +270,12 @@
     <target name="repository" depends="init">
        <download-ext external="ext.apache-struts" />
        <download-ext external="ext.bouncycastle" />
-       <download-ext external="ext.commons-codec" />
-       <download-ext external="ext.commons-collections" />
-       <download-ext external="ext.commons-configuration" />
-       <download-ext external="ext.commons-httpclient" />
-       <download-ext external="ext.commons-lang" />
-       <download-ext external="ext.commons-logging" />
+       <download-ext external="ext.jakarta-commons-codec" />
+       <download-ext external="ext.jakarta-commons-collections" />
+       <download-ext external="ext.jakarta-commons-configuration" />
+       <download-ext external="ext.jakarta-commons-httpclient" />
+       <download-ext external="ext.jakarta-commons-lang" />
+       <download-ext external="ext.jakarta-commons-logging" />
        <download-ext external="ext.junit" />
        <download-ext external="ext.log4j" />
        <download-ext external="ext.mysql-jdbc" />
