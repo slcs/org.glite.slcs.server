@@ -1,5 +1,5 @@
 /*
- * $Id: SLCSServerVersion.java,v 1.16 2008/04/22 15:29:26 vtschopp Exp $
+ * $Id: SLCSServerVersion.java,v 1.17 2008/05/06 12:24:32 vtschopp Exp $
  * 
  * Created on May 5, 2006 by tschopp
  *
@@ -13,7 +13,7 @@ package org.glite.slcs;
  * SLCSServerVersion and Copyright constants.
  *
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class SLCSServerVersion {
 
@@ -22,7 +22,7 @@ public class SLCSServerVersion {
     /** Minor version number */
     static public final int MINOR= 3;
     /** Revision version number */
-    static public final int REVISION= 0;    
+    static public final int REVISION= 1;    
     /** Build number */
     static public final int BUILD= 1;
     
