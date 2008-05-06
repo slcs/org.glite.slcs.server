@@ -1,5 +1,5 @@
 /*
- * $Id: FunctionalPatternBuilder.java,v 1.5 2007/12/21 10:07:14 vtschopp Exp $
+ * $Id: FunctionalPatternBuilder.java,v 1.6 2008/05/06 12:28:00 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,7 +37,7 @@ import org.glite.slcs.util.Utils;
  * TODO: document SLCSServerConfiguration parameters.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
@@ -151,33 +151,38 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
             if (getPattern().matches(matchHashValueFunction)) {
                 String replace = "hashValue\\( *\\$\\{" + name + "\\} *\\)";
                 // replace value with hash code
-                value = hashValue(value);
+                String hashValue = hashValue(value);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNPattern replace regex: " + replace + " by: "
-                            + value);
+                            + hashValue);
                 }
-                dn = dn.replaceAll(replace, value);
+                dn = dn.replaceAll(replace, hashValue);
             }
             else if (getPattern().matches(matchMappedValueFunction)) {
                 String replace = "mappedValue\\( *\\$\\{" + name + "\\} *\\)";
                 // replace value with mapped value
-                value = mappedValue(name, value);
+                String mappedValue = mappedValue(name, value);
+                if (mappedValue == null) {
+                    LOG.error("The name-value pair is not mapped: " + name + " = " + value);
+                    throw new ServiceException("Invalid Shibboleth attribute: The name-value pair is not mapped: " + name + " = " + value);
+                }
+
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNPattern replace regex: " + replace + " by: "
-                            + value);
+                            + mappedValue);
                 }
-                dn = dn.replaceAll(replace, value);
+                dn = dn.replaceAll(replace, mappedValue);
             }
             else if (getPattern().indexOf(placeholder) != -1) {
                 // replace accentuated chars
-                value = Utils.filterUnicodeAccentuedString(value);
+                String filteredValue = Utils.filterUnicodeAccentuedString(value);
                 // replace placeholder with attribute value: REGEX 1.4
                 String replace = "\\$\\{" + name + "\\}";
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNPattern replace regex: " + replace + " by: "
-                            + value);
+                            + filteredValue);
                 }
-                dn = dn.replaceAll(replace, value);
+                dn = dn.replaceAll(replace, filteredValue);
             }
         }
 
@@ -194,15 +199,15 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
     }
 
     /**
-     * Returns the mapping value for the given attribute name-value pair.
+     * Returns the mapping value for the given attribute name-value pair, or
+     * <code>null</code> if the pair is not mapped.
      * 
      * @param attributeName
      *            The attribute name.
      * @param attributeValue
      *            The attribute value.
      * @return The mapped attribute value if the attribute name-value pair
-     *         exists in the mapping table, otherwise returns the given
-     *         attributeValue.
+     *         exists in the mapping table, <code>null</code> otherwise.
      */
     protected String mappedValue(String attributeName, String attributeValue) {
         if (mappedValues_.containsKey(attributeName)) {
@@ -215,7 +220,8 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
                 }
             }
         }
-        return attributeValue;
+        //return attributeValue;
+        return null;
     }
 
     /**
