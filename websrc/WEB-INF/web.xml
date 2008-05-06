@@ -1,162 +1,197 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-    Copyright (c) Members of the EGEE Collaboration. 2007.
-    See http://www.eu-egee.org/partners/ for details on the copyright
-    holders.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
-    glite-slcs-server configuration
-
-    Author: Valery Tschopp <tschopp@switch.ch>
-    Version: $Id: web.xml,v 1.7 2007/11/13 14:39:22 vtschopp Exp $
+	Copyright (c) Members of the EGEE Collaboration. 2007.
+	See http://www.eu-egee.org/partners/ for details on the copyright
+	holders.
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+	
+	http://www.apache.org/licenses/LICENSE-2.0
+	
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+	
+	glite-slcs-server configuration
+	
+	Author: Valery Tschopp <tschopp@switch.ch>
+	Version: $Id: web.xml,v 1.8 2008/05/06 14:29:27 vtschopp Exp $
 -->
-<web-app id="SLCS"
-         version="2.4">
-         
-    <display-name>Short Lived Credential Service</display-name>
-    
-    <!-- SLCS Server Configuration -->
-    <!-- IMPORTANT NOTICE: 
-         the <context-param/> elements are overridden by the XML context file
-         /etc/tomcat5/Catalina/localhost/SLCS.xml
-    -->
-    <context-param>
-        <!-- SLCSServerConfigurationFile: absolute filename or file in classpath -->
-        <param-name>SLCSServerConfigurationFile</param-name>
-        <param-value>/opt/glite/etc/glite-slcs-server/slcs.xml</param-value>
-    </context-param>
-    <context-param>
-        <!-- Log4JConfigurationFile: absolute filename or file in classpath -->
-        <param-name>Log4JConfigurationFile</param-name>
-        <param-value>/opt/glite/etc/glite-slcs-server/log4j.xml</param-value>
-    </context-param>
-    <context-param>
-        <!-- AttributeDefinitonsFile: absolute filename or file in classpath -->
-        <param-name>AttributeDefinitionsFile</param-name>
-        <param-value>/opt/glite/etc/glite-slcs-server/attribute-defs.xml</param-value>
-    </context-param>
+<web-app id="SLCS" version="2.4">
+
+	<display-name>Short Lived Credential Service</display-name>
+
+	<!-- SLCS Server Configuration -->
+	<!-- IMPORTANT NOTICE: 
+		the <context-param/> elements are overridden by the XML context file
+		/etc/tomcat5/Catalina/localhost/SLCS.xml
+		See the deployment guide.
+	-->
+	<context-param>
+		<!-- SLCSServerConfigurationFile: absolute filename or file in classpath -->
+		<param-name>SLCSServerConfigurationFile</param-name>
+		<param-value>
+			/opt/glite/etc/glite-slcs-server/slcs.xml
+		</param-value>
+	</context-param>
+	<context-param>
+		<!-- Log4JConfigurationFile: absolute filename or file in classpath -->
+		<param-name>Log4JConfigurationFile</param-name>
+		<param-value>
+			/opt/glite/etc/glite-slcs-server/log4j.xml
+		</param-value>
+	</context-param>
+	<context-param>
+		<!-- AttributeDefinitonsFile: absolute filename or file in classpath -->
+		<param-name>AttributeDefinitionsFile</param-name>
+		<param-value>
+			/opt/glite/etc/glite-slcs-server/attribute-defs.xml
+		</param-value>
+	</context-param>
+	<context-param>
+		<!-- UserACLFile: absolute filename or file in classpath -->
+		<param-name>UserACLFile</param-name>
+		<param-value>
+			/opt/glite/etc/glite-slcs-server/acl.xml
+		</param-value>
+	</context-param>
+	<context-param>
+		<!-- AdminACLFile: absolute filename or file in classpath -->
+		<param-name>AdminACLFile</param-name>
+		<param-value>
+			/opt/glite/etc/glite-slcs-server/admin-acl.xml
+		</param-value>
+	</context-param>
 
 
-    <!-- Shibboleth Authorization Filter -->
-    <filter>
-        <filter-name>LoginAuthorizationFilter</filter-name>
-        <filter-class>org.glite.slcs.filter.AttributesAuthorizationFilter</filter-class>
-        <!-- MANDATORY ACLImplementation: class name of implementation -->
-        <init-param>
-            <param-name>ACLImplementation</param-name>
-            <param-value>org.glite.slcs.acl.impl.XMLFileAccessControlList</param-value>
-        </init-param>
-        <!-- MANDATORY ACLFile: REQUIRED(filename) for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
-        <init-param>
-            <param-name>ACLFile</param-name>
-            <param-value>/opt/glite/etc/glite-slcs-server/acl.xml</param-value>
-        </init-param>
-        <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
-        <init-param>
-            <param-name>ACLFileMonitoringInterval</param-name>
-            <!-- 1 min = 60 sec -->
-            <param-value>60</param-value>
-        </init-param>
-    </filter>
 
-    <filter>
-        <filter-name>AdminAuthorizationFilter</filter-name>
-        <filter-class>org.glite.slcs.filter.AttributesAuthorizationFilter</filter-class>
-        <!-- MANDATORY ACLImplementation: class name of implementation -->
-        <init-param>
-            <param-name>ACLImplementation</param-name>
-            <param-value>org.glite.slcs.acl.impl.XMLFileAccessControlList</param-value>
-        </init-param>
-        <!-- MANDATORY ACLFile: REQUIRED for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
-        <init-param>
-            <param-name>ACLFile</param-name>
-            <param-value>/opt/glite/etc/glite-slcs-server/admin-acl.xml</param-value>
-        </init-param>
-        <!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
-        <init-param>
-            <param-name>ACLFileMonitoringInterval</param-name>
-            <param-value>300</param-value>
-        </init-param>
-    </filter>
-    
-    <!-- Filters mapping -->
-    <!-- user ACL on LoginServlet -->
-    <filter-mapping>
-        <filter-name>LoginAuthorizationFilter</filter-name>
-        <servlet-name>SLCSLoginServlet</servlet-name>
-    </filter-mapping>
-    <!-- admin ACL on struts /admin/*.do action -->
-    <filter-mapping>
-        <filter-name>AdminAuthorizationFilter</filter-name>
-        <url-pattern>/admin/*</url-pattern>
-    </filter-mapping>
+	<!-- Shibboleth Authorization Filter -->
+	<filter>
+		<filter-name>LoginAuthorizationFilter</filter-name>
+		<filter-class>
+			org.glite.slcs.filter.AttributesAuthorizationFilter
+		</filter-class>
+		<!-- MANDATORY ACLImplementation: class name of implementation -->
+		<init-param>
+			<param-name>ACLImplementation</param-name>
+			<param-value>
+				org.glite.slcs.acl.impl.XMLFileAccessControlList
+			</param-value>
+		</init-param>
+		<!-- MANDATORY ACLFile or ContextParamACLFile: REQUIRED for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
+		<init-param>
+			<param-name>ContextParamACLFile</param-name>
+			<param-value>UserACLFile</param-value>
+		</init-param>
+		<!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
+		<init-param>
+			<param-name>ACLFileMonitoringInterval</param-name>
+			<!-- 1 min = 60 sec -->
+			<param-value>60</param-value>
+		</init-param>
+	</filter>
 
+	<filter>
+		<filter-name>AdminAuthorizationFilter</filter-name>
+		<filter-class>
+			org.glite.slcs.filter.AttributesAuthorizationFilter
+		</filter-class>
+		<!-- MANDATORY ACLImplementation: class name of implementation -->
+		<init-param>
+			<param-name>ACLImplementation</param-name>
+			<param-value>
+				org.glite.slcs.acl.impl.XMLFileAccessControlList
+			</param-value>
+		</init-param>
+		<!-- MANDATORY ACLFile or ContextParamACLFile: REQUIRED for org.glite.slcs.acl.impl.XMLFileAccessControlList implementation -->
+		<init-param>
+			<param-name>ContextParamACLFile</param-name>
+			<param-value>AdminACLFile</param-value>
+		</init-param>
+		<!-- OPTIONAL ACLFileMonitoringInterval: OPTION(seconds) if present, the ACLFile will be monitored and reload on a file change -->
+		<init-param>
+			<param-name>ACLFileMonitoringInterval</param-name>
+			<param-value>300</param-value>
+		</init-param>
+	</filter>
 
-    <!-- Servlets -->
-    <servlet>
-        <display-name>SLCS Login</display-name>
-        <servlet-name>SLCSLoginServlet</servlet-name>
-        <servlet-class>org.glite.slcs.servlet.LoginServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet>
-        <display-name>SLCS Certificate Request</display-name>
-        <servlet-name>SLCSCertificateServlet</servlet-name>
-        <servlet-class>org.glite.slcs.servlet.CertificateServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <!-- SLCS admin (struts) -->
-    <servlet>
-        <display-name>SLCS Admin Interface</display-name>
-        <servlet-name>SLCSStrutsAction</servlet-name>
-        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-        <init-param>
-            <param-name>config</param-name>
-            <param-value>/WEB-INF/struts-config.xml</param-value>
-        </init-param>
-        <init-param>
-            <param-name>chainConfig</param-name>
-            <param-value>/WEB-INF/chain-config.xml</param-value>
-        </init-param>
-<!-- 
-        <init-param>
-            <param-name>debug</param-name>
-            <param-value>2</param-value>
-        </init-param>
-        <init-param>
-            <param-name>detail</param-name>
-            <param-value>2</param-value>
-        </init-param>
- -->
-         <load-on-startup>1</load-on-startup>
-    </servlet>
+	<!-- Filters mapping -->
+	<!-- user ACL on LoginServlet -->
+	<filter-mapping>
+		<filter-name>LoginAuthorizationFilter</filter-name>
+		<servlet-name>SLCSLoginServlet</servlet-name>
+	</filter-mapping>
+	<!-- admin ACL on struts /admin/*.do action -->
+	<filter-mapping>
+		<filter-name>AdminAuthorizationFilter</filter-name>
+		<url-pattern>/admin/*</url-pattern>
+	</filter-mapping>
 
 
-    <!-- Servlet Mapping -->
-    <servlet-mapping>
-        <servlet-name>SLCSLoginServlet</servlet-name>
-        <url-pattern>/login</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SLCSCertificateServlet</servlet-name>
-        <url-pattern>/certificate</url-pattern>
-    </servlet-mapping>
-    <!-- Standard Action Servlet Mapping -->
-    <servlet-mapping>
-        <servlet-name>SLCSStrutsAction</servlet-name>
-        <url-pattern>*.do</url-pattern>
-    </servlet-mapping>
+	<!-- Servlets -->
+	<servlet>
+		<display-name>SLCS Login</display-name>
+		<servlet-name>SLCSLoginServlet</servlet-name>
+		<servlet-class>
+			org.glite.slcs.servlet.LoginServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<display-name>SLCS Certificate Request</display-name>
+		<servlet-name>SLCSCertificateServlet</servlet-name>
+		<servlet-class>
+			org.glite.slcs.servlet.CertificateServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- SLCS admin (struts) -->
+	<servlet>
+		<display-name>SLCS Admin Interface</display-name>
+		<servlet-name>SLCSStrutsAction</servlet-name>
+		<servlet-class>
+			org.apache.struts.action.ActionServlet
+		</servlet-class>
+		<init-param>
+			<param-name>config</param-name>
+			<param-value>/WEB-INF/struts-config.xml</param-value>
+		</init-param>
+		<init-param>
+			<param-name>chainConfig</param-name>
+			<param-value>/WEB-INF/chain-config.xml</param-value>
+		</init-param>
+		<!-- 
+			<init-param>
+			<param-name>debug</param-name>
+			<param-value>2</param-value>
+			</init-param>
+			<init-param>
+			<param-name>detail</param-name>
+			<param-value>2</param-value>
+			</init-param>
+		-->
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+
+	<!-- Servlet Mapping -->
+	<servlet-mapping>
+		<servlet-name>SLCSLoginServlet</servlet-name>
+		<url-pattern>/login</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SLCSCertificateServlet</servlet-name>
+		<url-pattern>/certificate</url-pattern>
+	</servlet-mapping>
+	<!-- Admin interface (struts) Servlet Mapping -->
+	<servlet-mapping>
+		<servlet-name>SLCSStrutsAction</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
 
 </web-app>

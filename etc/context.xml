@@ -1,11 +1,11 @@
 <!--
-$Id: context.xml,v 1.5 2007/11/13 14:36:22 vtschopp Exp $
+$Id: context.xml,v 1.6 2008/05/06 14:29:27 vtschopp Exp $
 
-Copy this context file in $CATALANIA_HOME/conf/[enginename]/[hostname]/[webappname].xml
-i.e. /etc/tomcat5/Catalina/localhost/SLCS.xml to deploy as /SLCS
+Copy this context.xml file in $CATALANIA_HOME/conf/[enginename]/[hostname]/[webappname].xml
+i.e. /etc/tomcat5/Catalina/localhost/SLCS.xml to deploy as the webapps as /SLCS
 
 IMPORTANT NOTICE: 
-These context parameters override the <context-param> elementis from the web application
+These context parameters override the <context-param> elements from the web application
 WEB-INF/web.xml file.
 -->
 <Context 
@@ -31,6 +31,20 @@ WEB-INF/web.xml file.
     <Parameter 
         name="AttributeDefinitionsFile"
         value="/opt/glite/etc/glite-slcs-server/attribute-defs.xml"
+        override="false"
+        type="java.lang.String"/>
+
+    <!-- Context parameter: absolute location of the user ACL file: protect the login servlet -->
+    <Parameter 
+        name="UserACLFile"
+        value="/opt/glite/etc/glite-slcs-server/acl.xml"
+        override="false"
+        type="java.lang.String"/>
+
+    <!-- Context parameter: absolute location of the admin ACL file: protect the admin servlet -->
+    <Parameter 
+        name="AdminACLFile"
+        value="/opt/glite/etc/glite-slcs-server/admin-acl.xml"
         override="false"
         type="java.lang.String"/>
 

@@ -1,5 +1,5 @@
 /*
- * $Id: XMLFileAccessControlList.java,v 1.7 2007/11/13 16:18:47 vtschopp Exp $
+ * $Id: XMLFileAccessControlList.java,v 1.8 2008/05/06 14:29:27 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,12 +37,18 @@ import org.glite.slcs.config.FileConfigurationMonitor;
  * and reload it on changes.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @see org.glite.slcs.acl.AccessControlList
  * @see org.glite.slcs.config.FileConfigurationListener
  */
 public class XMLFileAccessControlList implements AccessControlList,
         FileConfigurationListener {
+
+    /** Name of the ACL file parameter in the {@link FilterConfig} */
+    private static String ACLFILE_CONFIG_PARAM = "ACLFile";
+
+    /** Name of the {@link ServletContext} parameter referencing the ACL file */
+    private static String ACLFILE_CONTEXT_PARAM = "ContextParamACLFile";
 
     /** Logging */
     private static Log LOG = LogFactory.getLog(XMLFileAccessControlList.class);
@@ -69,16 +75,31 @@ public class XMLFileAccessControlList implements AccessControlList,
      * @see org.glite.slcs.acl.AccessControlList#init(javax.servlet.FilterConfig)
      */
     public void init(FilterConfig filterConfig) throws SLCSException {
-        
+
         // initialize the AttributeDefintions from the servlet context
         ServletContext context = filterConfig.getServletContext();
         AttributeDefinitionsFactory.initialize(context);
 
-        String filename = filterConfig.getInitParameter("ACLFile");
-        LOG.info("ACLFile=" + filename);
-        if (filename == null || filename.equals("")) {
-            throw new SLCSConfigurationException(
-                    "Filter parameter ACLFile is missing or empty");
+        String filename = filterConfig.getInitParameter(ACLFILE_CONFIG_PARAM);
+        LOG.info(ACLFILE_CONFIG_PARAM + "=" + filename);
+        if (filename == null) {
+            LOG.info("Parameter '" + ACLFILE_CONFIG_PARAM
+                    + "' is not defined, trying parameter '"
+                    + ACLFILE_CONTEXT_PARAM + "'");
+            String contextKey = filterConfig.getInitParameter(ACLFILE_CONTEXT_PARAM);
+            LOG.info(ACLFILE_CONTEXT_PARAM + "=" + contextKey);
+            if (contextKey != null) {
+                filename = context.getInitParameter(contextKey);
+                if (filename == null) {
+                    throw new SLCSConfigurationException(
+                            "Filter parameter ContextParamACLFile references a undefined Context parameter.");
+                }
+                LOG.debug("ACL filename=" + filename);
+            }
+            else {
+                throw new SLCSConfigurationException(
+                        "Filter parameter ACLFile or ContextParamACLFile not defined");
+            }
         }
 
         // load the XML file
@@ -242,7 +263,8 @@ public class XMLFileAccessControlList implements AccessControlList,
             for (int j = 0; j < attributeNames.size(); j++) {
                 String name = (String) attributeNames.get(j);
                 String value = (String) attributeValues.get(j);
-                Attribute attribute = attributeDefinitions.createAttribute(name, value);
+                Attribute attribute = attributeDefinitions.createAttribute(
+                        name, value);
                 // add attribute to the rule
                 rule.addAttribute(attribute);
             }

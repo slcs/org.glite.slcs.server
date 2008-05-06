@@ -1,11 +1,5 @@
 TODO:
 ----
-- read the org.glite.slcs.filter.AttributesAuthorizationFilter 
-  configuration parameters from SLCSServerConfiguration file and
-  not from the FilterConfig anymore. because web.xml is in the 
-  war file and can not be modified before deployment...
-  -> add AtttributesAuthorizationFilter element in slcs.xml file
-  -> or use context parameters for ACL files
   
 - implement a clean and full auditor.
 
