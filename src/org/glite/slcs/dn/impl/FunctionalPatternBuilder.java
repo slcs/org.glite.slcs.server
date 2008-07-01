@@ -1,5 +1,5 @@
 /*
- * $Id: FunctionalPatternBuilder.java,v 1.8 2008/07/01 12:37:32 vtschopp Exp $
+ * $Id: FunctionalPatternBuilder.java,v 1.9 2008/07/01 14:49:36 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,7 +37,7 @@ import org.glite.slcs.util.Utils;
  * TODO: document SLCSServerConfiguration parameters.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
@@ -205,11 +205,11 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
             LOG.debug("Raw DN: " + dn);
         }
         // try to validate and normalize the DN
-        dn = validateDN(dn);
+        String normalizedDN = validateDN(dn);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Normalized DN: " + dn);
+            LOG.debug("Normalized DN: " + normalizedDN);
         }
-        return dn;
+        return normalizedDN;
     }
 
     /**

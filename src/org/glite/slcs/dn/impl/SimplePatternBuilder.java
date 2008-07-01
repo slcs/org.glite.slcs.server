@@ -1,5 +1,5 @@
 /*
- * $Id: SimplePatternBuilder.java,v 1.5 2008/07/01 12:37:33 vtschopp Exp $
+ * $Id: SimplePatternBuilder.java,v 1.6 2008/07/01 14:49:36 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -32,7 +32,7 @@ import org.glite.slcs.util.Utils;
  * by the corresponding attribute value.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class SimplePatternBuilder implements DNBuilder {
 
@@ -118,12 +118,11 @@ public class SimplePatternBuilder implements DNBuilder {
             LOG.debug("Raw DN: " + dn);
         }
         // try to validate and normalize the DN
-        dn= validateDN(dn);
+        String normalizedDN= validateDN(dn);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Normalized DN: " + dn);
+            LOG.debug("Normalized DN: " + normalizedDN);
         }
-        
-        return dn;
+        return normalizedDN;
     }
 
     /*
@@ -181,7 +180,9 @@ public class SimplePatternBuilder implements DNBuilder {
         X509Principal principal;
         try {
             principal = utility.createX509Principal(dn);
-            return principal.getName();
+            String principalName= principal.getName();
+            LOG.debug("principal: " + principalName);
+            return principalName;
         } catch (GeneralSecurityException e) {
             LOG.error(e);
             throw new ServiceException("Invalid DN " + dn + ": "
