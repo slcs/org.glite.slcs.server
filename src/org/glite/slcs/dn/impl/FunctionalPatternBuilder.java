@@ -1,5 +1,5 @@
 /*
- * $Id: FunctionalPatternBuilder.java,v 1.7 2008/05/06 12:32:43 vtschopp Exp $
+ * $Id: FunctionalPatternBuilder.java,v 1.8 2008/07/01 12:37:32 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,7 +37,7 @@ import org.glite.slcs.util.Utils;
  * TODO: document SLCSServerConfiguration parameters.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
@@ -95,7 +95,8 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
                             + "].MappedValue[" + attributeValue + "]="
                             + attributeValueMapping);
                 }
-                attributeValueMappings.put(attributeValue, attributeValueMapping);
+                attributeValueMappings.put(attributeValue,
+                        attributeValueMapping);
             }
             LOG.info("DNBuilder.MappedValues[" + attributeName + "]="
                     + attributeValueMappings);
@@ -108,10 +109,13 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
      * Create a subject DN based on the string pattern configured in
      * SLCSServerConfiguration.
      * <p>
+     * The resulting DN will be validated and normalized.
+     * <p>
      * Available pattern functions:<br>
      * <ul>
-     * <li>mappedValue(attributeName,attributeValue): returns the human readable value of the
-     * given attribute name, or <code>null</code> if no mapping is defined.
+     * <li>mappedValue(attributeName,attributeValue): returns the human
+     * readable value of the given attribute name, or <code>null</code> if no
+     * mapping is defined.
      * <li>hashValue(attributeName): returns a hash of the attribute value.
      * </ul>
      * 
@@ -129,13 +133,16 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
             // BUG FIX: check multi-value and get only first one
             if (!name.equals("UserAgent") && value.indexOf(';') != -1) {
-                String multiValue= value;
-                int idx= multiValue.indexOf(';');
-                value= multiValue.substring(0, idx);
-                value= value.trim();
-                LOG.warn("Attribute " + name + " is multi-valued: " + multiValue + ". Using only the first value: " + value);
+                String multiValue = value;
+                int idx = multiValue.indexOf(';');
+                value = multiValue.substring(0, idx);
+                value = value.trim();
+                LOG.warn("Attribute " + name + " is multi-valued: "
+                        + multiValue + ". Using only the first value: " + value);
                 if (value.length() <= 0) {
-                    throw new ServiceException("Empty multi-valued attribute first value: " + name + "=" + value);
+                    throw new ServiceException(
+                            "Empty multi-valued attribute first value: " + name
+                                    + "=" + value);
                 }
             }
 
@@ -162,8 +169,11 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
                 // replace value with mapped value
                 String mappedValue = mappedValue(name, value);
                 if (mappedValue == null) {
-                    LOG.error("The name-value pair is not mapped: " + name + " = " + value);
-                    throw new ServiceException("Invalid Shibboleth attribute: The name-value pair is not mapped: " + name + " = " + value);
+                    LOG.error("The name-value pair is not mapped: " + name
+                            + " = " + value);
+                    throw new ServiceException(
+                            "Invalid Shibboleth attribute: The name-value pair is not mapped: "
+                                    + name + " = " + value);
                 }
 
                 if (LOG.isDebugEnabled()) {
@@ -187,13 +197,18 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
         if (dn.indexOf("${") != -1) {
             LOG.error("DN still contains not substitued placeholders: " + dn);
-            throw new ServiceException("Missing or wrong Shibboleth attributes: DN still contains placeholders: "
-                    + dn);
+            throw new ServiceException(
+                    "Missing or wrong Shibboleth attributes: DN still contains placeholders: "
+                            + dn);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DN: " + dn);
+            LOG.debug("Raw DN: " + dn);
         }
-
+        // try to validate and normalize the DN
+        dn = validateDN(dn);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Normalized DN: " + dn);
+        }
         return dn;
     }
 
@@ -219,7 +234,7 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
                 }
             }
         }
-        //return attributeValue;
+        // return attributeValue;
         return null;
     }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: SimplePatternBuilder.java,v 1.4 2007/03/19 15:45:55 vtschopp Exp $
+ * $Id: SimplePatternBuilder.java,v 1.5 2008/07/01 12:37:33 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -7,6 +7,7 @@
  */
 package org.glite.slcs.dn.impl;
 
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,21 +16,23 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.jce.X509Principal;
 import org.glite.slcs.SLCSConfigurationException;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.ServiceException;
 import org.glite.slcs.attribute.Attribute;
 import org.glite.slcs.config.SLCSServerConfiguration;
 import org.glite.slcs.dn.DNBuilder;
+import org.glite.slcs.pki.bouncycastle.X509PrincipalUtil;
 import org.glite.slcs.util.Utils;
 
 /**
  * SimplePatternBuilder builds a DN based on a string pattern, containing
- * <code>${attribute-name}</code> variables. These variables will be
- * replaced by the corresponding attribute value.
+ * <code>${attribute-name}</code> variables. These variables will be replaced
+ * by the corresponding attribute value.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SimplePatternBuilder implements DNBuilder {
 
@@ -54,8 +57,8 @@ public class SimplePatternBuilder implements DNBuilder {
     public void init(SLCSServerConfiguration config)
             throws SLCSConfigurationException {
         // read DNPattern from SLCSServerConfiguration
-        this.pattern_ = config
-                .getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".DNBuilder.DNPattern");
+        this.pattern_ = config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX
+                + ".DNBuilder.DNPattern");
         LOG.info("DNBuilder.DNPattern=" + getPattern());
     }
 
@@ -112,9 +115,14 @@ public class SimplePatternBuilder implements DNBuilder {
                             + dn);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("DN: " + dn);
+            LOG.debug("Raw DN: " + dn);
         }
-
+        // try to validate and normalize the DN
+        dn= validateDN(dn);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Normalized DN: " + dn);
+        }
+        
         return dn;
     }
 
@@ -157,5 +165,27 @@ public class SimplePatternBuilder implements DNBuilder {
      */
     public String getPattern() {
         return pattern_;
+    }
+
+    /**
+     * Validates and returns the normalized DN.
+     * 
+     * @param dn
+     *            The subject DN to validate and normalize.
+     * @return The validated, normalized DN.
+     * @throws SLCSException
+     *             if a validation error occurs.
+     */
+    public String validateDN(String dn) throws SLCSException {
+        X509PrincipalUtil utility = new X509PrincipalUtil();
+        X509Principal principal;
+        try {
+            principal = utility.createX509Principal(dn);
+            return principal.getName();
+        } catch (GeneralSecurityException e) {
+            LOG.error(e);
+            throw new ServiceException("Invalid DN " + dn + ": "
+                    + e.getMessage(), e.getCause());
+        }
     }
 }
