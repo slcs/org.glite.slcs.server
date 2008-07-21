@@ -1,3 +1,8 @@
+Version 1.4.1
+-------------
+* SECURITY: The method SLCSSessions.getSession(token,dn) must not return a session if the 
+  pair (token,dn) doesn't exist. 
+
 Version 1.4.0
 -------------
 * The DNBuilder uses the X509PrincipalUtil to validate and normalize the constructed DN.
@@ -46,4 +51,4 @@ Version 1.0.0
 * Initial release of the SLCS server
 
 --
-$Id: CHANGELOG,v 1.13 2008/07/01 13:15:33 vtschopp Exp $
+$Id: CHANGELOG,v 1.14 2008/07/21 08:40:00 vtschopp Exp $
