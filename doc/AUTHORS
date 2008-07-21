@@ -1,2 +1,9 @@
-Valery Tschopp <tschopp@switch.ch>
-Henri Mikkonen <henri.mikkonen@hip.fi>
+Implementation of org.glite.slcs.server:
+
+- Valery Tschopp <tschopp@switch.ch>
+
+Additional contributions:
+
+- Henri Mikkonen <henri.mikkonen@hip.fi> for the CMP online CA client code.
+- Xuan Thang Nguyen <xnguyen@it.swin.edu.au> for the sessions security fix.
+
