@@ -1,5 +1,5 @@
 /*
- * $Id: MemorySessions.java,v 1.6 2007/08/29 15:21:42 vtschopp Exp $
+ * $Id: MemorySessions.java,v 1.7 2008/07/21 08:10:28 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -30,7 +30,7 @@ import org.glite.slcs.util.Utils;
  * cleaning task to delete expired sessions.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class MemorySessions implements SLCSSessions {
 
@@ -177,7 +177,7 @@ public class MemorySessions implements SLCSSessions {
                 return session;
             }
         }
-        return session;
+        return null;
     }
 
     /**
@@ -195,7 +195,7 @@ public class MemorySessions implements SLCSSessions {
      * SessionEntry implements the SLCSSession interface.
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.6 $
+     * @version $Revision: 1.7 $
      */
     public class SessionEntry implements SLCSSession {
 
@@ -315,7 +315,7 @@ public class MemorySessions implements SLCSSessions {
      * sessions every given time interval.
      * 
      * @author Valery Tschopp <tschopp@switch.ch>
-     * @version $Revision: 1.6 $
+     * @version $Revision: 1.7 $
      */
     private class MemorySessionsCleaner extends Timer {
 
