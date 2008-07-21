@@ -1,5 +1,5 @@
 <!--
-$Id: context.xml,v 1.6 2008/05/06 14:29:27 vtschopp Exp $
+$Id: context.xml,v 1.7 2008/07/21 09:24:27 vtschopp Exp $
 
 Copy this context.xml file in $CATALANIA_HOME/conf/[enginename]/[hostname]/[webappname].xml
 i.e. /etc/tomcat5/Catalina/localhost/SLCS.xml to deploy as the webapps as /SLCS
@@ -10,6 +10,7 @@ WEB-INF/web.xml file.
 -->
 <Context 
     docBase="/opt/glite/share/webapps/glite-slcs-server.war"
+    unpackWAR="false"
     reloadable="true"
     debug="0">
 
