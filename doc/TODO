@@ -1,9 +1,10 @@
 TODO:
 ----
+- Java 1.5 fully compliant impl/interface with typed List, ...
 - clean up the AttributeDefinitionFile and the AccessControlListEditor/ACLFile, 
   AccessControlListEditor/AdminACLFile and try to use the servlet context parameters.  
 - implement a clean and full auditor.
 - find a solution to display the audit events for all group the admin belongs to.
 
 --
-$Id: TODO,v 1.9 2008/07/01 13:07:35 vtschopp Exp $
+$Id: TODO,v 1.10 2008/07/21 09:45:32 vtschopp Exp $
