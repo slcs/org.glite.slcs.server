@@ -1,7 +1,8 @@
 Version 1.4.1
 -------------
-* SECURITY: The method SLCSSessions.getSession(token,dn) must not return a session if the 
-  pair (token,dn) doesn't exist. 
+* SECURITY FIX: The method SLCSSessions.getSession(token,dn) must not return a session if the 
+  pair (token,dn) doesn't exist. Thanks to MELCOE (http://www.melcoe.mq.edu.au/) for reporting
+  the problem.
 
 Version 1.4.0
 -------------
@@ -51,4 +52,4 @@ Version 1.0.0
 * Initial release of the SLCS server
 
 --
-$Id: CHANGELOG,v 1.14 2008/07/21 08:40:00 vtschopp Exp $
+$Id: CHANGELOG,v 1.15 2008/07/22 09:20:49 vtschopp Exp $
