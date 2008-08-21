@@ -3,6 +3,7 @@ Version 1.4.1
 * SECURITY FIX: The method SLCSSessions.getSession(token,dn) must not return a session if the 
   pair (token,dn) doesn't exist. Thanks to MELCOE (http://www.melcoe.mq.edu.au/) for reporting
   the problem.
+* HomeOrganization attribute uzh.ch added for the Universitaet Zuerich in configuration file.
 
 Version 1.4.0
 -------------
@@ -52,4 +53,4 @@ Version 1.0.0
 * Initial release of the SLCS server
 
 --
-$Id: CHANGELOG,v 1.15 2008/07/22 09:20:49 vtschopp Exp $
+$Id: CHANGELOG,v 1.16 2008/08/21 10:42:16 vtschopp Exp $
