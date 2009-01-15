@@ -1,5 +1,5 @@
 /*
- * $Id: FunctionalPatternBuilder.java,v 1.9 2008/07/01 14:49:36 vtschopp Exp $
+ * $Id: FunctionalPatternBuilder.java,v 1.10 2009/01/15 12:27:48 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -37,7 +37,7 @@ import org.glite.slcs.util.Utils;
  * TODO: document SLCSServerConfiguration parameters.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
@@ -144,8 +144,7 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
                             "Empty multi-valued attribute first value: " + name
                                     + "=" + value);
                 }
-            }
-
+            }            
             // variable placeholder
             String placeholder = "${" + name + "}";
             // first look for functions hashValue(${attributeName}) and
@@ -185,13 +184,16 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
             else if (getPattern().indexOf(placeholder) != -1) {
                 // replace accentuated chars
                 String filteredValue = Utils.filterUnicodeAccentuedString(value);
+                // BUG FIX: escape value containing: ',', '=', '+', '<', '>', '#' or ';'
+                // to generate valid DN
+                String escapedValue = Utils.escapeAttributeValue(filteredValue);
                 // replace placeholder with attribute value: REGEX 1.4
                 String replace = "\\$\\{" + name + "\\}";
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("DNPattern replace regex: " + replace + " by: "
-                            + filteredValue);
+                            + escapedValue);
                 }
-                dn = dn.replaceAll(replace, filteredValue);
+                dn = dn.replaceAll(replace, escapedValue);
             }
         }
 
