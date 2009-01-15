@@ -1,34 +1,45 @@
 /*
- * $Id: SimplePKIResponse.java,v 1.1 2006/10/27 12:11:23 vtschopp Exp $
- * 
- * Created on Jun 14, 2006 by tschopp
+ * Copyright (c) 2007-2009. Members of the EGEE Collaboration.
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * $Id: SimplePKIResponse.java,v 1.2 2009/01/15 12:26:15 vtschopp Exp $
  */
 package org.glite.slcs.caclient.impl;
 
 import java.security.GeneralSecurityException;
 import java.security.Principal;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.jce.PrincipalUtil;
+import org.bouncycastle.jce.X509Principal;
 import org.glite.slcs.SLCSException;
 import org.glite.slcs.pki.Certificate;
 import org.glite.slcs.pki.bouncycastle.CMCPKIResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * RCF2797 compliant Simple Enrollment Response
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SimplePKIResponse implements PKIResponse {
 
@@ -48,7 +59,7 @@ public class SimplePKIResponse implements PKIResponse {
     /**
      * All X509 certificates contained in response
      */
-    private Collection x509Certificates_;
+    private Collection<X509Certificate> x509Certificates_;
 
     /**
      * Constuctor
@@ -72,45 +83,46 @@ public class SimplePKIResponse implements PKIResponse {
      */
     public Certificate getCertificate(Principal principal) throws SLCSException {
         // find the certificate and the chain based on the subject
-        LOG.debug("Looking for: " + principal);
-        String searchedSubject= principal.getName();
-
+        LOG.debug("Looking for: " + principal.getName());
+        
         X509Certificate cert= null;
-        Vector certChain= new Vector();
-        Iterator iter= x509Certificates_.iterator();
+        Vector<X509Certificate> certChain= new Vector<X509Certificate>();
+        Iterator<X509Certificate> iter= x509Certificates_.iterator();
         while (iter.hasNext()) {
-            X509Certificate x509= (X509Certificate) iter.next();
-            X500Principal x509Principal= x509.getSubjectX500Principal();
+            X509Certificate x509= iter.next();
+            X509Principal x509Principal;
+            try {
+                x509Principal = PrincipalUtil.getSubjectX509Principal(x509);
+            } catch (CertificateEncodingException e) {
+                LOG.error("Failed to extract X509 subject from certificate", e);
+                throw new CMCException("Failed to extract X509 subject from certificate", e);
+            }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("X509 Subject: " + x509Principal);
+                LOG.debug("X509 cert: " + x509Principal.getName());
             }
             // first try object match
             if (x509Principal.equals(principal)) {
                 cert= x509;
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Match object: " + x509Principal);
+                    LOG.debug("X509 cert matches (object): " + principal.getName());
                 }
             }
             else {
-                // try string match (RFC2253)
-                String x509Subject= x509Principal.getName(X500Principal.RFC2253);
-                StringTokenizer st= new StringTokenizer(x509Subject,",");
-                boolean found= true;
-                while (st.hasMoreElements()) {
-                    String element= (String) st.nextElement();
-                    element= element.trim();
-                    if (searchedSubject.indexOf(element) == -1) {
-                        found= false;
+                // then try X500Principal match (RFC 2253)
+                X500Principal principalX500= new X500Principal(principal.getName());
+                X500Principal x509PrincipalX500= new X500Principal(x509Principal.getName());
+                if (principalX500.getName().equals(x509PrincipalX500.getName())) {
+                    cert= x509;
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("X509 cert matches (X500): " + x509PrincipalX500.getName());
                     }
                 }
-                if (found) {
-                    cert= x509;
-                }
+                // otherwise its a chain element
                 else {
                     // cert is a chain part
                     certChain.add(x509);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Chain element: " + x509Subject);
+                        LOG.debug("X509 cert is a chain element: " + x509Principal.getName());
                     }
                 }
             }
