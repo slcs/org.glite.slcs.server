@@ -1,16 +1,28 @@
 /*
- * $Id: CMCPKIResponse.java,v 1.1 2006/10/27 12:11:24 vtschopp Exp $
- * 
- * Created on Jun 14, 2006 by tschopp
+ * Copyright (c) 2007-2009. Members of the EGEE Collaboration.
  *
- * Copyright (c) 2006 SWITCH - http://www.switch.ch/
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * $Id: CMCPKIResponse.java,v 1.2 2009/01/15 12:29:42 vtschopp Exp $
  */
 package org.glite.slcs.pki.bouncycastle;
 
 import java.security.GeneralSecurityException;
 import java.security.Security;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.X509CertSelector;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 
 import org.apache.commons.logging.Log;
@@ -23,7 +35,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  * CMCPKIResponse wrapper for the BouncyCastle CMSSignedData
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class CMCPKIResponse {
 
@@ -66,10 +78,10 @@ public class CMCPKIResponse {
      * @return A Collection of X509Certificate (unordered).
      * @throws GeneralSecurityException
      */
-    public Collection getX509Certificates() throws GeneralSecurityException {
+    public Collection<X509Certificate> getX509Certificates() throws GeneralSecurityException {
         X509CertSelector selector= new X509CertSelector();
-        Collection certs= certificatesStore_.getCertificates(selector);
-        return certs;
+        Collection<? extends Certificate> certs= certificatesStore_.getCertificates(selector);
+        return (Collection<X509Certificate>) certs;
     }
 
 }

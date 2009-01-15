@@ -1,9 +1,19 @@
 /*
- * $Id: SimplePatternBuilder.java,v 1.6 2008/07/01 14:49:36 vtschopp Exp $
+ * Copyright (c) 2007-2009. Members of the EGEE Collaboration.
  *
- * Copyright (c) Members of the EGEE Collaboration. 2004.
- * See http://eu-egee.org/partners/ for details on the copyright holders.
- * For license conditions see the license file or http://eu-egee.org/license.html 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * $Id: SimplePatternBuilder.java,v 1.7 2009/01/15 12:29:14 vtschopp Exp $
  */
 package org.glite.slcs.dn.impl;
 
@@ -32,7 +42,7 @@ import org.glite.slcs.util.Utils;
  * by the corresponding attribute value.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class SimplePatternBuilder implements DNBuilder {
 
@@ -79,8 +89,8 @@ public class SimplePatternBuilder implements DNBuilder {
 
         // parse pattern and match with attributes
         String dn = getPattern();
-        Set attributeNames = attributes.keySet();
-        Iterator names = attributeNames.iterator();
+        Set<String> attributeNames = attributes.keySet();
+        Iterator<String> names = attributeNames.iterator();
         while (names.hasNext()) {
             String name = (String) names.next();
             String placeholder = "${" + name + "}";
@@ -181,7 +191,7 @@ public class SimplePatternBuilder implements DNBuilder {
         try {
             principal = utility.createX509Principal(dn);
             String principalName= principal.getName();
-            LOG.debug("principal: " + principalName);
+            LOG.debug("X509Principal: " + principalName);
             return principalName;
         } catch (GeneralSecurityException e) {
             LOG.error(e);
