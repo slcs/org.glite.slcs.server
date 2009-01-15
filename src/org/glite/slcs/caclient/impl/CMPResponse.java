@@ -1,33 +1,37 @@
-/**
- * $Id: CMPResponse.java,v 1.2 2007/11/16 15:03:15 mikkonen Exp $
+/*
+ * Copyright (c) 2007-2009. Members of the EGEE Collaboration.
  *
- * Created on 11/07/2007 by Henri Mikkonen <henri.mikkonen@hip.fi>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright (c) Members of the EGEE Collaboration. 2004.
- * See http://eu-egee.org/partners/ for details on the copyright holders.
- * For license conditions see the license file or http://eu-egee.org/license.html
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * $Id: CMPResponse.java,v 1.3 2009/01/15 12:23:11 vtschopp Exp $
  */
 package org.glite.slcs.caclient.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.security.GeneralSecurityException;
 import java.security.Principal;
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-
-import org.glite.slcs.SLCSException;
-import org.glite.slcs.caclient.CAResponse;
-import org.glite.slcs.pki.Certificate;
 
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.x509.X509CertificateStructure;
 import org.bouncycastle.jce.provider.X509CertificateObject;
+import org.glite.slcs.SLCSException;
+import org.glite.slcs.caclient.CAResponse;
+import org.glite.slcs.pki.Certificate;
 
 import com.novosec.pkix.asn1.cmp.CertRepMessage;
 import com.novosec.pkix.asn1.cmp.CertResponse;
