@@ -7,7 +7,7 @@ Depends: org.glite.slcs.common
 
 Build Dependencies:
 
-- org.glite.slcs.common >= 1.4.0
+- org.glite.slcs.common >= 1.5.1
 - jdk v. 1.5.0_06
 - ant v. 1.6.2
 - junit v. 3.8.1
@@ -36,4 +36,4 @@ Comments:
 The server do not have runtime dependencies, besides Java 1.5 and Tomcat 5.X, because all required libraries (jar) are bundled in the Tomcat webapp .war file.
 
 --
-$Id: DEPENDENCIES,v 1.4 2008/04/22 15:47:00 vtschopp Exp $
+$Id: DEPENDENCIES,v 1.5 2009/01/20 12:35:05 vtschopp Exp $
