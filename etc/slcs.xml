@@ -19,7 +19,7 @@
     SLCS server configuration file
 
     Author: Valery Tschopp - <tschopp@switch.ch>
-    Version: $Id: slcs.xml,v 1.9 2008/08/11 16:00:49 vtschopp Exp $ 
+    Version: $Id: slcs.xml,v 1.10 2009/01/20 12:15:44 vtschopp Exp $ 
 -->
 <SLCSServerConfiguration>
 
@@ -56,6 +56,8 @@
                 <MappedValue attributeValue="unisi.ch">O=Universita della Svizzera Italiana</MappedValue>
                 <MappedValue attributeValue="unizh.ch">O=Universitaet Zuerich</MappedValue>
                 <MappedValue attributeValue="uzh.ch">O=Universitaet Zuerich</MappedValue>
+                <MappedValue attributeValue="psi.ch">O=Paul-Scherrer-Institut (PSI)</MappedValue>
+                <MappedValue attributeValue="wsl.ch">O=Eidg. Forschungsanstalt fuer Wald, Schnee und Landschaft (WSL)</MappedValue>
             </MappedValues>
         </DNBuilder>
 
