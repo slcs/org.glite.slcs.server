@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * $Id: FunctionalPatternBuilder.java,v 1.12 2009/01/15 13:46:15 vtschopp Exp $
+ * $Id: FunctionalPatternBuilder.java,v 1.13 2009/01/20 10:10:10 vtschopp Exp $
  */
 package org.glite.slcs.dn.impl;
 
@@ -47,7 +47,7 @@ import org.glite.slcs.util.Utils;
  * TODO: document SLCSServerConfiguration parameters.
  * 
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class FunctionalPatternBuilder extends SimplePatternBuilder {
 
@@ -204,7 +204,7 @@ public class FunctionalPatternBuilder extends SimplePatternBuilder {
                             + escapedValue);
                 }
                 // BUG FIX: escape the backslash for REGEX 1.4
-                String replaceValue= escapedValue.replaceAll("\\", "\\\\");
+                String replaceValue= escapedValue.replaceAll("\\\\", "\\\\\\\\");
                 dn = dn.replaceAll(replace, replaceValue);
             }
         }
