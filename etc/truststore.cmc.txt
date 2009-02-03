@@ -1,1 +1,2 @@
-truststore password: switchgrid
+Java truststore with both SwissSign Root CAs and both QuoVadis Root CAs.
+Passowrd: truststore
