@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * $Id: SLCSServerVersion.java,v 1.24 2009/02/02 15:21:10 vtschopp Exp $
+ * $Id: SLCSServerVersion.java,v 1.25 2009/02/03 10:19:17 vtschopp Exp $
  */
 package org.glite.slcs;
 
@@ -21,7 +21,7 @@ package org.glite.slcs;
  * SLCSServerVersion and Copyright constants.
  *
  * @author Valery Tschopp &lt;tschopp@switch.ch&gt;
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class SLCSServerVersion {
 
@@ -32,7 +32,7 @@ public class SLCSServerVersion {
     /** Revision version number */
     static public final int REVISION= 2;    
     /** Build number */
-    static public final int BUILD= 2;
+    static public final int BUILD= 3;
     
     /** Copyright */
     static public final String COPYRIGHT= "Copyright (c) 2007-2009 Members of the EGEE Collaboration";

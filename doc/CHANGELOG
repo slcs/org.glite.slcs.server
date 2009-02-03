@@ -2,6 +2,7 @@ Version 1.4.2
 -------------
 * BUG FIX: DNBuilder escape special characters '+', '=', '<', '>', ',' and ';' in attribute
   values.
+* truststore.cmc.jks contains all SwissSign and QuoVadis root CAs.
 
 Version 1.4.1
 -------------
@@ -58,4 +59,4 @@ Version 1.0.0
 * Initial release of the SLCS server
 
 --
-$Id: CHANGELOG,v 1.17 2009/01/20 12:21:34 vtschopp Exp $
+$Id: CHANGELOG,v 1.18 2009/02/03 10:19:17 vtschopp Exp $
