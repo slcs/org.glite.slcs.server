@@ -1,5 +1,6 @@
 TODO:
 ----
+- Add RSA algorithm and minium key length (>1024) checker in policy.
 - Java 1.5 fully compliant impl/interface with typed List, ...
 - clean up the AttributeDefinitionFile and the AccessControlListEditor/ACLFile, 
   AccessControlListEditor/AdminACLFile and try to use the servlet context parameters.  
@@ -7,4 +8,4 @@ TODO:
 - find a solution to display the audit events for all group the admin belongs to.
 
 --
-$Id: TODO,v 1.10 2008/07/21 09:45:32 vtschopp Exp $
+$Id: TODO,v 1.11 2009/04/03 09:14:42 vtschopp Exp $
