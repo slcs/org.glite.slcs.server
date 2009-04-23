@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractServlet.java,v 1.3 2007/11/01 14:35:11 vtschopp Exp $
+ * $Id: AbstractServlet.java,v 1.4 2009/04/23 08:11:46 vtschopp Exp $
  *
  * Copyright (c) Members of the EGEE Collaboration. 2004.
  * See http://eu-egee.org/partners/ for details on the copyright holders.
@@ -38,7 +38,7 @@ import org.glite.slcs.session.SLCSSessionsFactory;
  * AbstractServlet is the base class for the SLCS servlets.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class AbstractServlet extends HttpServlet {
 
@@ -250,9 +250,9 @@ public abstract class AbstractServlet extends HttpServlet {
         pw.print(message);
         pw.println("</Error>");
         if (cause != null) {
-            pw.print("<StackTrace>");
+            pw.print("<StackTrace><![CDATA[");
             cause.printStackTrace(pw);
-            pw.print("</StackTrace>");
+            pw.print("]]></StackTrace>");
         }
         pw.print("</");
         pw.print(type);
