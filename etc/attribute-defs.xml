@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<!-- $Id: attribute-defs.xml,v 1.2 2007/09/18 14:55:05 vtschopp Exp $ -->
+<!-- $Id: attribute-defs.xml,v 1.3 2009/08/14 09:22:13 vtschopp Exp $ -->
 
 <!--
     Shibboleth attribute definition for the SWITCHaai federation.
@@ -46,5 +46,15 @@
 		header="Shib-SwissEP-HomeOrganizationType" 
 		required="false"
 		displayName="Home Organization Type" />
+	<AttributeDefinition
+		name="urn:mace:switch.ch:attribute-def:swissEduPersonStudyBranch3"
+		header="Shib-SwissEP-StudyBranch3" 
+		required="false"
+		displayName="Study Branch 3" />
+	<AttributeDefinition
+		name="urn:mace:switch.ch:attribute-def:swissEduPersonStudyLevel"
+		header="Shib-SwissEP-StudyLevel" 
+		required="false"
+		displayName="Study Level" />
 </AttributeDefinitions>
 
