@@ -1,5 +1,5 @@
 /*
- * $Id: CMCClient.java,v 1.4 2007/07/25 07:21:24 vtschopp Exp $
+ * $Id: CMCClient.java,v 1.5 2010/12/02 16:02:21 vtschopp Exp $
  * 
  * Created on Jun 14, 2006 by tschopp
  *
@@ -12,6 +12,7 @@ import java.io.IOException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glite.slcs.SLCSException;
@@ -26,7 +27,7 @@ import org.glite.slcs.httpclient.ssl.ExtendedProtocolSocketFactory;
  * reponses.
  * 
  * @author Valery Tschopp <tschopp@switch.ch>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class CMCClient implements CAClient {
 
@@ -120,7 +121,7 @@ public class CMCClient implements CAClient {
     static private HttpClient createHttpClient(String keystorePath,
             String keystorePassword, String truststorePath) throws Exception {
         // add client auth and trust support to https, throws Exception
-        ExtendedProtocolSocketFactory psf= new ExtendedProtocolSocketFactory(keystorePath,
+        ProtocolSocketFactory psf= new ExtendedProtocolSocketFactory(keystorePath,
                                                                              keystorePassword,
                                                                              truststorePath);
         // register HTTPS extended protocol
