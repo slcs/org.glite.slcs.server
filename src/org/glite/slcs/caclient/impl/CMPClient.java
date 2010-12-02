@@ -1,5 +1,5 @@
 /**
- * $Id: CMPClient.java,v 1.2 2007/11/16 15:03:15 mikkonen Exp $
+ * $Id: CMPClient.java,v 1.3 2010/12/02 16:14:04 vtschopp Exp $
  *
  * Created on 13/06/2007 by Henri Mikkonen <henri.mikkonen@hip.fi>
  *
@@ -9,6 +9,7 @@
  */
 package org.glite.slcs.caclient.impl;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -22,6 +23,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.protocol.DefaultProtocolSocketFactory;
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -79,10 +81,11 @@ public class CMPClient implements CAClient {
     /** Logging */
     static private Log log = LogFactory.getLog(CMPClient.class);
     
-    private HttpClient httpClient;
-    private String relativeUrl;
+    private HttpClient httpClient_;
+    private String relativeUrl_;
     
-    private Properties cmpProperties;
+    /** CMP configuration variables */
+    private Properties cmpProperties_;
     
     /*
      * Constructs a <code>CMPClient</code>
@@ -95,7 +98,7 @@ public class CMPClient implements CAClient {
      * @see org.glite.slcs.caclient.CAClient#getConnection()
      */
     public CAConnection getConnection() throws SLCSException {
-        return new CMPConnection(this, this.relativeUrl);
+        return new CMPConnection(this, relativeUrl_);
     }
 
     /* (non-Javadoc)
@@ -103,32 +106,40 @@ public class CMPClient implements CAClient {
      */
     public void init(SLCSServerConfiguration config) throws SLCSException {
         log.debug("Reading HTTP Client related variables from the configuration:");
-        this.initHttpClientVars(config);
-        this.cmpProperties = new Properties();
+        initHttpClientVars(config);
+        cmpProperties_ = new Properties();
         log.debug("Reading general CMP variables from the configuration:");
-        this.initGeneralCMPVars(config);
+        initGeneralCMPVars(config);
         log.debug("Reading crypto related CMP variables from the configuration:");
-        this.initCryptoCMPVars(config);
+        initCryptoCMPVars(config);
     }
 	
     private void initHttpClientVars(SLCSServerConfiguration config) throws SLCSException {
         String caURL= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.CAUrl");
         log.info("CAClient.CAUrl=" + caURL);
-        String keystoreFilename= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.KeyStoreFile");
+        URL serverUrl= null;
+        try {
+            serverUrl = new URL(caURL);
+        } catch (MalformedURLException e1) {
+            log.error(e1);
+            throw new SLCSException(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.CAUrl=" + caURL + " is not a valid URL", e1);
+        }
+        // check for HTTPS if KeyStore and co are needed
+        boolean isSecure= serverUrl.getProtocol().equalsIgnoreCase("https");
+        String keystoreFilename= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.KeyStoreFile",isSecure);
         log.info("CAClient.KeyStoreFile=" + keystoreFilename);
-        String keystorePassword= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.KeyStorePassword");
+        String keystorePassword= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.KeyStorePassword",isSecure);
         log.info("CAClient.KeyStorePassword=" + keystorePassword);
-        String truststoreFilename= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.TrustStoreFile");
+        String truststoreFilename= config.getString(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient.TrustStoreFile",isSecure);
         log.info("CAClient.TrustStoreFile=" + truststoreFilename);
 
         // init the vars
         try {
-            URL serverUrl = new URL(caURL);
-            this.httpClient= createHttpClient(keystoreFilename,
+            httpClient_= createHttpClient(serverUrl,
+                                              keystoreFilename,
                                               keystorePassword,
-                                              truststoreFilename,
-                                              serverUrl);
-            this.relativeUrl = serverUrl.getPath();
+                                              truststoreFilename);
+            relativeUrl_ = serverUrl.getPath();
         } catch (Exception e) {
             log.error(e);
             throw new SLCSException("Failed to create embedded HttpClient", e);
@@ -136,19 +147,19 @@ public class CMPClient implements CAClient {
     }
 	
     private void initGeneralCMPVars(SLCSServerConfiguration config) throws SLCSException {
-        this.readConfigurationVariable(config, CA_DN_IDENTIFIER, null);
-        this.readConfigurationVariable(config, SENDER_DN_IDENTIFIER, null);
-        this.readConfigurationVariable(config, RECIPIENT_DN_IDENTIFIER, null);
+        readConfigurationVariable(config, CA_DN_IDENTIFIER, null);
+        readConfigurationVariable(config, SENDER_DN_IDENTIFIER, null);
+        readConfigurationVariable(config, RECIPIENT_DN_IDENTIFIER, null);
     }
 	
     private void initCryptoCMPVars(SLCSServerConfiguration config) throws SLCSException {
-        this.readConfigurationVariable(config, SENDER_KID_IDENTIFIER, null);
-        this.readConfigurationVariable(config, SHARED_SECRET_IDENTIFIER, null);
-        this.readConfigurationVariable(config, OWF_ALG_ID_IDENTIFIER, DEFAULT_OWF_ALGID);
-        this.readConfigurationVariable(config, ITERATION_COUNT_IDENTIFIER, DEFAULT_ITERATION_COUNT);
-        this.readConfigurationVariable(config, MAC_ALG_ID_IDENTIFIER, DEFAULT_MAC_ALGID);
-        this.readConfigurationVariable(config, SALT_STRING_IDENTIFIER, "");
-        this.readConfigurationVariable(config, PROTECTION_ALG_ID_IDENTIFIER, DEFAULT_PROTECTION_ALGID);
+        readConfigurationVariable(config, SENDER_KID_IDENTIFIER, null);
+        readConfigurationVariable(config, SHARED_SECRET_IDENTIFIER, null);
+        readConfigurationVariable(config, OWF_ALG_ID_IDENTIFIER, DEFAULT_OWF_ALGID);
+        readConfigurationVariable(config, ITERATION_COUNT_IDENTIFIER, DEFAULT_ITERATION_COUNT);
+        readConfigurationVariable(config, MAC_ALG_ID_IDENTIFIER, DEFAULT_MAC_ALGID);
+        readConfigurationVariable(config, SALT_STRING_IDENTIFIER, "");
+        readConfigurationVariable(config, PROTECTION_ALG_ID_IDENTIFIER, DEFAULT_PROTECTION_ALGID);
     }
 	
     private void readConfigurationVariable(SLCSServerConfiguration config, String variable, String defaultValue) throws SLCSException {
@@ -156,35 +167,38 @@ public class CMPClient implements CAClient {
         if (str == null || str.equals("")) {
             if (defaultValue == null) {
                 throw new SLCSException(SLCSServerConfiguration.COMPONENTSCONFIGURATION_PREFIX + ".CAClient." + variable + " is a required variable!");
-            } else {
-                log.info("CAClient." + variable + "='" + defaultValue + "' (was null, using default)");
-                this.cmpProperties.setProperty(variable, defaultValue);
             }
-        } else {
-            this.cmpProperties.setProperty(variable, str);
+            else {
+                log.info("CAClient." + variable + "=" + defaultValue + " (was null, using default)");
+                cmpProperties_.setProperty(variable, defaultValue);
+            }
+        } 
+        else {
+            cmpProperties_.setProperty(variable, str);
             log.info("CAClient." + variable + "=" + str);
         }
     }
 
-    private HttpClient createHttpClient(String keystorePath, String keystorePassword, String truststorePath, URL caURL) throws SLCSException {
+    static private HttpClient createHttpClient(URL caURL, String keystorePath, String keystorePassword, String truststorePath) throws SLCSException {
         Protocol protocol = null;
         int port = caURL.getPort();
-        if (caURL.getProtocol().equals("http")) {
+        if (caURL.getProtocol().equalsIgnoreCase("http")) {
             if (port == -1) {
                 port = 80;
             }
             protocol = new Protocol("http", new DefaultProtocolSocketFactory(), port);
-        } else if (caURL.getProtocol().equals("https")) {
+        } else if (caURL.getProtocol().equalsIgnoreCase("https")) {
             if (port == -1) {
                 port = 443;
             }
             try {
-                ExtendedProtocolSocketFactory psf= new ExtendedProtocolSocketFactory(keystorePath, keystorePassword, truststorePath);
+                ProtocolSocketFactory psf= new ExtendedProtocolSocketFactory(keystorePath, keystorePassword, truststorePath);
                 protocol = new Protocol("https", psf, port);
             } catch (Exception e) {
                 throw new SLCSException("Error in generating the secure http client", e);
             }	
-        } else {
+        } 
+        else {
             throw new SLCSException ("Protocol defined in CAClient.CAUrl is not supported! Use http or https.");
         }
         // create HTTP client
@@ -198,20 +212,20 @@ public class CMPClient implements CAClient {
      * @see org.glite.slcs.SLCSServerComponent#shutdown()
      */
     public void shutdown() {
-        this.httpClient = null;
+        httpClient_ = null;
     }
 	
     /**
      * @return the underlying HttpClient
      */
     protected HttpClient getHttpClient() {
-        return this.httpClient;
+        return httpClient_;
     }
     
     /**
      * @return the CMP configuration variables
      */
     protected Properties getCMPProperties() {
-        return this.cmpProperties;
+        return cmpProperties_;
     }
 }
