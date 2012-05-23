@@ -56,7 +56,7 @@
         <tstamp />
 		<!-- check for the glite-slcs-common jar file in stage -->
     	<fileset id="glite-slcs-common.fileset" dir="${stage.lib.dir}">
-            <include name="glite-slcs-common-*.jar"/>
+            <include name="glite-slcs-common.jar"/>
         </fileset>
         <path id="glite-slcs-common.path">
         	<fileset refid="glite-slcs-common.fileset" />
